@@ -2,8 +2,11 @@ import SwiftUI
 import Supabase
 
 struct AccountView: View {
+    let store: GroupsStore
+
     @Environment(AuthStore.self) private var authStore
     @State private var showPaywall = false
+    @State private var showProfileEditor = false
     @State private var showDeleteConfirm = false
     @State private var isDeleting = false
     @State private var isExporting = false
@@ -48,6 +51,19 @@ struct AccountView: View {
         .sheet(isPresented: $showPaywall) {
             PaywallView()
         }
+        .sheet(isPresented: $showProfileEditor) {
+            if let profile = authStore.currentProfile {
+                ProfileEditView(profile: profile) { name, color in
+                    try await authStore.updateProfile(name: name, color: color)
+                    await store.load()
+                    withAnimation {
+                        toastMessage = "Profil güncellendi."
+                    }
+                    try? await Task.sleep(for: .seconds(2))
+                    withAnimation { toastMessage = nil }
+                }
+            }
+        }
         .confirmationDialog(
             "Hesabın silinsin mi?",
             isPresented: $showDeleteConfirm,
@@ -71,53 +87,75 @@ struct AccountView: View {
 
     private var profileCard: some View {
         HStack(spacing: 16) {
-            GradientAvatar(
-                name: authStore.currentProfile?.displayName ?? "?",
-                color: authStore.currentProfile?.avatarColor ?? "#4F46E5",
-                size: 56
-            )
+            Button {
+                guard authStore.currentProfile != nil else { return }
+                showProfileEditor = true
+            } label: {
+                HStack(spacing: 16) {
+                GradientAvatar(
+                    name: authStore.currentProfile?.displayName ?? "?",
+                    color: authStore.currentProfile?.avatarColor
+                        ?? AvatarPalette.fallback,
+                    size: 56
+                )
 
-            VStack(alignment: .leading, spacing: 4) {
-                if authStore.sessionState == .anonymous {
-                    Text("Misafir Kullanıcı")
-                        .font(.display(18, weight: .bold))
-                        .foregroundStyle(Color.textPrimary)
-                    Text("Pro için Apple ile giriş yap")
-                        .font(.body(14))
-                        .foregroundStyle(Color.textSecondary)
-                } else {
-                    Text(authStore.currentProfile?.displayName ?? "Kullanıcı")
-                        .font(.display(18, weight: .bold))
-                        .foregroundStyle(Color.textPrimary)
+                VStack(alignment: .leading, spacing: 4) {
+                    if authStore.sessionState == .anonymous {
+                        Text(authStore.currentProfile?.displayName ?? "Misafir Kullanıcı")
+                            .font(.display(18, weight: .bold))
+                            .foregroundStyle(Color.textPrimary)
+                        Text("Pro için Apple ile giriş yap")
+                            .font(.body(14))
+                            .foregroundStyle(Color.textSecondary)
+                    } else {
+                        Text(authStore.currentProfile?.displayName ?? "Kullanıcı")
+                            .font(.display(18, weight: .bold))
+                            .foregroundStyle(Color.textPrimary)
 
-                    HStack(spacing: 6) {
-                        if authStore.currentProfile?.userPro == true {
-                            Image(systemName: "diamond.fill")
-                                .font(.system(size: 11))
-                            Text("Pro")
-                                .font(.body(12, weight: .semibold))
-                        } else {
-                            Text("Ücretsiz")
-                                .font(.body(12, weight: .medium))
+                        HStack(spacing: 6) {
+                            if authStore.currentProfile?.userPro == true {
+                                Image(systemName: "diamond.fill")
+                                    .font(.system(size: 11))
+                                Text("Pro")
+                                    .font(.body(12, weight: .semibold))
+                            } else {
+                                Text("Ücretsiz")
+                                    .font(.body(12, weight: .medium))
+                            }
                         }
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 4)
+                        .background(
+                            authStore.currentProfile?.userPro == true
+                                ? LinearGradient(colors: [.gradientStart, .gradientEnd], startPoint: .leading, endPoint: .trailing)
+                                : LinearGradient(colors: [Color.textTertiary, Color.textTertiary], startPoint: .leading, endPoint: .trailing)
+                        )
+                        .clipShape(Capsule())
                     }
-                    .foregroundStyle(.white)
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 4)
-                    .background(
-                        authStore.currentProfile?.userPro == true
-                            ? LinearGradient(colors: [.gradientStart, .gradientEnd], startPoint: .leading, endPoint: .trailing)
-                            : LinearGradient(colors: [Color.textTertiary, Color.textTertiary], startPoint: .leading, endPoint: .trailing)
-                    )
-                    .clipShape(Capsule())
+                }
                 }
             }
+            .buttonStyle(.plain)
 
             Spacer()
 
             if authStore.sessionState == .anonymous {
                 AppleSignInButton()
                     .frame(width: 150)
+            } else {
+                Button {
+                    showProfileEditor = true
+                } label: {
+                    Image(systemName: "pencil")
+                        .font(.system(size: 14, weight: .semibold))
+                        .foregroundStyle(Color.primaryTheme)
+                        .frame(width: 36, height: 36)
+                        .background(Color.surfaceTinted)
+                        .clipShape(Circle())
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel("Profili Düzenle")
             }
         }
         .padding(18)
@@ -473,7 +511,7 @@ struct AccountView: View {
 
 #Preview {
     NavigationStack {
-        AccountView()
+        AccountView(store: PreviewSupport.groupsStore)
     }
     .environment(PreviewSupport.authStore)
 }

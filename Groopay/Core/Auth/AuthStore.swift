@@ -137,8 +137,16 @@ final class AuthStore {
 
     func updateProfile(name: String, color: String) async throws {
         let userID = try await supabase.auth.session.user.id
+        let trimmedName = name.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmedName.isEmpty, trimmedName.count <= 40 else {
+            throw AuthStoreError.invalidDisplayName
+        }
+        guard AvatarPalette.colors.contains(color) else {
+            throw AuthStoreError.invalidAvatarColor
+        }
+
         let update = ProfileUpdate(
-            displayName: name.trimmingCharacters(in: .whitespacesAndNewlines),
+            displayName: trimmedName,
             avatarColor: color
         )
 
@@ -262,6 +270,8 @@ private struct GroupMemberNameUpdate: Encodable {
 private enum AuthStoreError: LocalizedError {
     case invalidAppleCredential
     case identityMismatch
+    case invalidDisplayName
+    case invalidAvatarColor
 
     var errorDescription: String? {
         switch self {
@@ -269,6 +279,10 @@ private enum AuthStoreError: LocalizedError {
             String(localized: "auth.error.invalidAppleCredential")
         case .identityMismatch:
             "Apple kimliği bağlanamadı; misafir verileriniz korundu."
+        case .invalidDisplayName:
+            "Görünen ad 1-40 karakter olmalıdır."
+        case .invalidAvatarColor:
+            "Geçersiz avatar rengi."
         }
     }
 }

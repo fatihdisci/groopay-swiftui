@@ -28,7 +28,7 @@ struct MainTabView: View {
             }
 
             NavigationStack {
-                AccountView()
+                AccountView(store: groupsStore)
             }
             .tabItem {
                 Label("tab.account", systemImage: "person.crop.circle.fill")
