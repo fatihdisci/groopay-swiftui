@@ -159,8 +159,13 @@ final class AuthStore {
 
     private func observeAuthState() {
         authListenerTask = Task { [weak self, supabase] in
-            for await (_, session) in supabase.auth.authStateChanges {
+            for await (event, session) in supabase.auth.authStateChanges {
                 guard let self else { return }
+
+                if event == .initialSession, session?.isExpired == true {
+                    continue
+                }
+
                 await self.apply(session: session)
             }
         }
