@@ -1,0 +1,189 @@
+import SwiftUI
+
+struct GroupsListView: View {
+    @Environment(AuthStore.self) private var authStore
+    let store: GroupsStore
+    let onJoin: () -> Void
+    let onCreate: () -> Void
+
+    var body: some View {
+        ZStack(alignment: .bottom) {
+            Color.background.ignoresSafeArea()
+
+            SwiftUI.Group {
+                if store.isLoading && store.groups.isEmpty {
+                    ProgressView()
+                        .tint(.primaryTheme)
+                } else if store.groups.isEmpty {
+                    emptyState
+                } else {
+                    groupList
+                }
+            }
+
+            bottomBar
+        }
+    }
+
+    private var groupList: some View {
+        ScrollView {
+            LazyVStack(spacing: 14) {
+                if !store.overallBalance.isEmpty {
+                    OverallBalanceCard(balances: store.overallBalance)
+                }
+
+                ForEach(store.groups) { snapshot in
+                    NavigationLink {
+                        GroupDetailView(
+                            groupID: snapshot.id,
+                            store: store
+                        )
+                    } label: {
+                        GroupCard(snapshot: snapshot)
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+            .padding(.horizontal, 20)
+            .padding(.top, 8)
+            .padding(.bottom, 108)
+        }
+    }
+
+    private var emptyState: some View {
+        VStack(spacing: 12) {
+            Image(systemName: "person.2")
+                .font(.system(size: 54))
+                .foregroundStyle(Color.textTertiary)
+            Text("Henüz grubun yok")
+                .font(.display(21))
+                .foregroundStyle(Color.textPrimary)
+            Text("Yeni bir grup oluştur veya davet koduyla katıl.")
+                .font(.body(14))
+                .foregroundStyle(Color.textSecondary)
+                .multilineTextAlignment(.center)
+        }
+        .padding(.horizontal, 40)
+        .padding(.bottom, 90)
+    }
+
+    private var bottomBar: some View {
+        HStack(spacing: 12) {
+            Button(action: onJoin) {
+                Label("Gruba Katıl", systemImage: "rectangle.portrait.and.arrow.right")
+                    .font(.body(14, weight: .semibold))
+                    .foregroundStyle(Color.primaryTheme)
+                    .frame(maxWidth: .infinity, minHeight: 48)
+                    .background(Color.surface)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: ThemeRadius.button)
+                            .stroke(Color.primaryTheme.opacity(0.35))
+                    )
+            }
+
+            Button(action: onCreate) {
+                GradientButtonLabel(
+                    title: reachedLimit ? "Pro ile Sınırsız" : "Yeni Grup",
+                    systemImage: reachedLimit ? "lock.fill" : "plus",
+                    disabled: reachedLimit
+                )
+            }
+        }
+        .padding(.horizontal, 20)
+        .padding(.top, 12)
+        .padding(.bottom, 10)
+        .background(.ultraThinMaterial)
+    }
+
+    private var reachedLimit: Bool {
+        !(authStore.currentProfile?.userPro ?? false)
+            && store.createdNonDemoGroupCount >= 5
+    }
+}
+
+private struct OverallBalanceCard: View {
+    let balances: [String: Int]
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            Text("GENEL DURUM")
+                .font(.body(11, weight: .semibold))
+                .tracking(1.4)
+                .foregroundStyle(.white.opacity(0.75))
+
+            ForEach(balances.keys.sorted(), id: \.self) { currency in
+                let amount = balances[currency, default: 0]
+                HStack {
+                    Text(currency)
+                        .font(.body(13, weight: .semibold))
+                        .foregroundStyle(.white.opacity(0.8))
+                    Spacer()
+                    Text(formatAmount(abs(amount), currency: currency))
+                        .font(.display(20, weight: .extraBold))
+                        .foregroundStyle(.white)
+                    Text(amount >= 0 ? "alacaklısın" : "borçlusun")
+                        .font(.body(11, weight: .medium))
+                        .foregroundStyle(.white.opacity(0.76))
+                }
+            }
+        }
+        .padding(20)
+        .background(
+            LinearGradient(
+                colors: [
+                    Color(cssHex: "#4F46E5") ?? .gradientStart,
+                    Color(cssHex: "#5B54E8") ?? .gradientEnd
+                ],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+        )
+        .clipShape(RoundedRectangle(cornerRadius: 20))
+        .purpleTintedShadow(radius: 18, y: 9)
+    }
+}
+
+private struct GroupCard: View {
+    let snapshot: GroupSnapshot
+
+    var body: some View {
+        HStack(spacing: 14) {
+            GradientAvatar(
+                name: snapshot.group.name,
+                emoji: snapshot.group.avatarEmoji,
+                color: snapshot.group.avatarColor
+            )
+
+            VStack(alignment: .leading, spacing: 5) {
+                Text(snapshot.group.name)
+                    .font(.display(17))
+                    .foregroundStyle(Color.textPrimary)
+                    .lineLimit(1)
+                Text("\(snapshot.activeMembers.count) aktif üye")
+                    .font(.body(13))
+                    .foregroundStyle(Color.textSecondary)
+            }
+
+            Spacer()
+
+            Image(systemName: "chevron.right")
+                .font(.system(size: 14, weight: .semibold))
+                .foregroundStyle(Color.textTertiary)
+        }
+        .padding(16)
+        .background(Color.surface)
+        .clipShape(RoundedRectangle(cornerRadius: ThemeRadius.card))
+        .purpleTintedShadow()
+    }
+}
+
+#Preview {
+    NavigationStack {
+        GroupsListView(
+            store: PreviewSupport.groupsStore,
+            onJoin: {},
+            onCreate: {}
+        )
+    }
+    .environment(PreviewSupport.authStore)
+}
