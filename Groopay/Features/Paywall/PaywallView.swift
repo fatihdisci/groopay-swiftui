@@ -47,24 +47,37 @@ struct PaywallView: View {
     @State private var purchaseSuccess = false
 
     var body: some View {
-        VStack(spacing: 0) {
-            // Hero Alanı — mor gradient + SF Symbol
-            heroSection
+        ZStack(alignment: .topTrailing) {
+            // Arka plan - tüm ekranı kaplayan gradient + gri
+            VStack(spacing: 0) {
+                LinearGradient(
+                    colors: [.gradientStart, .gradientEnd],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+                .frame(height: 260)
+                Color.background
+            }
+            .ignoresSafeArea()
 
-            // Feature Carousel
-            featureCarousel
+            VStack(spacing: 0) {
+                // Hero Alanı
+                heroSection
 
-            // Fiyat Kartı
-            pricingCard
+                // Feature Carousel
+                featureCarousel
 
-            // Devam Butonu
-            continueButton
+                // Fiyat Kartı
+                pricingCard
 
-            // Footer Linkler
-            footerLinks
-        }
-        .background(Color.background)
-        .overlay(alignment: .topTrailing) {
+                // Devam Butonu
+                continueButton
+
+                // Footer Linkler
+                footerLinks
+            }
+
+            // X Butonu
             closeButton
         }
         .task {
@@ -92,17 +105,21 @@ struct PaywallView: View {
 
     private var heroSection: some View {
         VStack(spacing: 16) {
-            // Pro simgesi
+            Spacer()
+                .frame(height: 56)
+
+            // Uygulama ikonu
             ZStack {
                 Circle()
                     .fill(Color.white.opacity(0.18))
                     .frame(width: 80, height: 80)
 
-                Image(systemName: "diamond.fill")
-                    .font(.system(size: 36))
-                    .foregroundStyle(.white)
+                Image("AppIcon")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: 56, height: 56)
+                    .clipShape(RoundedRectangle(cornerRadius: 14))
             }
-            .padding(.top, 32)
 
             Text("Groopay User Pro")
                 .font(.display(28, weight: .extraBold))
@@ -115,13 +132,6 @@ struct PaywallView: View {
         }
         .frame(maxWidth: .infinity)
         .padding(.bottom, 28)
-        .background(
-            LinearGradient(
-                colors: [.gradientStart, .gradientEnd],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-        )
     }
 
     // MARK: - Feature Carousel
@@ -299,10 +309,11 @@ struct PaywallView: View {
                 .font(.system(size: 13, weight: .bold))
                 .foregroundStyle(.white)
                 .frame(width: 28, height: 28)
-                .background(Color.black.opacity(0.2))
+                .background(.ultraThinMaterial)
                 .clipShape(Circle())
         }
-        .padding(16)
+        .padding(.top, 56)
+        .padding(.trailing, 16)
     }
 }
 
