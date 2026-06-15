@@ -65,47 +65,78 @@ struct GroupsListView: View {
 
     private var bottomBar: some View {
         HStack(spacing: 12) {
-            Button(action: onJoin) {
-                Label("Gruba Katıl", systemImage: "rectangle.portrait.and.arrow.right")
-                    .font(.body(14, weight: .semibold))
-                    .foregroundStyle(Color.primaryTheme)
-                    .frame(maxWidth: .infinity, minHeight: 48)
-                    .background(.ultraThinMaterial)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: ThemeRadius.button)
-                            .stroke(Color.primaryTheme.opacity(0.3), lineWidth: 1)
-                    )
-                    .clipShape(RoundedRectangle(cornerRadius: ThemeRadius.button))
-            }
+            if #available(iOS 26.0, *) {
+                Button(action: onJoin) {
+                    joinButtonLabel
+                }
+                .buttonStyle(.glass)
+                .tint(.primaryTheme)
 
-            Button(action: onCreate) {
-                Label(
-                    reachedLimit ? "Pro ile Sınırsız" : "Yeni Grup",
-                    systemImage: reachedLimit ? "lock.fill" : "plus"
-                )
-                .font(.body(15, weight: .semibold))
-                .foregroundStyle(.white)
-                .frame(maxWidth: .infinity, minHeight: 50)
-                .background(
-                    ZStack {
-                        RoundedRectangle(cornerRadius: ThemeRadius.button)
-                            .fill(.ultraThinMaterial)
-                        LinearGradient(
-                            colors: reachedLimit
-                                ? [.textTertiary.opacity(0.4), .textTertiary.opacity(0.4)]
-                                : [.gradientStart.opacity(0.75), .gradientEnd.opacity(0.75)],
-                            startPoint: .leading,
-                            endPoint: .trailing
+                Button(action: onCreate) {
+                    createButtonLabel
+                }
+                .buttonStyle(.glassProminent)
+                .tint(reachedLimit ? .textTertiary : .primaryTheme)
+            } else {
+                Button(action: onJoin) {
+                    joinButtonLabel
+                        .foregroundStyle(Color.primaryTheme)
+                        .background(.ultraThinMaterial)
+                        .overlay {
+                            RoundedRectangle(cornerRadius: ThemeRadius.button)
+                                .stroke(
+                                    Color.primaryTheme.opacity(0.35),
+                                    lineWidth: 1
+                                )
+                        }
+                        .clipShape(
+                            RoundedRectangle(cornerRadius: ThemeRadius.button)
                         )
-                    }
-                )
-                .clipShape(RoundedRectangle(cornerRadius: ThemeRadius.button))
+                }
+
+                Button(action: onCreate) {
+                    createButtonLabel
+                        .foregroundStyle(.white)
+                        .background(
+                            LinearGradient(
+                                colors: reachedLimit
+                                    ? [.textTertiary, .textTertiary]
+                                    : [.gradientStart, .gradientEnd],
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
+                        )
+                        .clipShape(
+                            RoundedRectangle(cornerRadius: ThemeRadius.button)
+                        )
+                        .purpleTintedShadow(radius: 12, y: 5)
+                }
             }
         }
         .padding(.horizontal, 20)
         .padding(.top, 12)
         .padding(.bottom, 10)
         .background(.ultraThinMaterial)
+    }
+
+    private var joinButtonLabel: some View {
+        Label(
+            "Gruba Katıl",
+            systemImage: "rectangle.portrait.and.arrow.right"
+        )
+        .font(.body(14, weight: .semibold))
+        .frame(maxWidth: .infinity, minHeight: 50)
+        .contentShape(Rectangle())
+    }
+
+    private var createButtonLabel: some View {
+        Label(
+            reachedLimit ? "Pro ile Sınırsız" : "Yeni Grup",
+            systemImage: reachedLimit ? "lock.fill" : "plus"
+        )
+        .font(.body(15, weight: .semibold))
+        .frame(maxWidth: .infinity, minHeight: 50)
+        .contentShape(Rectangle())
     }
 
     private var reachedLimit: Bool {
