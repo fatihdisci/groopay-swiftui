@@ -10,6 +10,7 @@ struct JoinGroupView: View {
     @State private var ghosts: [Member] = []
     @State private var selectedGhostID: UUID?
     @State private var isWorking = false
+    @FocusState private var isFocused: Bool
 
     var body: some View {
         ScrollView {
@@ -27,6 +28,9 @@ struct JoinGroupView: View {
         .background(Color.background)
         .navigationTitle("Gruba Katıl")
         .navigationBarTitleDisplayMode(.inline)
+        .task {
+            isFocused = true
+        }
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Button("Kapat") { dismiss() }
@@ -65,13 +69,20 @@ struct JoinGroupView: View {
                 .padding(18)
                 .background(Color.surface)
                 .clipShape(RoundedRectangle(cornerRadius: ThemeRadius.card))
+                .focused($isFocused)
                 .onChange(of: code) { _, newValue in
-                    code = String(
+                    let filtered = String(
                         newValue
                             .uppercased()
                             .filter { $0.isLetter || $0.isNumber }
                             .prefix(8)
                     )
+                    code = filtered
+
+                    // 8 karakter dolunca otomatik kontrol et
+                    if filtered.count == 8 {
+                        Task { await lookup() }
+                    }
                 }
 
             Button {

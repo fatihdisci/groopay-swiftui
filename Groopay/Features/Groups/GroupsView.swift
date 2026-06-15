@@ -27,13 +27,15 @@ struct GroupsView: View {
             switch sheet {
             case .new:
                 NewGroupSheet(store: store)
-                    .presentationDetents([.height(330)])
+                    .presentationDetents([.medium])
                     .presentationCornerRadius(24)
                     .presentationDragIndicator(.visible)
             case .join:
                 NavigationStack {
                     JoinGroupView(store: store)
                 }
+                .presentationDetents([.medium, .large])
+                .presentationDragIndicator(.visible)
             }
         }
         .sheet(isPresented: $store.presentedPaywall) {

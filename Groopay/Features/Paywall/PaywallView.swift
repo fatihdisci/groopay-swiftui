@@ -114,11 +114,17 @@ struct PaywallView: View {
                     .fill(Color.white.opacity(0.18))
                     .frame(width: 80, height: 80)
 
-                Image("AppIcon")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 56, height: 56)
-                    .clipShape(RoundedRectangle(cornerRadius: 14))
+                if let uiImage = UIImage(named: "AppIcon") {
+                    Image(uiImage: uiImage)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 56, height: 56)
+                        .clipShape(RoundedRectangle(cornerRadius: 14))
+                } else {
+                    Image(systemName: "diamond.fill")
+                        .font(.system(size: 36))
+                        .foregroundStyle(.white)
+                }
             }
 
             Text("Groopay User Pro")

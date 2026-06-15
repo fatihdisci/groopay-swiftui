@@ -8,6 +8,7 @@ struct ActivityView: View {
 
     @State private var searchText = ""
     @State private var debouncedQuery = ""
+    @State private var showPaywall = false
 
     private var isPro: Bool {
         authStore.currentProfile?.userPro ?? false
@@ -37,6 +38,9 @@ struct ActivityView: View {
         .navigationBarTitleDisplayMode(.inline)
         .task { await store.load() }
         .refreshable { await store.load() }
+        .sheet(isPresented: $showPaywall) {
+            PaywallView()
+        }
         // 300ms debounce; yalnızca Pro kullanıcılar arar.
         .task(id: searchText) {
             guard isPro else { return }
@@ -79,23 +83,27 @@ struct ActivityView: View {
     }
 
     private var proSearchCTA: some View {
-        HStack(spacing: 8) {
-            Image(systemName: "diamond.fill")
-                .font(.system(size: 13, weight: .bold))
-            Text("Aramak için Pro'ya geç")
-                .font(.body(13, weight: .semibold))
-        }
-        .foregroundStyle(.white)
-        .padding(.horizontal, 16)
-        .padding(.vertical, 10)
-        .background(
-            LinearGradient(
-                colors: [.gradientStart, .gradientEnd],
-                startPoint: .leading,
-                endPoint: .trailing
+        Button {
+            showPaywall = true
+        } label: {
+            HStack(spacing: 8) {
+                Image(systemName: "diamond.fill")
+                    .font(.system(size: 13, weight: .bold))
+                Text("Aramak için Pro'ya geç")
+                    .font(.body(13, weight: .semibold))
+            }
+            .foregroundStyle(.white)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 10)
+            .background(
+                LinearGradient(
+                    colors: [.gradientStart, .gradientEnd],
+                    startPoint: .leading,
+                    endPoint: .trailing
+                )
             )
-        )
-        .clipShape(Capsule())
+            .clipShape(Capsule())
+        }
     }
 
     // MARK: - Sections (date headers)
