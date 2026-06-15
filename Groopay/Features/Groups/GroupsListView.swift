@@ -70,19 +70,36 @@ struct GroupsListView: View {
                     .font(.body(14, weight: .semibold))
                     .foregroundStyle(Color.primaryTheme)
                     .frame(maxWidth: .infinity, minHeight: 48)
-                    .background(Color.surface)
+                    .background(.ultraThinMaterial)
                     .overlay(
                         RoundedRectangle(cornerRadius: ThemeRadius.button)
-                            .stroke(Color.primaryTheme.opacity(0.35))
+                            .stroke(Color.primaryTheme.opacity(0.3), lineWidth: 1)
                     )
+                    .clipShape(RoundedRectangle(cornerRadius: ThemeRadius.button))
             }
 
             Button(action: onCreate) {
-                GradientButtonLabel(
-                    title: reachedLimit ? "Pro ile Sınırsız" : "Yeni Grup",
-                    systemImage: reachedLimit ? "lock.fill" : "plus",
-                    disabled: reachedLimit
+                Label(
+                    reachedLimit ? "Pro ile Sınırsız" : "Yeni Grup",
+                    systemImage: reachedLimit ? "lock.fill" : "plus"
                 )
+                .font(.body(15, weight: .semibold))
+                .foregroundStyle(.white)
+                .frame(maxWidth: .infinity, minHeight: 50)
+                .background(
+                    ZStack {
+                        RoundedRectangle(cornerRadius: ThemeRadius.button)
+                            .fill(.ultraThinMaterial)
+                        LinearGradient(
+                            colors: reachedLimit
+                                ? [.textTertiary.opacity(0.4), .textTertiary.opacity(0.4)]
+                                : [.gradientStart.opacity(0.75), .gradientEnd.opacity(0.75)],
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    }
+                )
+                .clipShape(RoundedRectangle(cornerRadius: ThemeRadius.button))
             }
         }
         .padding(.horizontal, 20)
