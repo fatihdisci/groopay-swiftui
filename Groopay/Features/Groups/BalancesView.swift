@@ -8,6 +8,7 @@ struct BalancesTabView: View {
     @State private var mode: BalanceMode = .raw
     @State private var ibanCopied = false
     @State private var busy = false
+    @State private var paymentSheet: PaymentSheetConfig?
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     private var snapshot: GroupSnapshot? { store.snapshot(groupID) }
@@ -28,6 +29,19 @@ struct BalancesTabView: View {
             .padding(.horizontal, 20)
             .padding(.top, 4)
             .animation(reduceMotion ? nil : .default, value: mode)
+            .sheet(item: $paymentSheet) { config in
+                PaymentSheet(config: config) { amount in
+                    runSettlementAction {
+                        await store.markPaid(
+                            groupID: config.groupID,
+                            fromMember: config.fromMember,
+                            toMember: config.toMember,
+                            amount: amount,
+                            currency: config.currency
+                        )
+                    }
+                }
+            }
             .alert("WhatsApp açılamadı", isPresented: $ibanCopied) {
                 Button("Tamam", role: .cancel) {}
             } message: {
@@ -304,7 +318,10 @@ struct BalancesTabView: View {
                 if pending != nil {
                     HStack {
                         Spacer()
-                        Label("Onay Bekleniyor", systemImage: "clock.fill")
+                        Label(
+                            "\(formatAmount(pending!.amount, currency: pending!.currency)) onay bekliyor",
+                            systemImage: "clock.fill"
+                        )
                             .font(.body(12, weight: .semibold))
                             .foregroundStyle(Color.warning)
                             .padding(.horizontal, 12)
@@ -320,15 +337,14 @@ struct BalancesTabView: View {
                             icon: "checkmark",
                             tint: .credit
                         ) {
-                            runSettlementAction {
-                                await store.markPaid(
-                                    groupID: groupID,
-                                    fromMember: transfer.fromMemberId,
-                                    toMember: transfer.toMemberId,
-                                    amount: transfer.amount,
-                                    currency: transfer.currency
-                                )
-                            }
+                            paymentSheet = PaymentSheetConfig(
+                                debtAmount: transfer.amount,
+                                currency: transfer.currency,
+                                debtorName: creditor,
+                                groupID: groupID,
+                                fromMember: transfer.fromMemberId,
+                                toMember: transfer.toMemberId
+                            )
                         }
                         circleAction(
                             title: "IBAN İste",
