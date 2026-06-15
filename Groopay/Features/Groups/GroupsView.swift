@@ -16,7 +16,7 @@ struct GroupsView: View {
             onCreate: handleCreateTap
         )
         .navigationTitle("Gruplar")
-        .navigationBarTitleDisplayMode(.large)
+        .navigationBarTitleDisplayMode(.inline)
         .task {
             await store.load()
         }

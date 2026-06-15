@@ -28,10 +28,6 @@ struct GroupsListView: View {
     private var groupList: some View {
         ScrollView {
             LazyVStack(spacing: 14) {
-                if !store.overallBalance.isEmpty {
-                    OverallBalanceCard(balances: store.overallBalance)
-                }
-
                 ForEach(store.groups) { snapshot in
                     NavigationLink {
                         GroupDetailView(
@@ -101,47 +97,6 @@ struct GroupsListView: View {
     }
 }
 
-private struct OverallBalanceCard: View {
-    let balances: [String: Int]
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 14) {
-            Text("GENEL DURUM")
-                .font(.body(11, weight: .semibold))
-                .tracking(1.4)
-                .foregroundStyle(.white.opacity(0.75))
-
-            ForEach(balances.keys.sorted(), id: \.self) { currency in
-                let amount = balances[currency, default: 0]
-                HStack {
-                    Text(currency)
-                        .font(.body(13, weight: .semibold))
-                        .foregroundStyle(.white.opacity(0.8))
-                    Spacer()
-                    Text(formatAmount(abs(amount), currency: currency))
-                        .font(.display(20, weight: .extraBold))
-                        .foregroundStyle(.white)
-                    Text(amount >= 0 ? "alacaklısın" : "borçlusun")
-                        .font(.body(11, weight: .medium))
-                        .foregroundStyle(.white.opacity(0.76))
-                }
-            }
-        }
-        .padding(20)
-        .background(
-            LinearGradient(
-                colors: [
-                    Color(cssHex: "#4F46E5") ?? .gradientStart,
-                    Color(cssHex: "#5B54E8") ?? .gradientEnd
-                ],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-        )
-        .clipShape(RoundedRectangle(cornerRadius: 20))
-        .purpleTintedShadow(radius: 18, y: 9)
-    }
-}
 
 private struct GroupCard: View {
     let snapshot: GroupSnapshot

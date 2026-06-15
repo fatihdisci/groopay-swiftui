@@ -44,7 +44,7 @@ struct AccountView: View {
             }
         }
         .navigationTitle("Hesabım")
-        .navigationBarTitleDisplayMode(.large)
+        .navigationBarTitleDisplayMode(.inline)
         .sheet(isPresented: $showPaywall) {
             PaywallView()
         }

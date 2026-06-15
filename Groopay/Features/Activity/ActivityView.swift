@@ -34,7 +34,7 @@ struct ActivityView: View {
             }
         }
         .navigationTitle("Aktivite")
-        .navigationBarTitleDisplayMode(.large)
+        .navigationBarTitleDisplayMode(.inline)
         .task { await store.load() }
         .refreshable { await store.load() }
         // 300ms debounce; yalnızca Pro kullanıcılar arar.

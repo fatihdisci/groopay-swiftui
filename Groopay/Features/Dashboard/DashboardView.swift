@@ -36,7 +36,7 @@ struct DashboardView: View {
             }
         }
         .navigationTitle("tab.dashboard")
-        .navigationBarTitleDisplayMode(.large)
+        .navigationBarTitleDisplayMode(.inline)
         .refreshable { await store.load() }
         .sheet(isPresented: $showPaywall) {
             PaywallView()
