@@ -79,18 +79,22 @@ final class AuthStore {
             let wasAnonymous = supabase.auth.currentUser?.isAnonymous ?? false
             let previousUserID = supabase.auth.currentUser?.id
 
-            let session: Session
+            var session: Session
             if wasAnonymous {
-                // Misafir hesabı Apple kimliğine BAĞLA: aynı user ID korunur,
-                // anonimken oluşturulan grup/masraf verileri kaybolmaz.
-                // Bağlama başarısız olursa (ör. bu Apple kimliği başka bir
-                // hesaba bağlıysa) hata fırlatılır; anonim oturum bozulmaz,
-                // veri silinmez.
-                session = try await supabase.auth.linkIdentityWithIdToken(
-                    credentials: credentials
-                )
-                if let previousUserID, session.user.id != previousUserID {
-                    throw AuthStoreError.identityMismatch
+                do {
+                    session = try await supabase.auth.linkIdentityWithIdToken(
+                        credentials: credentials
+                    )
+                    if let previousUserID, session.user.id != previousUserID {
+                        throw AuthStoreError.identityMismatch
+                    }
+                } catch {
+                    // Kimlik zaten başka bir hesaba bağlıysa (ör. eski oturum),
+                    // o hesaba giriş yap. Anonim veriler korunamaz ama kullanıcı
+                    // eski hesabına döner.
+                    session = try await supabase.auth.signInWithIdToken(
+                        credentials: credentials
+                    )
                 }
             } else {
                 session = try await supabase.auth.signInWithIdToken(
