@@ -1,7 +1,13 @@
 {
   "sourceLanguage" : "tr",
   "strings" : {
+    "/ay" : {
+
+    },
     "%@ ödedi" : {
+
+    },
+    "%@ ödedi diyor" : {
 
     },
     "%lld aktif üye" : {
@@ -17,6 +23,9 @@
 
     },
     "ABC12345" : {
+
+    },
+    "Abonelik dönem sonunda otomatik yenilenir. İptal edilmezse ücret tahsil edilir. Hesap ayarlarından yönetebilirsiniz." : {
 
     },
     "account.appleRequired" : {
@@ -68,6 +77,7 @@
       }
     },
     "account.purchaseReady" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -86,7 +96,19 @@
     "Açıklama" : {
 
     },
+    "Aktivite" : {
+
+    },
+    "Aktivitede ara" : {
+
+    },
+    "alacaklı" : {
+
+    },
     "alacaklısın" : {
+
+    },
+    "Aramak için Pro'ya geç" : {
 
     },
     "auth.apple" : {
@@ -204,13 +226,16 @@
     "Ayrıl" : {
 
     },
-    "Bakiyeler burada görünecek" : {
+    "Bir hata oluştu" : {
 
     },
     "Bir sorun oluştu" : {
 
     },
     "Bölüşme" : {
+
+    },
+    "borçlu" : {
 
     },
     "borçlusun" : {
@@ -238,6 +263,9 @@
     "Davet kodunla gruba katıl" : {
 
     },
+    "Devam Et" : {
+
+    },
     "Devret ve Ayrıl" : {
 
     },
@@ -247,10 +275,19 @@
     "Farklı kod gir" : {
 
     },
+    "Fiyat bilgisi yükleniyor…" : {
+
+    },
+    "Gelişmiş Panel Pro'ya Özel" : {
+
+    },
     "GENEL DURUM" : {
 
     },
     "Gerçek üye" : {
+
+    },
+    "Gizlilik" : {
 
     },
     "Groopay grup daveti" : {
@@ -277,10 +314,16 @@
     "Gruplar" : {
 
     },
+    "Gruplarındaki masraf ve ödemeler burada görünecek." : {
+
+    },
     "Gruptan Ayrıl" : {
 
     },
     "Gruptan ayrılmak istiyor musun?" : {
+
+    },
+    "Harcama Özeti" : {
 
     },
     "Hayalet" : {
@@ -289,10 +332,19 @@
     "Hayalet Ekle" : {
 
     },
+    "Henüz aktivite yok" : {
+
+    },
     "Henüz grubun yok" : {
 
     },
     "Henüz masraf yok" : {
+
+    },
+    "Herkes ödeşti" : {
+
+    },
+    "IBAN isteme mesajı panoya kopyalandı; dilediğin uygulamada yapıştırabilirsin." : {
 
     },
     "Kalan %@ → %@" : {
@@ -311,10 +363,19 @@
     "Kategori" : {
 
     },
+    "Kategori Analizi" : {
+
+    },
     "Kısa açıklama" : {
 
     },
     "Kodu Paylaş" : {
+
+    },
+    "Kullanım Koşulları" : {
+
+    },
+    "Kullanıma Hazır" : {
 
     },
     "KURUCU" : {
@@ -338,7 +399,22 @@
     "Masrafı Sil" : {
 
     },
+    "ödeşti" : {
+
+    },
+    "Ödeştin" : {
+
+    },
     "Ödeyen" : {
+
+    },
+    "Onay Bekleniyor" : {
+
+    },
+    "ONAYINI BEKLEYEN ÖDEMELER" : {
+
+    },
+    "Onayla" : {
 
     },
     "onboarding.expenses.message" : {
@@ -507,19 +583,34 @@
         }
       }
     },
+    "Pro Aktif" : {
+
+    },
+    "Pro analitik yakında daha da detaylanacak." : {
+
+    },
+    "Pro'ya Geç" : {
+
+    },
+    "Pro'ya geçerek gelişmiş panele eriş." : {
+
+    },
+    "Reddet" : {
+
+    },
     "Sağ alttaki + ile ilk masrafı ekle." : {
 
     },
-    "Satın alma akışı sonraki fazda bağlanacak." : {
+    "Satın Almaları Geri Yükle" : {
 
     },
     "Seç" : {
 
     },
-    "Sil" : {
+    "SENİN DURUMUN" : {
 
     },
-    "Sınırsız grup oluşturmak ve Pro özelliklerini kullanmak için Apple ile giriş yapıp Pro'ya geç." : {
+    "Sil" : {
 
     },
     "tab.account" : {
@@ -589,6 +680,18 @@
     "Tamam" : {
 
     },
+    "Tüm gruplarının para birimi bazında özeti." : {
+
+    },
+    "Tüm gruplarının para birimi bazında özetini, harcama trendlerini ve kategorilerini görmek için Pro'ya geç." : {
+
+    },
+    "Tüm özelliklere sınırsız erişim." : {
+
+    },
+    "Ücretsiz Plan" : {
+
+    },
     "Üye adı" : {
 
     },
@@ -596,6 +699,9 @@
 
     },
     "Vazgeç" : {
+
+    },
+    "WhatsApp açılamadı" : {
 
     },
     "Yalnızca grup kurucusu hayalet üye ekleyebilir." : {

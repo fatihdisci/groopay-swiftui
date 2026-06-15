@@ -51,6 +51,7 @@ final class RealtimeManager {
 
     private func subscribe(groupID: UUID) async {
         let channel = supabase.channel("groopay:group:\(groupID.uuidString)")
+        var groupListenerTasks: [Task<Void, Never>] = []
 
         for table in Self.watchedTables {
             let stream = channel.postgresChange(
@@ -66,10 +67,19 @@ final class RealtimeManager {
                     await self?.groupsStore?.refreshFromRealtime()
                 }
             }
-            listenerTasks.append(task)
+            groupListenerTasks.append(task)
         }
 
-        await channel.subscribe()
-        channels.append(channel)
+        do {
+            try await channel.subscribeWithError()
+            listenerTasks.append(contentsOf: groupListenerTasks)
+            channels.append(channel)
+        } catch {
+            groupListenerTasks.forEach { $0.cancel() }
+            await supabase.removeChannel(channel)
+            #if DEBUG
+            print("Realtime subscription failed for group \(groupID): \(error)")
+            #endif
+        }
     }
 }
