@@ -315,11 +315,20 @@ struct BalancesTabView: View {
             }
 
             if isMyDebt {
-                if pending != nil {
-                    HStack {
+                if let pending = pending {
+                    HStack(spacing: 8) {
                         Spacer()
+                        Button {
+                            runSettlementAction {
+                                await store.rejectSettlement(groupID: groupID, settlementID: pending.id)
+                            }
+                        } label: {
+                            Image(systemName: "xmark.circle.fill")
+                                .font(.system(size: 18))
+                                .foregroundStyle(Color.textTertiary)
+                        }
                         Label(
-                            "\(formatAmount(pending!.amount, currency: pending!.currency)) onay bekliyor",
+                            "\(formatAmount(pending.amount, currency: pending.currency)) onay bekliyor",
                             systemImage: "clock.fill"
                         )
                             .font(.body(12, weight: .semibold))
