@@ -70,13 +70,33 @@ final class AuthStore {
                 throw AuthStoreError.invalidAppleCredential
             }
 
-            let session = try await supabase.auth.signInWithIdToken(
-                credentials: OpenIDConnectCredentials(
-                    provider: .apple,
-                    idToken: idToken,
-                    nonce: nonce
-                )
+            let credentials = OpenIDConnectCredentials(
+                provider: .apple,
+                idToken: idToken,
+                nonce: nonce
             )
+
+            let wasAnonymous = supabase.auth.currentUser?.isAnonymous ?? false
+            let previousUserID = supabase.auth.currentUser?.id
+
+            let session: Session
+            if wasAnonymous {
+                // Misafir hesabı Apple kimliğine BAĞLA: aynı user ID korunur,
+                // anonimken oluşturulan grup/masraf verileri kaybolmaz.
+                // Bağlama başarısız olursa (ör. bu Apple kimliği başka bir
+                // hesaba bağlıysa) hata fırlatılır; anonim oturum bozulmaz,
+                // veri silinmez.
+                session = try await supabase.auth.linkIdentityWithIdToken(
+                    credentials: credentials
+                )
+                if let previousUserID, session.user.id != previousUserID {
+                    throw AuthStoreError.identityMismatch
+                }
+            } else {
+                session = try await supabase.auth.signInWithIdToken(
+                    credentials: credentials
+                )
+            }
             await apply(session: session)
         } catch let error as ASAuthorizationError
             where error.code == .canceled {
@@ -232,8 +252,14 @@ private struct GroupMemberNameUpdate: Encodable {
 
 private enum AuthStoreError: LocalizedError {
     case invalidAppleCredential
+    case identityMismatch
 
     var errorDescription: String? {
-        String(localized: "auth.error.invalidAppleCredential")
+        switch self {
+        case .invalidAppleCredential:
+            String(localized: "auth.error.invalidAppleCredential")
+        case .identityMismatch:
+            "Apple kimliği bağlanamadı; misafir verileriniz korundu."
+        }
     }
 }
