@@ -661,7 +661,7 @@ struct AddExpenseView: View {
 private extension SplitType {
     static var allCasesOrdered: [SplitType] { [.equal, .custom, .subset] }
 
-    var title: String {
+    var title: LocalizedStringResource {
         switch self {
         case .equal: "Eşit"
         case .custom: "Özel"

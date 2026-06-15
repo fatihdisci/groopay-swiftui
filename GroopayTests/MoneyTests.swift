@@ -28,9 +28,27 @@ final class MoneyTests: XCTestCase {
     }
 
     func testFormattingUsesTurkishCurrencyStyle() {
-        XCTAssertEqual(normalized(formatAmount(59_163, currency: "TRY")), "₺591,63")
-        XCTAssertEqual(normalized(formatAmount(5_000, currency: "EUR")), "€50,00")
-        XCTAssertEqual(normalized(formatAmount(10_000, currency: "USD")), "$100,00")
+        let locale = Locale(identifier: "tr_TR")
+        XCTAssertEqual(
+            normalized(formatAmount(59_163, currency: "TRY", locale: locale)),
+            "₺591,63"
+        )
+        XCTAssertEqual(
+            normalized(formatAmount(5_000, currency: "EUR", locale: locale)),
+            "€50,00"
+        )
+        XCTAssertEqual(
+            normalized(formatAmount(10_000, currency: "USD", locale: locale)),
+            "$100,00"
+        )
+    }
+
+    func testFormattingUsesEnglishCurrencyStyle() {
+        let locale = Locale(identifier: "en_US")
+        XCTAssertEqual(
+            normalized(formatAmount(10_000, currency: "USD", locale: locale)),
+            "$100.00"
+        )
     }
 
     func testDecimalRoundTripIsExact() {

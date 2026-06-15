@@ -4,12 +4,20 @@ import SwiftUI
 /// İkonlar SF Symbols, renkler kategori chip/dairesi için kullanılır.
 struct ExpenseCategory: Identifiable, Hashable, Sendable {
     let id: String
-    let title: String
+    let title: LocalizedStringResource
     let icon: String
     let colorHex: String
 
     var color: Color {
         Color(cssHex: colorHex) ?? .primaryTheme
+    }
+
+    static func == (lhs: ExpenseCategory, rhs: ExpenseCategory) -> Bool {
+        lhs.id == rhs.id
+    }
+
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
     }
 
     static let all: [ExpenseCategory] = [

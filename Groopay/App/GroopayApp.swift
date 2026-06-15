@@ -4,6 +4,7 @@ import RevenueCat
 @main
 struct GroopayApp: App {
     @State private var authStore = AuthStore()
+    @State private var localizationStore = LocalizationStore()
 
     init() {
         PurchasesManager.shared.configure()
@@ -13,6 +14,8 @@ struct GroopayApp: App {
         WindowGroup {
             RootView()
                 .environment(authStore)
+                .environment(localizationStore)
+                .environment(\.locale, localizationStore.locale)
                 .preferredColorScheme(.light)
         }
     }

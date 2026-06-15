@@ -5,6 +5,7 @@ struct AccountView: View {
     let store: GroupsStore
 
     @Environment(AuthStore.self) private var authStore
+    @Environment(LocalizationStore.self) private var localizationStore
     @State private var showPaywall = false
     @State private var showProfileEditor = false
     @State private var showDeleteConfirm = false
@@ -12,8 +13,17 @@ struct AccountView: View {
     @State private var isExporting = false
     @State private var toastMessage: String?
 
-    private let privacyURL = "https://groopay.vercel.app/privacy"
-    private let termsURL = "https://groopay.vercel.app/terms"
+    private var legalPathPrefix: String {
+        localizationStore.languageCode == "en" ? "/en" : ""
+    }
+
+    private var privacyURL: String {
+        "https://groopay.vercel.app\(legalPathPrefix)/privacy"
+    }
+
+    private var termsURL: String {
+        "https://groopay.vercel.app\(legalPathPrefix)/terms"
+    }
 
     var body: some View {
         ZStack {
@@ -24,6 +34,9 @@ struct AccountView: View {
                 VStack(spacing: 24) {
                     // Profil Kartı
                     profileCard
+
+                    // Tercihler
+                    preferencesSection
 
                     // Pro Kartı
                     proCard
@@ -57,7 +70,10 @@ struct AccountView: View {
                     try await authStore.updateProfile(name: name, color: color)
                     await store.load()
                     withAnimation {
-                        toastMessage = "Profil güncellendi."
+                        toastMessage = String(
+                            localized: "Profil güncellendi.",
+                            locale: localizationStore.locale
+                        )
                     }
                     try? await Task.sleep(for: .seconds(2))
                     withAnimation { toastMessage = nil }
@@ -92,48 +108,60 @@ struct AccountView: View {
                 showProfileEditor = true
             } label: {
                 HStack(spacing: 16) {
-                GradientAvatar(
-                    name: authStore.currentProfile?.displayName ?? "?",
-                    color: authStore.currentProfile?.avatarColor
-                        ?? AvatarPalette.fallback,
-                    size: 56
-                )
+                    GradientAvatar(
+                        name: authStore.currentProfile?.displayName ?? "?",
+                        color: authStore.currentProfile?.avatarColor
+                            ?? AvatarPalette.fallback,
+                        size: 56
+                    )
 
-                VStack(alignment: .leading, spacing: 4) {
-                    if authStore.sessionState == .anonymous {
-                        Text(authStore.currentProfile?.displayName ?? "Misafir Kullanıcı")
-                            .font(.display(18, weight: .bold))
-                            .foregroundStyle(Color.textPrimary)
-                        Text("Pro için Apple ile giriş yap")
-                            .font(.body(14))
-                            .foregroundStyle(Color.textSecondary)
-                    } else {
-                        Text(authStore.currentProfile?.displayName ?? "Kullanıcı")
-                            .font(.display(18, weight: .bold))
-                            .foregroundStyle(Color.textPrimary)
+                    VStack(alignment: .leading, spacing: 4) {
+                        if authStore.sessionState == .anonymous {
+                            Text(
+                                authStore.currentProfile?.displayName
+                                    ?? String(
+                                        localized: "Misafir Kullanıcı",
+                                        locale: localizationStore.locale
+                                    )
+                            )
+                                .font(.display(18, weight: .bold))
+                                .foregroundStyle(Color.textPrimary)
+                            Text("Pro için Apple ile giriş yap")
+                                .font(.body(14))
+                                .foregroundStyle(Color.textSecondary)
+                        } else {
+                            Text(
+                                authStore.currentProfile?.displayName
+                                    ?? String(
+                                        localized: "Kullanıcı",
+                                        locale: localizationStore.locale
+                                    )
+                            )
+                                .font(.display(18, weight: .bold))
+                                .foregroundStyle(Color.textPrimary)
 
-                        HStack(spacing: 6) {
-                            if authStore.currentProfile?.userPro == true {
-                                Image(systemName: "diamond.fill")
-                                    .font(.system(size: 11))
-                                Text("Pro")
-                                    .font(.body(12, weight: .semibold))
-                            } else {
-                                Text("Ücretsiz")
-                                    .font(.body(12, weight: .medium))
+                            HStack(spacing: 6) {
+                                if authStore.currentProfile?.userPro == true {
+                                    Image(systemName: "diamond.fill")
+                                        .font(.system(size: 11))
+                                    Text("Pro")
+                                        .font(.body(12, weight: .semibold))
+                                } else {
+                                    Text("Ücretsiz")
+                                        .font(.body(12, weight: .medium))
+                                }
                             }
+                            .foregroundStyle(.white)
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 4)
+                            .background(
+                                authStore.currentProfile?.userPro == true
+                                    ? LinearGradient(colors: [.gradientStart, .gradientEnd], startPoint: .leading, endPoint: .trailing)
+                                    : LinearGradient(colors: [Color.textTertiary, Color.textTertiary], startPoint: .leading, endPoint: .trailing)
+                            )
+                            .clipShape(Capsule())
                         }
-                        .foregroundStyle(.white)
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 4)
-                        .background(
-                            authStore.currentProfile?.userPro == true
-                                ? LinearGradient(colors: [.gradientStart, .gradientEnd], startPoint: .leading, endPoint: .trailing)
-                                : LinearGradient(colors: [Color.textTertiary, Color.textTertiary], startPoint: .leading, endPoint: .trailing)
-                        )
-                        .clipShape(Capsule())
                     }
-                }
                 }
             }
             .buttonStyle(.plain)
@@ -165,6 +193,38 @@ struct AccountView: View {
     }
 
     // MARK: - Pro
+
+    private var preferencesSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Dil")
+                .font(.body(13, weight: .semibold))
+                .foregroundStyle(Color.textSecondary)
+
+            Picker(
+                "Dil",
+                selection: Binding(
+                    get: { localizationStore.selection },
+                    set: { language in
+                        localizationStore.select(language)
+                        Task { await saveLanguage(language) }
+                    }
+                )
+            ) {
+                ForEach(AppLanguage.allCases) { language in
+                    Text(language.title).tag(language)
+                }
+            }
+            .pickerStyle(.segmented)
+
+            Text("Otomatik seçim, cihazınızın tercih edilen dilini kullanır.")
+                .font(.body(12))
+                .foregroundStyle(Color.textTertiary)
+        }
+        .padding(18)
+        .background(Color.surface)
+        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .purpleTintedShadow()
+    }
 
     private var proCard: some View {
         VStack(spacing: 14) {
@@ -219,7 +279,10 @@ struct AccountView: View {
         .purpleTintedShadow()
     }
 
-    private func featureRow(icon: String, text: String) -> some View {
+    private func featureRow(
+        icon: String,
+        text: LocalizedStringResource
+    ) -> some View {
         HStack(spacing: 10) {
             Image(systemName: icon)
                 .font(.system(size: 13, weight: .semibold))
@@ -237,7 +300,7 @@ struct AccountView: View {
     @ViewBuilder
     private func actionButton(
         icon: String,
-        title: String,
+        title: LocalizedStringResource,
         color: Color,
         isLoading: Bool = false,
         action: (() -> Void)? = nil
@@ -429,6 +492,21 @@ struct AccountView: View {
         UIApplication.shared.open(url)
     }
 
+    private func saveLanguage(_ language: AppLanguage) async {
+        do {
+            try await authStore.updateLocale(language)
+        } catch {
+            withAnimation {
+                toastMessage = String(
+                    localized: "Dil tercihi kaydedilemedi.",
+                    locale: localizationStore.locale
+                )
+            }
+            try? await Task.sleep(for: .seconds(3))
+            withAnimation { toastMessage = nil }
+        }
+    }
+
     private func handleExport() async {
         isExporting = true
         // TODO: Supabase'ten kullanıcı verilerini JSON olarak çek, paylaş
@@ -464,13 +542,23 @@ struct AccountView: View {
             }
 
             withAnimation {
-                toastMessage = "Veriler hazır, paylaşım ekranı açılıyor."
+                toastMessage = String(
+                    localized: "Veriler hazır, paylaşım ekranı açılıyor.",
+                    locale: localizationStore.locale
+                )
             }
             try? await Task.sleep(for: .seconds(2))
             withAnimation { toastMessage = nil }
         } catch {
             withAnimation {
-                toastMessage = "Dışa aktarma başarısız: \(error.localizedDescription)"
+                toastMessage = String(
+                    format: String(
+                        localized: "Dışa aktarma başarısız: %@",
+                        locale: localizationStore.locale
+                    ),
+                    locale: localizationStore.locale,
+                    error.localizedDescription
+                )
             }
             try? await Task.sleep(for: .seconds(3))
             withAnimation { toastMessage = nil }
@@ -486,7 +574,10 @@ struct AccountView: View {
             await authStore.loadProfile()
         } catch {
             withAnimation {
-                toastMessage = "Hesap silme başarısız."
+                toastMessage = String(
+                    localized: "Hesap silme başarısız.",
+                    locale: localizationStore.locale
+                )
             }
             try? await Task.sleep(for: .seconds(3))
             withAnimation { toastMessage = nil }
@@ -514,4 +605,5 @@ struct AccountView: View {
         AccountView(store: PreviewSupport.groupsStore)
     }
     .environment(PreviewSupport.authStore)
+    .environment(LocalizationStore())
 }

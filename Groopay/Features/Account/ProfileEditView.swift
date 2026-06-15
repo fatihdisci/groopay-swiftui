@@ -5,6 +5,7 @@ struct ProfileEditView: View {
     let onSave: (_ name: String, _ color: String) async throws -> Void
 
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.locale) private var locale
 
     @State private var displayName: String
     @State private var selectedColor: String
@@ -173,7 +174,10 @@ struct ProfileEditView: View {
             try await onSave(trimmedName, selectedColor)
             dismiss()
         } catch {
-            errorMessage = "Profil güncellenemedi. Lütfen tekrar deneyin."
+            errorMessage = String(
+                localized: "Profil güncellenemedi. Lütfen tekrar deneyin.",
+                locale: locale
+            )
             isSaving = false
         }
     }

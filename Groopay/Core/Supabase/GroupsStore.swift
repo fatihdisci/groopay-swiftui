@@ -271,7 +271,7 @@ final class GroupsStore {
         date: Date = Date()
     ) async -> Bool {
         guard let actor = currentMemberID(in: groupID) else {
-            errorMessage = "Üyelik bilgisi bulunamadı."
+            errorMessage = localized("Üyelik bilgisi bulunamadı.")
             return false
         }
 
@@ -313,7 +313,7 @@ final class GroupsStore {
         date: Date = Date()
     ) async -> Bool {
         guard let actor = currentMemberID(in: groupID) else {
-            errorMessage = "Üyelik bilgisi bulunamadı."
+            errorMessage = localized("Üyelik bilgisi bulunamadı.")
             return false
         }
 
@@ -343,7 +343,7 @@ final class GroupsStore {
 
     func deleteExpense(expenseID: UUID, groupID: UUID) async -> Bool {
         guard let actor = currentMemberID(in: groupID) else {
-            errorMessage = "Üyelik bilgisi bulunamadı."
+            errorMessage = localized("Üyelik bilgisi bulunamadı.")
             return false
         }
 
@@ -368,7 +368,7 @@ final class GroupsStore {
         currency: String
     ) async -> Bool {
         guard let actor = currentMemberID(in: groupID) else {
-            errorMessage = "Üyelik bilgisi bulunamadı."
+            errorMessage = localized("Üyelik bilgisi bulunamadı.")
             return false
         }
 
@@ -394,7 +394,7 @@ final class GroupsStore {
 
     func confirmSettlement(groupID: UUID, settlementID: UUID) async -> Bool {
         guard let actor = currentMemberID(in: groupID) else {
-            errorMessage = "Üyelik bilgisi bulunamadı."
+            errorMessage = localized("Üyelik bilgisi bulunamadı.")
             return false
         }
         switch await rpc.confirmSettlement(settlementId: settlementID, confirmedBy: actor) {
@@ -409,7 +409,7 @@ final class GroupsStore {
 
     func rejectSettlement(groupID: UUID, settlementID: UUID) async -> Bool {
         guard let actor = currentMemberID(in: groupID) else {
-            errorMessage = "Üyelik bilgisi bulunamadı."
+            errorMessage = localized("Üyelik bilgisi bulunamadı.")
             return false
         }
         switch await rpc.rejectSettlement(settlementId: settlementID, confirmedBy: actor) {
@@ -519,7 +519,7 @@ final class GroupsStore {
         case .success(let preview) where preview.error == nil:
             return preview
         case .success:
-            errorMessage = "Davet kodu geçersiz veya süresi dolmuş."
+            errorMessage = localized("Davet kodu geçersiz veya süresi dolmuş.")
             return nil
         case .failure(let error):
             errorMessage = error.localizedDescription
@@ -556,7 +556,7 @@ final class GroupsStore {
                 )
 
             guard response.success else {
-                errorMessage = response.error ?? "Gruba katılınamadı."
+                errorMessage = response.error ?? localized("Gruba katılınamadı.")
                 return false
             }
 
@@ -570,6 +570,13 @@ final class GroupsStore {
 
     func clearError() {
         errorMessage = nil
+    }
+
+    private func localized(_ key: String.LocalizationValue) -> String {
+        String(
+            localized: key,
+            locale: LocalizationStore.currentLocale()
+        )
     }
 
     private static func isLimitError(_ error: RPCError) -> Bool {

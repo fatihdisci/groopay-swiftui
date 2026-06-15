@@ -258,7 +258,7 @@ struct EditGroupView: View {
     }
 
     private func field<Content: View>(
-        _ title: String,
+        _ title: LocalizedStringResource,
         @ViewBuilder content: () -> Content
     ) -> some View {
         VStack(alignment: .leading, spacing: 8) {

@@ -3,6 +3,7 @@ import SwiftUI
 struct GroupDetailView: View {
     let groupID: UUID
     let store: GroupsStore
+    @Environment(\.locale) private var locale
     @State private var selectedTab = GroupDetailTab.expenses
     @State private var presentedExpense: ExpenseSheet?
 
@@ -64,10 +65,25 @@ struct GroupDetailView: View {
     /// Platform-nötr metin özeti (WhatsApp vb. için sade düz yazı).
     private func summaryText(_ snapshot: GroupSnapshot) -> String {
         let transfers = simplifyDebts(balances: snapshot.memberBalances())
-        var lines = ["\(snapshot.group.name) — Hesap Özeti", ""]
+        var lines = [
+            String(
+                format: String(
+                    localized: "%@ — Hesap Özeti",
+                    locale: locale
+                ),
+                locale: locale,
+                snapshot.group.name
+            ),
+            ""
+        ]
 
         if transfers.isEmpty {
-            lines.append("Herkes ödeşti, kimsenin kimseye borcu yok.")
+            lines.append(
+                String(
+                    localized: "Herkes ödeşti, kimsenin kimseye borcu yok.",
+                    locale: locale
+                )
+            )
         } else {
             for transfer in transfers {
                 let debtor = snapshot.member(id: transfer.fromMemberId)?.displayName ?? "?"
@@ -78,7 +94,9 @@ struct GroupDetailView: View {
         }
 
         lines.append("")
-        lines.append("Groopay ile hesaplandı.")
+        lines.append(
+            String(localized: "Groopay ile hesaplandı.", locale: locale)
+        )
         return lines.joined(separator: "\n")
     }
 
@@ -207,7 +225,9 @@ private enum GroupDetailTab: String, CaseIterable, Identifiable {
     case balances
 
     var id: String { rawValue }
-    var title: String { self == .expenses ? "Masraflar" : "Bakiyeler" }
+    var title: LocalizedStringResource {
+        self == .expenses ? "Masraflar" : "Bakiyeler"
+    }
 }
 
 private struct ExpenseCard: View {

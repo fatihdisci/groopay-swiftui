@@ -48,4 +48,5 @@ struct MainTabView: View {
 #Preview {
     MainTabView()
         .environment(PreviewSupport.authStore)
+        .environment(LocalizationStore())
 }

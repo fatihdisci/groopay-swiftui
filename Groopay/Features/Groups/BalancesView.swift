@@ -10,6 +10,7 @@ struct BalancesTabView: View {
     @State private var busy = false
     @State private var paymentSheet: PaymentSheetConfig?
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.locale) private var locale
 
     private var snapshot: GroupSnapshot? { store.snapshot(groupID) }
     private var currentMemberID: UUID? { store.currentMemberID(in: groupID) }
@@ -377,7 +378,7 @@ struct BalancesTabView: View {
     }
 
     private func circleAction(
-        title: String,
+        title: LocalizedStringResource,
         icon: String,
         tint: Color,
         action: @escaping () -> Void
@@ -419,10 +420,16 @@ struct BalancesTabView: View {
         groupName: String
     ) {
         let formatted = formatAmount(amount, currency: currency)
-        let message = """
-        Merhaba \(creditor)! "\(groupName)" grubunda sana \(formatted) ödemem var. \
-        Ödemeyi yapabilmem için IBAN'ını paylaşır mısın? Teşekkürler!
-        """
+        let message = String(
+            format: String(
+                localized: "Merhaba %@! \"%@\" grubunda sana %@ ödemem var. Ödemeyi yapabilmem için IBAN'ını paylaşır mısın? Teşekkürler!",
+                locale: locale
+            ),
+            locale: locale,
+            creditor,
+            groupName,
+            formatted
+        )
         // Her durumda panoya da koy (en son çare).
         UIPasteboard.general.string = message
 
@@ -455,7 +462,7 @@ enum BalanceMode: String, CaseIterable, Identifiable {
     case simplified
 
     var id: String { rawValue }
-    var title: String {
+    var title: LocalizedStringResource {
         switch self {
         case .raw: "Ham liste"
         case .simplified: "Sadeleştirilmiş"

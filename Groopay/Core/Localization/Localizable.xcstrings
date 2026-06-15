@@ -1,757 +1,3544 @@
 {
-  "sourceLanguage" : "tr",
-  "strings" : {
-    "/ay" : {
-
-    },
-    "%@ ödedi" : {
-
-    },
-    "%@ ödedi diyor" : {
-
-    },
-    "%lld aktif üye" : {
-
-    },
-    "%lld üye" : {
-
-    },
-    "%lld/30" : {
-
-    },
-    "0" : {
-
-    },
-    "ABC12345" : {
-
-    },
-    "Abonelik dönem sonunda otomatik yenilenir. İptal edilmezse ücret tahsil edilir. Hesap ayarlarından yönetebilirsiniz." : {
-
-    },
-    "account.appleRequired" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sign in with Apple before purchasing Pro."
+  "sourceLanguage": "tr",
+  "strings": {
+    "0": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "0"
           }
         },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pro satın almak için Apple ile giriş yapmalısın."
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "0"
           }
         }
       }
     },
-    "account.appleUser" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Apple user"
+    "/ay": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "/ay"
           }
         },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Apple kullanıcısı"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "/month"
           }
         }
       }
     },
-    "account.guest" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Guest account"
+    "%@ — Hesap Özeti": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ — Balance Summary"
           }
         },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Misafir hesap"
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ — Hesap Özeti"
           }
         }
       }
     },
-    "account.purchaseReady" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ready for purchases"
+    "%@ gruba katıldı": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ gruba katıldı"
           }
         },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Satın almaya hazır"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ joined the group"
           }
         }
       }
     },
-    "Açıklama" : {
-
-    },
-    "Aktivite" : {
-
-    },
-    "Aktivitede ara" : {
-
-    },
-    "alacaklı" : {
-
-    },
-    "alacaklısın" : {
-
-    },
-    "Aramak için Pro'ya geç" : {
-
-    },
-    "auth.apple" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Continue with Apple"
+    "%@ kişisine": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ kişisine"
           }
         },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Apple ile Giriş"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "to %@"
           }
         }
       }
     },
-    "auth.error.invalidAppleCredential" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Apple credentials could not be verified."
+    "%@ masraf ekledi": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ masraf ekledi"
           }
         },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Apple kimlik bilgileri doğrulanamadı."
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ added an expense"
           }
         }
       }
     },
-    "auth.error.title" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sign-in error"
+    "%@ masraf sildi": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ masraf sildi"
           }
         },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Giriş hatası"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ deleted an expense"
           }
         }
       }
     },
-    "auth.guest" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Continue as guest"
+    "%@ masrafı güncelledi": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ masrafı güncelledi"
           }
         },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Misafir olarak devam"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ updated the expense"
           }
         }
       }
     },
-    "auth.purchaseRequiresApple" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Guest mode is free to use. Apple sign-in is required for purchases."
+    "%@ onay bekliyor": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ onay bekliyor"
           }
         },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Misafir modu ücretsiz kullanılabilir. Satın alma için Apple ile giriş gerekir."
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ pending approval"
           }
         }
       }
     },
-    "auth.subtitle" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Continue with Apple or start with a guest account."
+    "%@ ödedi": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ ödedi"
           }
         },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Apple ile giriş yap veya misafir hesapla başla."
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ paid"
           }
         }
       }
     },
-    "auth.title" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Welcome to Groopay"
+    "%@ ödedi diyor": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ ödedi diyor"
           }
         },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Groopay'e Hoş Geldin"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ says they paid"
           }
         }
       }
     },
-    "Ayrıl" : {
-
-    },
-    "Bir hata oluştu" : {
-
-    },
-    "Bir sorun oluştu" : {
-
-    },
-    "Bölüşme" : {
-
-    },
-    "borçlu" : {
-
-    },
-    "borçlusun" : {
-
-    },
-    "Bu işlem geri alınamaz. Tüm grup verilerine erişimin silinir ve Pro aboneliğin iptal olur." : {
-
-    },
-    "Bu kişilerden biri sen misin?" : {
-
-    },
-    "common.ok" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "OK"
+    "%@ ödeme yaptı": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ ödeme yaptı"
           }
         },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tamam"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ made a payment"
           }
         }
       }
     },
-    "Davet kodunla gruba katıl" : {
-
-    },
-    "Devam Et" : {
-
-    },
-    "Devret ve Ayrıl" : {
-
-    },
-    "Ekle" : {
-
-    },
-    "Farklı kod gir" : {
-
-    },
-    "Fiyat bilgisi yükleniyor…" : {
-
-    },
-    "GENEL DURUM" : {
-
-    },
-    "Genel Durumun" : {
-
-    },
-    "Gerçek üye" : {
-
-    },
-    "Gizlilik" : {
-
-    },
-    "Gizlilik Politikası" : {
-
-    },
-    "Groopay grup daveti" : {
-
-    },
-    "Groopay Pro" : {
-
-    },
-    "Groopay User Pro" : {
-
-    },
-    "Gruba Katıl" : {
-
-    },
-    "Grubu Düzenle" : {
-
-    },
-    "Grubu kalıcı olarak silmek istiyor musun?" : {
-
-    },
-    "Grubu Sil" : {
-
-    },
-    "Grup adı" : {
-
-    },
-    "Gruplar" : {
-
-    },
-    "Gruplar sekmesinden bir grup oluştur veya davet koduyla katıl, panelde özetini gör." : {
-
-    },
-    "Gruplarındaki masraf ve ödemeler burada görünecek." : {
-
-    },
-    "Gruptan Ayrıl" : {
-
-    },
-    "Gruptan ayrılmak istiyor musun?" : {
-
-    },
-    "Harcama Kategorileri" : {
-
-    },
-    "Hayalet" : {
-
-    },
-    "Hayalet Ekle" : {
-
-    },
-    "Henüz aktivite yok" : {
-
-    },
-    "Henüz aktivite yok." : {
-
-    },
-    "Henüz borç/alacak yok" : {
-
-    },
-    "Henüz grubun yok" : {
-
-    },
-    "Henüz hiç grubun yok" : {
-
-    },
-    "Henüz kategori verisi yok." : {
-
-    },
-    "Henüz masraf yok" : {
-
-    },
-    "Herkes ödeşti" : {
-
-    },
-    "Hesabım" : {
-
-    },
-    "Hesabımı Sil" : {
-
-    },
-    "Hesabın silinsin mi?" : {
-
-    },
-    "IBAN isteme mesajı panoya kopyalandı; dilediğin uygulamada yapıştırabilirsin." : {
-
-    },
-    "Kalan %@ → %@" : {
-      "localizations" : {
-        "tr" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Kalan %1$@ → %2$@"
-          }
-        }
-      }
-    },
-    "Kapat" : {
-
-    },
-    "Kategori" : {
-
-    },
-    "Kategori analizi, harcama trendleri ve detaylı özetler Pro ile kullanılabilir." : {
-
-    },
-    "Kısa açıklama" : {
-
-    },
-    "Kodu Paylaş" : {
-
-    },
-    "Kullanım Koşulları" : {
-
-    },
-    "KURUCU" : {
-
-    },
-    "Kuruculuğu Devret" : {
-
-    },
-    "Masraf Ekle" : {
-
-    },
-    "Masraf kaydedilemedi" : {
-
-    },
-    "Masraf silinsin mi?" : {
-
-    },
-    "Masrafı Düzenle" : {
-
-    },
-    "Masrafı Sil" : {
-
-    },
-    "Misafir Kullanıcı" : {
-
-    },
-    "ödeşti" : {
-
-    },
-    "Ödeştin" : {
-
-    },
-    "Ödeyen" : {
-
-    },
-    "Onay Bekleniyor" : {
-
-    },
-    "ONAYINI BEKLEYEN ÖDEMELER" : {
-
-    },
-    "Onayla" : {
-
-    },
-    "onboarding.expenses.message" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "See shared expenses clearly and keep every currency separate."
+    "%lld aktif üye": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld aktif üye"
           }
         },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ortak harcamaları net gör, her para birimini ayrı takip et."
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld active members"
           }
         }
       }
     },
-    "onboarding.expenses.title" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Track expenses"
+    "%lld dk önce": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld dk önce"
           }
         },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Harcamaları takip et"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld min ago"
           }
         }
       }
     },
-    "onboarding.groups.message" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Keep trips, homes and shared plans together in simple groups."
+    "%lld g önce": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld g önce"
           }
         },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Seyahatleri, evleri ve ortak planları sade gruplarda bir arada tut."
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld d ago"
           }
         }
       }
     },
-    "onboarding.groups.title" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Share with your group"
+    "%lld sa önce": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld sa önce"
           }
         },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Grubunla paylaş"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld hr ago"
           }
         }
       }
     },
-    "onboarding.next" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Next"
+    "%lld üye": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld üye"
           }
         },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "İleri"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld members"
           }
         }
       }
     },
-    "onboarding.settle.message" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Know who owes whom without mixing currencies or balances."
+    "%lld/30": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld/30"
           }
         },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Para birimlerini karıştırmadan kimin kime borçlu olduğunu bil."
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld/30"
           }
         }
       }
     },
-    "onboarding.settle.title" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Settle with confidence"
+    "%lld/40": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld/40"
           }
         },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kolayca hesaplaş"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld/40"
           }
         }
       }
     },
-    "onboarding.skip" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Skip"
+    "ABC12345": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ABC12345"
           }
         },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Atla"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ABC12345"
           }
         }
       }
     },
-    "onboarding.start" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Get started"
+    "Abonelik dönem sonunda otomatik yenilenir. İptal edilmezse ücret tahsil edilir. Hesap ayarlarından yönetebilirsiniz.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abonelik dönem sonunda otomatik yenilenir. İptal edilmezse ücret tahsil edilir. Hesap ayarlarından yönetebilirsiniz."
           }
         },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Başla"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The subscription renews automatically at the end of each period unless canceled. You can manage it in account settings."
           }
         }
       }
     },
-    "Önizleme" : {
-
-    },
-    "Örn. Akşam yemeği" : {
-
-    },
-    "Panel Pro'ya Özel" : {
-
-    },
-    "placeholder.comingSoon" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Coming soon"
+    "account.appleRequired": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sign in with Apple before purchasing Pro."
           }
         },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Yakında"
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pro satın almak için Apple ile giriş yapmalısın."
           }
         }
       }
     },
-    "Pro" : {
-
-    },
-    "Pro aboneliğin aktif" : {
-
-    },
-    "Pro için Apple ile giriş yap" : {
-
-    },
-    "Pro'ya Geç" : {
-
-    },
-    "Reddet" : {
-
-    },
-    "Sağ alttaki + ile ilk masrafı ekle." : {
-
-    },
-    "Satın Almaları Geri Yükle" : {
-
-    },
-    "Seç" : {
-
-    },
-    "SENİN DURUMUN" : {
-
-    },
-    "Sil" : {
-
-    },
-    "Son Aktiviteler" : {
-
-    },
-    "tab.account" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Account"
+    "account.appleUser": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apple user"
           }
         },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hesap"
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apple kullanıcısı"
           }
         }
       }
     },
-    "tab.activity" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Activity"
+    "account.guest": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Guest account"
           }
         },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aktivite"
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Misafir hesap"
           }
         }
       }
     },
-    "tab.dashboard" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dashboard"
+    "account.purchaseReady": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ready for purchases"
           }
         },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Panel"
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Satın almaya hazır"
           }
         }
       }
     },
-    "tab.groups" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Groups"
+    "Açıklama": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Açıklama"
           }
         },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Gruplar"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Description"
           }
         }
       }
     },
-    "Tamam" : {
-
+    "Adınızı girin": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adınızı girin"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enter your name"
+          }
+        }
+      }
     },
-    "Tüm özelliklere sınırsız erişim." : {
-
+    "Aktivite": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aktivite"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Activity"
+          }
+        }
+      }
     },
-    "Ücretsiz" : {
-
+    "Aktivite Arama": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aktivite Arama"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Activity Search"
+          }
+        }
+      }
     },
-    "Üye adı" : {
-
+    "Aktivitede ara": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aktivitede ara"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Search activity"
+          }
+        }
+      }
     },
-    "Üyeler" : {
-
+    "alacaklı": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "alacaklı"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "owed"
+          }
+        }
+      }
     },
-    "Vazgeç" : {
-
+    "alacaklısın": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "alacaklısın"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "owed to you"
+          }
+        }
+      }
     },
-    "WhatsApp açılamadı" : {
-
+    "Alışveriş": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alışveriş"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shopping"
+          }
+        }
+      }
     },
-    "Yalnızca grup kurucusu hayalet üye ekleyebilir." : {
-
+    "Alt-Küme": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alt-Küme"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Subset"
+          }
+        }
+      }
     },
-    "Yasal" : {
-
+    "Apple kimliği bağlanamadı; misafir verileriniz korundu.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Could not link your Apple ID; your guest data was preserved."
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apple kimliği bağlanamadı; misafir verileriniz korundu."
+          }
+        }
+      }
     },
-    "Yeni bir grup oluştur veya davet koduyla katıl." : {
-
+    "Aramak için Pro'ya geç": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aramak için Pro'ya geç"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Go Pro to search"
+          }
+        }
+      }
     },
-    "Yeni Grup" : {
-
+    "auth.apple": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Continue with Apple"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apple ile Giriş"
+          }
+        }
+      }
+    },
+    "auth.error.invalidAppleCredential": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apple credentials could not be verified."
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apple kimlik bilgileri doğrulanamadı."
+          }
+        }
+      }
+    },
+    "auth.error.title": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sign-in error"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Giriş hatası"
+          }
+        }
+      }
+    },
+    "auth.guest": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Continue as guest"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Misafir olarak devam"
+          }
+        }
+      }
+    },
+    "auth.purchaseRequiresApple": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Guest mode is free to use. Apple sign-in is required for purchases."
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Misafir modu ücretsiz kullanılabilir. Satın alma için Apple ile giriş gerekir."
+          }
+        }
+      }
+    },
+    "auth.subtitle": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Continue with Apple or start with a guest account."
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apple ile giriş yap veya misafir hesapla başla."
+          }
+        }
+      }
+    },
+    "auth.title": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Welcome to Groopay"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Groopay'e Hoş Geldin"
+          }
+        }
+      }
+    },
+    "Avatar rengi": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Avatar rengi"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Avatar color"
+          }
+        }
+      }
+    },
+    "Ayrıl": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ayrıl"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Leave"
+          }
+        }
+      }
+    },
+    "az önce": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "az önce"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "just now"
+          }
+        }
+      }
+    },
+    "Bakiyeler": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bakiyeler"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Balances"
+          }
+        }
+      }
+    },
+    "Bir hata oluştu": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bir hata oluştu"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "An error occurred"
+          }
+        }
+      }
+    },
+    "Bir sorun oluştu": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bir sorun oluştu"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Something went wrong"
+          }
+        }
+      }
+    },
+    "Birisi": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Birisi"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Someone"
+          }
+        }
+      }
+    },
+    "borçlu": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "borçlu"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "owes"
+          }
+        }
+      }
+    },
+    "borçlusun": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "borçlusun"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "you owe"
+          }
+        }
+      }
+    },
+    "Bölüşme": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bölüşme"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Split"
+          }
+        }
+      }
+    },
+    "Bu işlem geri alınamaz. Tüm grup verilerine erişimin silinir ve Pro aboneliğin iptal olur.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bu işlem geri alınamaz. Tüm grup verilerine erişimin silinir ve Pro aboneliğin iptal olur."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This action cannot be undone. You will lose access to all group data and your Pro subscription will be canceled."
+          }
+        }
+      }
+    },
+    "Bu kişilerden biri sen misin?": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bu kişilerden biri sen misin?"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Are you one of these people?"
+          }
+        }
+      }
+    },
+    "Bugün": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bugün"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Today"
+          }
+        }
+      }
+    },
+    "common.ok": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OK"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tamam"
+          }
+        }
+      }
+    },
+    "Davet kodu geçersiz veya süresi dolmuş.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The invite code is invalid or has expired."
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Davet kodu geçersiz veya süresi dolmuş."
+          }
+        }
+      }
+    },
+    "Davet kodunla gruba katıl": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Davet kodunla gruba katıl"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Join a group with your invite code"
+          }
+        }
+      }
+    },
+    "Davet Linki": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Invite Link"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Davet Linki"
+          }
+        }
+      }
+    },
+    "Değişiklikleri Kaydet": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Save Changes"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Değişiklikleri Kaydet"
+          }
+        }
+      }
+    },
+    "Devam Et": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Devam Et"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Continue"
+          }
+        }
+      }
+    },
+    "Devret ve Ayrıl": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Devret ve Ayrıl"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Transfer and Leave"
+          }
+        }
+      }
+    },
+    "Dışa aktarma başarısız: %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Export failed: %@"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dışa aktarma başarısız: %@"
+          }
+        }
+      }
+    },
+    "Diğer": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diğer"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Other"
+          }
+        }
+      }
+    },
+    "Dil": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dil"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Language"
+          }
+        }
+      }
+    },
+    "Dil tercihi kaydedilemedi.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dil tercihi kaydedilemedi."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Could not save the language preference."
+          }
+        }
+      }
+    },
+    "Dün": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dün"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Yesterday"
+          }
+        }
+      }
+    },
+    "Eğlence": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Eğlence"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Entertainment"
+          }
+        }
+      }
+    },
+    "Ekle": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ekle"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add"
+          }
+        }
+      }
+    },
+    "Emoji": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Emoji"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Emoji"
+          }
+        }
+      }
+    },
+    "English": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "English"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "English"
+          }
+        }
+      }
+    },
+    "Eşit": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Eşit"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Equal"
+          }
+        }
+      }
+    },
+    "Farklı kod gir": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Farklı kod gir"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enter a different code"
+          }
+        }
+      }
+    },
+    "Faturalar": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Faturalar"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bills"
+          }
+        }
+      }
+    },
+    "Fiyat bilgisi yükleniyor…": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fiyat bilgisi yükleniyor…"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Loading price…"
+          }
+        }
+      }
+    },
+    "Geçersiz avatar rengi.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Invalid avatar color."
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Geçersiz avatar rengi."
+          }
+        }
+      }
+    },
+    "Gelişmiş Panel": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gelişmiş Panel"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Advanced Dashboard"
+          }
+        }
+      }
+    },
+    "GENEL DURUM": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OVERALL STATUS"
+          }
+        }
+      }
+    },
+    "Genel Durumun": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Genel Durumun"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your Overall Status"
+          }
+        }
+      }
+    },
+    "Gerçek üye": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gerçek üye"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Real member"
+          }
+        }
+      }
+    },
+    "Gizlilik": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gizlilik"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Privacy"
+          }
+        }
+      }
+    },
+    "Gizlilik Politikası": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gizlilik Politikası"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Privacy Policy"
+          }
+        }
+      }
+    },
+    "Görünen ad": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Görünen ad"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Display name"
+          }
+        }
+      }
+    },
+    "Görünen ad 1-40 karakter olmalıdır.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Display name must be between 1 and 40 characters."
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Görünen ad 1-40 karakter olmalıdır."
+          }
+        }
+      }
+    },
+    "Görünen ad boş bırakılamaz.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Görünen ad boş bırakılamaz."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Display name cannot be empty."
+          }
+        }
+      }
+    },
+    "Groopay grup daveti": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Groopay grup daveti"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Groopay group invitation"
+          }
+        }
+      }
+    },
+    "Groopay ile hesaplandı.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Calculated with Groopay."
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Groopay ile hesaplandı."
+          }
+        }
+      }
+    },
+    "Groopay Pro": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Groopay Pro"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Groopay Pro"
+          }
+        }
+      }
+    },
+    "Groopay User Pro": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Groopay User Pro"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Groopay User Pro"
+          }
+        }
+      }
+    },
+    "Gruba Katıl": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gruba Katıl"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Join Group"
+          }
+        }
+      }
+    },
+    "Gruba katılınamadı.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Could not join the group."
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gruba katılınamadı."
+          }
+        }
+      }
+    },
+    "Grubu Düzenle": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Grubu Düzenle"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Edit Group"
+          }
+        }
+      }
+    },
+    "Grubu kalıcı olarak silmek istiyor musun?": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Grubu kalıcı olarak silmek istiyor musun?"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Do you want to permanently delete this group?"
+          }
+        }
+      }
+    },
+    "Grubu Oluştur": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Grubu Oluştur"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Create Group"
+          }
+        }
+      }
+    },
+    "Grubu Sil": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Grubu Sil"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete Group"
+          }
+        }
+      }
+    },
+    "Grup": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Group"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Grup"
+          }
+        }
+      }
+    },
+    "Grup adı": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Grup adı"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Group name"
+          }
+        }
+      }
+    },
+    "Gruplar": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gruplar"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Groups"
+          }
+        }
+      }
+    },
+    "Gruplar sekmesinden bir grup oluştur veya davet koduyla katıl, panelde özetini gör.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gruplar sekmesinden bir grup oluştur veya davet koduyla katıl, panelde özetini gör."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Create a group from the Groups tab or join with an invite code to see its summary here."
+          }
+        }
+      }
+    },
+    "Gruplarındaki masraf ve ödemeler burada görünecek.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gruplarındaki masraf ve ödemeler burada görünecek."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Expenses and payments from your groups will appear here."
+          }
+        }
+      }
+    },
+    "Gruptan Ayrıl": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gruptan Ayrıl"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Leave Group"
+          }
+        }
+      }
+    },
+    "Gruptan ayrılmak istiyor musun?": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gruptan ayrılmak istiyor musun?"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Do you want to leave this group?"
+          }
+        }
+      }
+    },
+    "Güncelle": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Update"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Güncelle"
+          }
+        }
+      }
+    },
+    "Ham liste": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ham liste"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Raw list"
+          }
+        }
+      }
+    },
+    "Harcama Kategorileri": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Harcama Kategorileri"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Spending Categories"
+          }
+        }
+      }
+    },
+    "Harcamalarını kategorilere göre analiz et, nereye ne kadar gittiğini görselleştir.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Harcamalarını kategorilere göre analiz et, nereye ne kadar gittiğini görselleştir."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Analyze spending by category and see where your money goes."
+          }
+        }
+      }
+    },
+    "Hayalet": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hayalet"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ghost"
+          }
+        }
+      }
+    },
+    "Hayalet Ekle": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hayalet Ekle"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add Ghost"
+          }
+        }
+      }
+    },
+    "Henüz aktivite yok": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Henüz aktivite yok"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No activity yet"
+          }
+        }
+      }
+    },
+    "Henüz aktivite yok.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Henüz aktivite yok."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No activity yet."
+          }
+        }
+      }
+    },
+    "Henüz borç/alacak yok": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Henüz borç/alacak yok"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No balances yet"
+          }
+        }
+      }
+    },
+    "Henüz grubun yok": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Henüz grubun yok"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No groups yet"
+          }
+        }
+      }
+    },
+    "Henüz hiç grubun yok": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Henüz hiç grubun yok"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You do not have any groups yet"
+          }
+        }
+      }
+    },
+    "Henüz kategori verisi yok.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Henüz kategori verisi yok."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No category data yet."
+          }
+        }
+      }
+    },
+    "Henüz masraf yok": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Henüz masraf yok"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No expenses yet"
+          }
+        }
+      }
+    },
+    "Herkes ödeşti": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Herkes ödeşti"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Everyone is settled"
+          }
+        }
+      }
+    },
+    "Herkes ödeşti, kimsenin kimseye borcu yok.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Everyone is settled. No one owes anyone."
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Herkes ödeşti, kimsenin kimseye borcu yok."
+          }
+        }
+      }
+    },
+    "Hesabım": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hesabım"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Account"
+          }
+        }
+      }
+    },
+    "Hesabımı Sil": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hesabımı Sil"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete My Account"
+          }
+        }
+      }
+    },
+    "Hesabın silinsin mi?": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hesabın silinsin mi?"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete your account?"
+          }
+        }
+      }
+    },
+    "Hesap silme başarısız.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Could not delete the account."
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hesap silme başarısız."
+          }
+        }
+      }
+    },
+    "IBAN İste": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Request IBAN"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "IBAN İste"
+          }
+        }
+      }
+    },
+    "IBAN isteme mesajı panoya kopyalandı; dilediğin uygulamada yapıştırabilirsin.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "IBAN isteme mesajı panoya kopyalandı; dilediğin uygulamada yapıştırabilirsin."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The IBAN request was copied to the clipboard. You can paste it into any app."
+          }
+        }
+      }
+    },
+    "Kalan %@ → %@": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "new",
+            "value": "Kalan %1$@ → %2$@"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remaining %1$@ → %2$@"
+          }
+        }
+      }
+    },
+    "Kapat": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kapat"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Close"
+          }
+        }
+      }
+    },
+    "Kategori": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kategori"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Category"
+          }
+        }
+      }
+    },
+    "Kategori Analizi": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kategori Analizi"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Category Analytics"
+          }
+        }
+      }
+    },
+    "Kategori analizi, harcama trendleri ve detaylı özetler Pro ile kullanılabilir.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kategori analizi, harcama trendleri ve detaylı özetler Pro ile kullanılabilir."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Category analytics, spending trends, and detailed summaries are available with Pro."
+          }
+        }
+      }
+    },
+    "Kaydet": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kaydet"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Save"
+          }
+        }
+      }
+    },
+    "Kısa açıklama": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kısa açıklama"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Short description"
+          }
+        }
+      }
+    },
+    "Kodu Kontrol Et": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Check Code"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kodu Kontrol Et"
+          }
+        }
+      }
+    },
+    "Kodu Paylaş": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kodu Paylaş"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share Code"
+          }
+        }
+      }
+    },
+    "Konaklama": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Konaklama"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Accommodation"
+          }
+        }
+      }
+    },
+    "Kullanım Koşulları": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kullanım Koşulları"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Terms of Use"
+          }
+        }
+      }
+    },
+    "KURUCU": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "KURUCU"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "FOUNDER"
+          }
+        }
+      }
+    },
+    "Kullanıcı": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "User"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kullanıcı"
+          }
+        }
+      }
+    },
+    "Kuruculuğu Devret": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kuruculuğu Devret"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Transfer Ownership"
+          }
+        }
+      }
+    },
+    "Lütfen geçerli bir tutar girin.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Please enter a valid amount."
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lütfen geçerli bir tutar girin."
+          }
+        }
+      }
+    },
+    "Market": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Market"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Groceries"
+          }
+        }
+      }
+    },
+    "Masraf Ekle": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Masraf Ekle"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add Expense"
+          }
+        }
+      }
+    },
+    "Masraf kaydedilemedi": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Masraf kaydedilemedi"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Could not save the expense"
+          }
+        }
+      }
+    },
+    "Masraf silinsin mi?": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Masraf silinsin mi?"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete this expense?"
+          }
+        }
+      }
+    },
+    "Masrafı Düzenle": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Masrafı Düzenle"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Edit Expense"
+          }
+        }
+      }
+    },
+    "Masrafı Sil": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Masrafı Sil"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete Expense"
+          }
+        }
+      }
+    },
+    "Masraflar": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Masraflar"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Expenses"
+          }
+        }
+      }
+    },
+    "Merhaba %@! \"%@\" grubunda sana %@ ödemem var. Ödemeyi yapabilmem için IBAN'ını paylaşır mısın? Teşekkürler!": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hi %1$@! I owe you %3$@ in the \"%2$@\" group. Could you share your IBAN so I can pay you? Thanks!"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Merhaba %@! \"%@\" grubunda sana %@ ödemem var. Ödemeyi yapabilmem için IBAN'ını paylaşır mısın? Teşekkürler!"
+          }
+        }
+      }
+    },
+    "Misafir Kullanıcı": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Guest User"
+          }
+        }
+      }
+    },
+    "Ne kadar ödedin?": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ne kadar ödedin?"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "How much did you pay?"
+          }
+        }
+      }
+    },
+    "Onay Bekleniyor": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pending Approval"
+          }
+        }
+      }
+    },
+    "ONAYINI BEKLEYEN ÖDEMELER": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ONAYINI BEKLEYEN ÖDEMELER"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PAYMENTS AWAITING YOUR APPROVAL"
+          }
+        }
+      }
+    },
+    "Onayla": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Onayla"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Approve"
+          }
+        }
+      }
+    },
+    "onboarding.expenses.message": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "See shared expenses clearly and keep every currency separate."
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ortak harcamaları net gör, her para birimini ayrı takip et."
+          }
+        }
+      }
+    },
+    "onboarding.expenses.title": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Track expenses"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Harcamaları takip et"
+          }
+        }
+      }
+    },
+    "onboarding.groups.message": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keep trips, homes and shared plans together in simple groups."
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Seyahatleri, evleri ve ortak planları sade gruplarda bir arada tut."
+          }
+        }
+      }
+    },
+    "onboarding.groups.title": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share with your group"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Grubunla paylaş"
+          }
+        }
+      }
+    },
+    "onboarding.next": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Next"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "İleri"
+          }
+        }
+      }
+    },
+    "onboarding.settle.message": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Know who owes whom without mixing currencies or balances."
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Para birimlerini karıştırmadan kimin kime borçlu olduğunu bil."
+          }
+        }
+      }
+    },
+    "onboarding.settle.title": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Settle with confidence"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kolayca hesaplaş"
+          }
+        }
+      }
+    },
+    "onboarding.skip": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Skip"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Atla"
+          }
+        }
+      }
+    },
+    "onboarding.start": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Get started"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Başla"
+          }
+        }
+      }
+    },
+    "Otomatik": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Otomatik"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Automatic"
+          }
+        }
+      }
+    },
+    "Otomatik seçim, cihazınızın tercih edilen dilini kullanır.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Otomatik seçim, cihazınızın tercih edilen dilini kullanır."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Automatic uses your device’s preferred language."
+          }
+        }
+      }
+    },
+    "Ödedim": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "I Paid"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ödedim"
+          }
+        }
+      }
+    },
+    "Ödeme Bildir": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ödeme Bildir"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Report Payment"
+          }
+        }
+      }
+    },
+    "Ödeme tutarı borçtan (%@) fazla olamaz.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The payment cannot exceed the debt (%@)."
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ödeme tutarı borçtan (%@) fazla olamaz."
+          }
+        }
+      }
+    },
+    "ödeşti": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ödeşti"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "settled"
+          }
+        }
+      }
+    },
+    "Ödeştin": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ödeştin"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You are settled"
+          }
+        }
+      }
+    },
+    "Ödeyen": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ödeyen"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Paid by"
+          }
+        }
+      }
+    },
+    "Önizleme": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Önizleme"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Preview"
+          }
+        }
+      }
+    },
+    "Örn. Akşam yemeği": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Örn. Akşam yemeği"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "e.g. Dinner"
+          }
+        }
+      }
+    },
+    "Özel": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Özel"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Custom"
+          }
+        }
+      }
+    },
+    "Panel Pro'ya Özel": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Panel Pro'ya Özel"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dashboard Requires Pro"
+          }
+        }
+      }
+    },
+    "placeholder.comingSoon": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Coming soon"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Yakında"
+          }
+        }
+      }
+    },
+    "Pro": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pro"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pro"
+          }
+        }
+      }
+    },
+    "Pro aboneliğin aktif": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pro aboneliğin aktif"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your Pro subscription is active"
+          }
+        }
+      }
+    },
+    "Pro Aç/Kapat (Geliştirici)": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pro Aç/Kapat (Geliştirici)"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Toggle Pro (Developer)"
+          }
+        }
+      }
+    },
+    "Pro için Apple ile giriş yap": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pro için Apple ile giriş yap"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sign in with Apple for Pro"
+          }
+        }
+      }
+    },
+    "Pro ile Sınırsız": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pro ile Sınırsız"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unlimited with Pro"
+          }
+        }
+      }
+    },
+    "Pro'ya Geç": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pro'ya Geç"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Go Pro"
+          }
+        }
+      }
+    },
+    "Profil güncellendi.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Profile updated."
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Profil güncellendi."
+          }
+        }
+      }
+    },
+    "Profil güncellenemedi. Lütfen tekrar deneyin.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Could not update the profile. Please try again."
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Profil güncellenemedi. Lütfen tekrar deneyin."
+          }
+        }
+      }
+    },
+    "Profili Düzenle": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Profili Düzenle"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Edit Profile"
+          }
+        }
+      }
+    },
+    "Reddet": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reddet"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reject"
+          }
+        }
+      }
+    },
+    "Renk": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Color"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Renk"
+          }
+        }
+      }
+    },
+    "Sadeleştirilmiş": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sadeleştirilmiş"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Simplified"
+          }
+        }
+      }
+    },
+    "Sağ alttaki + ile ilk masrafı ekle.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sağ alttaki + ile ilk masrafı ekle."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tap + at the bottom right to add the first expense."
+          }
+        }
+      }
+    },
+    "Satın Almaları Geri Yükle": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Satın Almaları Geri Yükle"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Restore Purchases"
+          }
+        }
+      }
+    },
+    "Seç": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Seç"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Select"
+          }
+        }
+      }
+    },
+    "SENİN DURUMUN": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "SENİN DURUMUN"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "YOUR STATUS"
+          }
+        }
+      }
+    },
+    "Sınırsız Grup": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sınırsız Grup"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unlimited Groups"
+          }
+        }
+      }
+    },
+    "Sil": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sil"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete"
+          }
+        }
+      }
+    },
+    "Son Aktiviteler": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Son Aktiviteler"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recent Activity"
+          }
+        }
+      }
+    },
+    "tab.account": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Account"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hesap"
+          }
+        }
+      }
+    },
+    "tab.activity": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Activity"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aktivite"
+          }
+        }
+      }
+    },
+    "tab.dashboard": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dashboard"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Panel"
+          }
+        }
+      }
+    },
+    "tab.groups": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Groups"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gruplar"
+          }
+        }
+      }
+    },
+    "Tamam": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tamam"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OK"
+          }
+        }
+      }
+    },
+    "Tarih yok": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tarih yok"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No date"
+          }
+        }
+      }
+    },
+    "Toplam borç: %@": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Toplam borç: %@"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Total debt: %@"
+          }
+        }
+      }
+    },
+    "Tüm gruplarındaki aktivitelerde arama yap, geçmiş masrafları kolayca bul.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tüm gruplarındaki aktivitelerde arama yap, geçmiş masrafları kolayca bul."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Search activity across all your groups and easily find past expenses."
+          }
+        }
+      }
+    },
+    "Tüm gruplarının para birimi bazında özetini, harcama trendlerini ve kategorilerini tek ekranda gör.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tüm gruplarının para birimi bazında özetini, harcama trendlerini ve kategorilerini tek ekranda gör."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "See currency-based summaries, spending trends, and categories for all your groups in one place."
+          }
+        }
+      }
+    },
+    "Tüm özelliklere sınırsız erişim.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tüm özelliklere sınırsız erişim."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unlimited access to all features."
+          }
+        }
+      }
+    },
+    "Türkçe": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Türkçe"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Türkçe"
+          }
+        }
+      }
+    },
+    "Ulaşım": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ulaşım"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Transport"
+          }
+        }
+      }
+    },
+    "Ücretsiz": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ücretsiz"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Free"
+          }
+        }
+      }
+    },
+    "Ücretsizde 5 grup sınırı var. Pro ile istediğin kadar grup oluştur, hiçbir arkadaşını dışarıda bırakma.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ücretsizde 5 grup sınırı var. Pro ile istediğin kadar grup oluştur, hiçbir arkadaşını dışarıda bırakma."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The free plan is limited to 5 groups. With Pro, create as many groups as you want."
+          }
+        }
+      }
+    },
+    "Ürün bilgisi yüklenemedi.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Could not load product information."
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ürün bilgisi yüklenemedi."
+          }
+        }
+      }
+    },
+    "Üye adı": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Üye adı"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Member name"
+          }
+        }
+      }
+    },
+    "Üyeler": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Üyeler"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Members"
+          }
+        }
+      }
+    },
+    "Üyelik bilgisi bulunamadı.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Membership information could not be found."
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Üyelik bilgisi bulunamadı."
+          }
+        }
+      }
+    },
+    "Vazgeç": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vazgeç"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cancel"
+          }
+        }
+      }
+    },
+    "Veriler hazır, paylaşım ekranı açılıyor.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your data is ready. Opening the share sheet."
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Veriler hazır, paylaşım ekranı açılıyor."
+          }
+        }
+      }
+    },
+    "Verilerimi Dışa Aktar": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Export My Data"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verilerimi Dışa Aktar"
+          }
+        }
+      }
+    },
+    "WhatsApp açılamadı": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "WhatsApp açılamadı"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Could not open WhatsApp"
+          }
+        }
+      }
+    },
+    "Yalnızca grup kurucusu hayalet üye ekleyebilir.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Yalnızca grup kurucusu hayalet üye ekleyebilir."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Only the group founder can add ghost members."
+          }
+        }
+      }
+    },
+    "Yasal": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Yasal"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Legal"
+          }
+        }
+      }
+    },
+    "Yemek": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Yemek"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Food"
+          }
+        }
+      }
+    },
+    "Yeni bir grup oluştur veya davet koduyla katıl.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Yeni bir grup oluştur veya davet koduyla katıl."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Create a new group or join with an invite code."
+          }
+        }
+      }
+    },
+    "Yeni Grup": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Yeni Grup"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "New Group"
+          }
+        }
+      }
+    },
+    "Yeni Grup Oluştur": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Yeni Grup Oluştur"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Create New Group"
+          }
+        }
+      }
+    },
+    "Yeni üye olarak katıl": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Join as a new member"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Yeni üye olarak katıl"
+          }
+        }
+      }
     }
   },
-  "version" : "1.0"
+  "version": "1.0"
 }

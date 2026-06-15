@@ -91,7 +91,11 @@ func minorAmount(fromDecimal amount: Decimal, currency: String) -> Int? {
     return Int(NSDecimalString(&rounded, Locale(identifier: "en_US_POSIX")))
 }
 
-func formatAmount(_ minor: Int, currency: String) -> String {
+func formatAmount(
+    _ minor: Int,
+    currency: String,
+    locale: Locale = LocalizationStore.currentLocale()
+) -> String {
     let decimals = getDecimals(currency)
     var amount = Decimal(minor)
 
@@ -100,7 +104,7 @@ func formatAmount(_ minor: Int, currency: String) -> String {
     }
 
     let formatter = NumberFormatter()
-    formatter.locale = Locale(identifier: "tr_TR")
+    formatter.locale = locale
     formatter.numberStyle = .currency
     formatter.currencyCode = currency.uppercased()
     formatter.minimumFractionDigits = decimals

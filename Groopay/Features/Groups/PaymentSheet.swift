@@ -15,6 +15,7 @@ struct PaymentSheet: View {
     let onPay: (Int) -> Void
 
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.locale) private var locale
     @State private var amountText: String
     @State private var showError = false
     @FocusState private var isFocused: Bool
@@ -138,10 +139,24 @@ struct PaymentSheet: View {
 
     private var errorMessage: String {
         if parsedAmount <= 0 {
-            return "Lütfen geçerli bir tutar girin."
+            return String(
+                localized: "Lütfen geçerli bir tutar girin.",
+                locale: locale
+            )
         }
         if parsedAmount > config.debtAmount {
-            return "Ödeme tutarı borçtan (\(formatAmount(config.debtAmount, currency: config.currency))) fazla olamaz."
+            return String(
+                format: String(
+                    localized: "Ödeme tutarı borçtan (%@) fazla olamaz.",
+                    locale: locale
+                ),
+                locale: locale,
+                formatAmount(
+                    config.debtAmount,
+                    currency: config.currency,
+                    locale: locale
+                )
+            )
         }
         return ""
     }

@@ -83,7 +83,10 @@ final class PurchasesManager {
         defer { isLoading = false }
 
         guard let product = monthlyProduct else {
-            errorMessage = "Ürün bilgisi yüklenemedi."
+            errorMessage = String(
+                localized: "Ürün bilgisi yüklenemedi.",
+                locale: LocalizationStore.currentLocale()
+            )
             return false
         }
 

@@ -6,8 +6,8 @@ import RevenueCat
 struct ProFeature: Identifiable {
     let id: String
     let icon: String
-    let title: String
-    let subtitle: String
+    let title: LocalizedStringResource
+    let subtitle: LocalizedStringResource
 }
 
 private let proFeatures: [ProFeature] = [
@@ -41,6 +41,7 @@ private let proFeatures: [ProFeature] = [
 
 struct PaywallView: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.locale) private var locale
     @State private var purchases = PurchasesManager.shared
     @State private var selectedFeature = 0
     @State private var isPurchasing = false
@@ -270,7 +271,11 @@ struct PaywallView: View {
     // MARK: - Footer
 
     private var footerLinks: some View {
-        HStack(spacing: 24) {
+        let pathPrefix = locale.language.languageCode?.identifier == "en"
+            ? "/en"
+            : ""
+
+        return HStack(spacing: 24) {
             Button("Satın Almaları Geri Yükle") {
                 Task {
                     isPurchasing = true
@@ -282,7 +287,9 @@ struct PaywallView: View {
             .foregroundStyle(Color.textSecondary)
 
             Button {
-                guard let url = URL(string: "https://groopay.vercel.app/privacy") else { return }
+                guard let url = URL(
+                    string: "https://groopay.vercel.app\(pathPrefix)/privacy"
+                ) else { return }
                 UIApplication.shared.open(url)
             } label: {
                 Text("Gizlilik")
@@ -292,7 +299,9 @@ struct PaywallView: View {
             }
 
             Button {
-                guard let url = URL(string: "https://groopay.vercel.app/terms") else { return }
+                guard let url = URL(
+                    string: "https://groopay.vercel.app\(pathPrefix)/terms"
+                ) else { return }
                 UIApplication.shared.open(url)
             } label: {
                 Text("Kullanım Koşulları")

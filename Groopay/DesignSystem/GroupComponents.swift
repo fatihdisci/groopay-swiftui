@@ -5,6 +5,7 @@ struct GradientAvatar: View {
     var emoji: String?
     var color: String?
     var size: CGFloat = 48
+    @Environment(\.locale) private var locale
 
     var body: some View {
         ZStack {
@@ -32,9 +33,7 @@ struct GradientAvatar: View {
     private var initials: String {
         let words = name.split(separator: " ")
         let letters = words.prefix(2).compactMap(\.first)
-        return String(letters).uppercased(
-            with: Locale(identifier: "tr_TR")
-        )
+        return String(letters).uppercased(with: locale)
     }
 
     private var gradientColors: [Color] {
@@ -46,7 +45,7 @@ struct GradientAvatar: View {
 }
 
 struct GradientButtonLabel: View {
-    let title: String
+    let title: LocalizedStringResource
     let systemImage: String
     var disabled = false
 

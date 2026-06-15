@@ -3,6 +3,7 @@ import SwiftUI
 struct NewGroupSheet: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(AuthStore.self) private var authStore
+    @Environment(\.locale) private var locale
     let store: GroupsStore
 
     @State private var name = ""
@@ -112,7 +113,8 @@ struct NewGroupSheet: View {
         isCreating = true
         let success = await store.createGroup(
             name: trimmedName,
-            displayName: authStore.currentProfile?.displayName ?? "Kullanıcı"
+            displayName: authStore.currentProfile?.displayName
+                ?? String(localized: "Kullanıcı", locale: locale)
         )
         isCreating = false
         if success {

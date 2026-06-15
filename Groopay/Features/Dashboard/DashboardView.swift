@@ -2,6 +2,7 @@ import SwiftUI
 
 struct DashboardView: View {
     @Environment(AuthStore.self) private var authStore
+    @Environment(\.locale) private var locale
     @State private var showPaywall = false
     let store: GroupsStore
 
@@ -277,7 +278,8 @@ struct DashboardView: View {
     private func dashboardActivityRow(_ activity: Activity) -> some View {
         let presentation = ActivityPresentation(
             activity: activity,
-            actorName: actorName(activity)
+            actorName: actorName(activity),
+            locale: locale
         )
 
         return HStack(spacing: 12) {
@@ -353,7 +355,8 @@ struct DashboardView: View {
     }
 
     private func groupName(_ groupID: UUID) -> String {
-        store.groups.first { $0.id == groupID }?.group.name ?? "Grup"
+        store.groups.first { $0.id == groupID }?.group.name
+            ?? String(localized: "Grup", locale: locale)
     }
 
     private func actorName(_ activity: Activity) -> String? {
@@ -378,17 +381,29 @@ struct DashboardView: View {
         let interval = -date.timeIntervalSinceNow
         switch interval {
         case ..<60:
-            return "az önce"
+            return String(localized: "az önce", locale: locale)
         case ..<3600:
-            return "\(Int(interval / 60)) dk önce"
+            return String(
+                format: String(localized: "%lld dk önce", locale: locale),
+                locale: locale,
+                Int64(interval / 60)
+            )
         case ..<86400:
-            return "\(Int(interval / 3600)) sa önce"
+            return String(
+                format: String(localized: "%lld sa önce", locale: locale),
+                locale: locale,
+                Int64(interval / 3600)
+            )
         case ..<604800:
-            return "\(Int(interval / 86400)) g önce"
+            return String(
+                format: String(localized: "%lld g önce", locale: locale),
+                locale: locale,
+                Int64(interval / 86400)
+            )
         default:
             let formatter = DateFormatter()
-            formatter.locale = Locale(identifier: "tr_TR")
-            formatter.dateFormat = "d MMM"
+            formatter.locale = locale
+            formatter.setLocalizedDateFormatFromTemplate("d MMM")
             return formatter.string(from: date)
         }
     }

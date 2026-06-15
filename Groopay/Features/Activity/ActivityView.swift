@@ -5,6 +5,7 @@ struct ActivityView: View {
 
     @Environment(AuthStore.self) private var authStore
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.locale) private var locale
 
     @State private var searchText = ""
     @State private var debouncedQuery = ""
@@ -111,7 +112,7 @@ struct ActivityView: View {
     private var filtered: [Activity] {
         let query = debouncedQuery
             .trimmingCharacters(in: .whitespacesAndNewlines)
-            .lowercased(with: Locale(identifier: "tr_TR"))
+            .lowercased(with: locale)
         guard isPro, !query.isEmpty else { return store.activities }
 
         return store.activities.filter { activity in
@@ -122,7 +123,7 @@ struct ActivityView: View {
                 groupName(activity.groupId)
             ]
             .joined(separator: " ")
-            .lowercased(with: Locale(identifier: "tr_TR"))
+            .lowercased(with: locale)
             return haystack.contains(query)
         }
     }
@@ -131,7 +132,7 @@ struct ActivityView: View {
         var order: [String] = []
         var buckets: [String: [Activity]] = [:]
         for activity in filtered {
-            let key = Self.dayHeader(for: activity.createdAt)
+            let key = Self.dayHeader(for: activity.createdAt, locale: locale)
             if buckets[key] == nil {
                 buckets[key] = []
                 order.append(key)
@@ -151,7 +152,7 @@ struct ActivityView: View {
                     ActivityRow(
                         presentation: presentation(for: activity),
                         groupName: groupName(activity.groupId),
-                        time: Self.timeString(activity.createdAt)
+                        time: Self.timeString(activity.createdAt, locale: locale)
                     )
                     if activity.id != section.items.last?.id {
                         Divider().padding(.leading, 58)
@@ -184,7 +185,8 @@ struct ActivityView: View {
     // MARK: - Lookups
 
     private func groupName(_ groupID: UUID) -> String {
-        store.groups.first { $0.id == groupID }?.group.name ?? "Grup"
+        store.groups.first { $0.id == groupID }?.group.name
+            ?? String(localized: "Grup", locale: locale)
     }
 
     private func actorName(_ activity: Activity) -> String? {
@@ -198,37 +200,48 @@ struct ActivityView: View {
     }
 
     private func presentation(for activity: Activity) -> ActivityPresentation {
-        ActivityPresentation(activity: activity, actorName: actorName(activity))
+        ActivityPresentation(
+            activity: activity,
+            actorName: actorName(activity),
+            locale: locale
+        )
     }
 
     // MARK: - Date helpers
 
-    private static func dayHeader(for date: Date?) -> String {
-        guard let date else { return "Tarih yok" }
+    private static func dayHeader(for date: Date?, locale: Locale) -> String {
+        guard let date else {
+            return String(localized: "Tarih yok", locale: locale)
+        }
         let calendar = Calendar(identifier: .gregorian)
-        if calendar.isDateInToday(date) { return "Bugün" }
-        if calendar.isDateInYesterday(date) { return "Dün" }
-        return dayFormatter.string(from: date)
+        if calendar.isDateInToday(date) {
+            return String(localized: "Bugün", locale: locale)
+        }
+        if calendar.isDateInYesterday(date) {
+            return String(localized: "Dün", locale: locale)
+        }
+        return dayFormatter(locale: locale).string(from: date)
     }
 
-    private static func timeString(_ date: Date?) -> String {
+    private static func timeString(_ date: Date?, locale: Locale) -> String {
         guard let date else { return "" }
-        return timeFormatter.string(from: date)
+        return timeFormatter(locale: locale).string(from: date)
     }
 
-    private static let dayFormatter: DateFormatter = {
+    private static func dayFormatter(locale: Locale) -> DateFormatter {
         let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "tr_TR")
-        formatter.dateFormat = "d MMMM yyyy"
+        formatter.locale = locale
+        formatter.setLocalizedDateFormatFromTemplate("d MMMM yyyy")
         return formatter
-    }()
+    }
 
-    private static let timeFormatter: DateFormatter = {
+    private static func timeFormatter(locale: Locale) -> DateFormatter {
         let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "tr_TR")
-        formatter.dateFormat = "HH:mm"
+        formatter.locale = locale
+        formatter.timeStyle = .short
+        formatter.dateStyle = .none
         return formatter
-    }()
+    }
 }
 
 // MARK: - Presentation
@@ -239,27 +252,49 @@ struct ActivityPresentation {
     let title: String
     let subtitle: String?
 
-    init(activity: Activity, actorName: String?) {
+    init(
+        activity: Activity,
+        actorName: String?,
+        locale: Locale = LocalizationStore.currentLocale()
+    ) {
         let type = activity.actionType.lowercased()
-        let who = actorName ?? "Birisi"
+        let who = actorName ?? String(localized: "Birisi", locale: locale)
         let description = activity.metadata["description"]?.stringValue
 
         if type.contains("expense") {
             icon = "receipt"
             color = .primaryTheme
-            title = type.contains("delete")
-                ? "\(who) masraf sildi"
-                : (type.contains("update") ? "\(who) masrafı güncelledi" : "\(who) masraf ekledi")
+            let key: String.LocalizationValue
+            if type.contains("delete") {
+                key = "%@ masraf sildi"
+            } else if type.contains("update") {
+                key = "%@ masrafı güncelledi"
+            } else {
+                key = "%@ masraf ekledi"
+            }
+            title = String(
+                format: String(localized: key, locale: locale),
+                locale: locale,
+                who
+            )
             subtitle = description
         } else if type.contains("settle") || type.contains("payment") || type.contains("pay") {
             icon = "checkmark.circle.fill"
             color = .credit
-            title = "\(who) ödeme yaptı"
+            title = String(
+                format: String(localized: "%@ ödeme yaptı", locale: locale),
+                locale: locale,
+                who
+            )
             subtitle = description
         } else if type.contains("join") || type.contains("member") {
             icon = "person.badge.plus"
             color = Color(cssHex: "#8B5CF6") ?? .gradientEnd
-            title = "\(who) gruba katıldı"
+            title = String(
+                format: String(localized: "%@ gruba katıldı", locale: locale),
+                locale: locale,
+                who
+            )
             subtitle = nil
         } else {
             icon = "bell.fill"

@@ -3,6 +3,7 @@ import SwiftUI
 struct JoinGroupView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(AuthStore.self) private var authStore
+    @Environment(\.locale) private var locale
     let store: GroupsStore
 
     @State private var code = ""
@@ -100,8 +101,15 @@ struct JoinGroupView: View {
     private func previewContent(_ preview: InvitePreview) -> some View {
         VStack(spacing: 18) {
             VStack(spacing: 8) {
-                GradientAvatar(name: preview.groupName ?? "Grup", size: 60)
-                Text(preview.groupName ?? "Grup")
+                GradientAvatar(
+                    name: preview.groupName
+                        ?? String(localized: "Grup", locale: locale),
+                    size: 60
+                )
+                Text(
+                    preview.groupName
+                        ?? String(localized: "Grup", locale: locale)
+                )
                     .font(.display(22, weight: .extraBold))
                 Text("\(preview.memberCount ?? 0) aktif üye")
                     .font(.body(13))
@@ -166,7 +174,11 @@ struct JoinGroupView: View {
                         ? "checkmark.circle.fill"
                         : "circle"
                 )
-                Text(title)
+                if id == nil {
+                    Text("Yeni üye olarak katıl")
+                } else {
+                    Text(verbatim: title)
+                }
                 Spacer()
             }
             .font(.body(14, weight: .medium))
@@ -199,7 +211,8 @@ struct JoinGroupView: View {
         let success = await store.join(
             code: token,
             claimGhostID: selectedGhostID,
-            displayName: authStore.currentProfile?.displayName ?? "Kullanıcı"
+            displayName: authStore.currentProfile?.displayName
+                ?? String(localized: "Kullanıcı", locale: locale)
         )
         isWorking = false
         if success {

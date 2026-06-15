@@ -165,6 +165,21 @@ final class AuthStore {
         await loadProfile()
     }
 
+    func updateLocale(_ locale: AppLanguage) async throws {
+        let userID = try await supabase.auth.session.user.id
+
+        try await supabase
+            .from("profiles")
+            .update(ProfileLocaleUpdate(locale: locale.rawValue))
+            .eq("id", value: userID)
+            .execute()
+
+        if var profile = currentProfile {
+            profile.locale = locale.rawValue
+            currentProfile = profile
+        }
+    }
+
     func clearError() {
         errorMessage = nil
     }
@@ -267,6 +282,10 @@ private struct GroupMemberNameUpdate: Encodable {
     }
 }
 
+private struct ProfileLocaleUpdate: Encodable {
+    let locale: String
+}
+
 private enum AuthStoreError: LocalizedError {
     case invalidAppleCredential
     case identityMismatch
@@ -278,11 +297,20 @@ private enum AuthStoreError: LocalizedError {
         case .invalidAppleCredential:
             String(localized: "auth.error.invalidAppleCredential")
         case .identityMismatch:
-            "Apple kimliği bağlanamadı; misafir verileriniz korundu."
+            String(
+                localized: "Apple kimliği bağlanamadı; misafir verileriniz korundu.",
+                locale: LocalizationStore.currentLocale()
+            )
         case .invalidDisplayName:
-            "Görünen ad 1-40 karakter olmalıdır."
+            String(
+                localized: "Görünen ad 1-40 karakter olmalıdır.",
+                locale: LocalizationStore.currentLocale()
+            )
         case .invalidAvatarColor:
-            "Geçersiz avatar rengi."
+            String(
+                localized: "Geçersiz avatar rengi.",
+                locale: LocalizationStore.currentLocale()
+            )
         }
     }
 }
