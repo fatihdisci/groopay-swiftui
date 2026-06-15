@@ -7,7 +7,7 @@ struct MainTabView: View {
     var body: some View {
         TabView {
             NavigationStack {
-                DashboardView()
+                DashboardView(store: groupsStore)
             }
             .tabItem {
                 Label("tab.dashboard", systemImage: "chart.bar.fill")
@@ -39,7 +39,6 @@ struct MainTabView: View {
             realtime.attach(groupsStore)
             await groupsStore.load()
         }
-        // Üye olunan grup kümesi değişince realtime aboneliklerini eşitle.
         .task(id: groupsStore.groups.map(\.id)) {
             await realtime.sync(groupIDs: groupsStore.groups.map(\.id))
         }

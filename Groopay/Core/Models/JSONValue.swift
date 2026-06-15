@@ -54,4 +54,12 @@ enum JSONValue: Codable, Equatable, Sendable {
             try container.encodeNil()
         }
     }
+
+    var intValue: Int? {
+        switch self {
+        case .integer(let value): return value
+        case .decimal(let value): return NSDecimalNumber(decimal: value).intValue
+        default: return nil
+        }
+    }
 }

@@ -266,7 +266,7 @@ struct PaywallView: View {
             .foregroundStyle(Color.textSecondary)
 
             Button {
-                guard let url = URL(string: "https://groopay.app/privacy") else { return }
+                guard let url = URL(string: "https://groopay.vercel.app/privacy") else { return }
                 UIApplication.shared.open(url)
             } label: {
                 Text("Gizlilik")
@@ -276,7 +276,7 @@ struct PaywallView: View {
             }
 
             Button {
-                guard let url = URL(string: "https://groopay.app/terms") else { return }
+                guard let url = URL(string: "https://groopay.vercel.app/terms") else { return }
                 UIApplication.shared.open(url)
             } label: {
                 Text("Kullanım Koşulları")
