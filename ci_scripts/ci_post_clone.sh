@@ -5,15 +5,18 @@ set -eu
 REPOSITORY_PATH="${CI_PRIMARY_REPOSITORY_PATH:-$(pwd)}"
 SECRETS_FILE="$REPOSITORY_PATH/Config/Secrets.xcconfig"
 
-: "${SUPABASE_URL:?Add SUPABASE_URL to the Xcode Cloud environment variables.}"
-: "${SUPABASE_ANON_KEY:?Add SUPABASE_ANON_KEY to the Xcode Cloud environment variables.}"
-: "${REVENUECAT_API_KEY:?Add REVENUECAT_API_KEY to the Xcode Cloud environment variables.}"
+: > "$SECRETS_FILE"
 
-# In xcconfig files, an unescaped // starts a comment.
-SUPABASE_URL_XCCONFIG=$(printf '%s' "$SUPABASE_URL" | sed 's#://#:/$()/#')
+if [ -n "${SUPABASE_URL:-}" ]; then
+    # In xcconfig files, an unescaped // starts a comment.
+    SUPABASE_URL_XCCONFIG=$(printf '%s' "$SUPABASE_URL" | sed 's#://#:/$()/#')
+    printf 'SUPABASE_URL = %s\n' "$SUPABASE_URL_XCCONFIG" >> "$SECRETS_FILE"
+fi
 
-cat > "$SECRETS_FILE" <<EOF
-SUPABASE_URL = $SUPABASE_URL_XCCONFIG
-SUPABASE_ANON_KEY = $SUPABASE_ANON_KEY
-REVENUECAT_API_KEY = $REVENUECAT_API_KEY
-EOF
+if [ -n "${SUPABASE_ANON_KEY:-}" ]; then
+    printf 'SUPABASE_ANON_KEY = %s\n' "$SUPABASE_ANON_KEY" >> "$SECRETS_FILE"
+fi
+
+if [ -n "${REVENUECAT_API_KEY:-}" ]; then
+    printf 'REVENUECAT_API_KEY = %s\n' "$REVENUECAT_API_KEY" >> "$SECRETS_FILE"
+fi
