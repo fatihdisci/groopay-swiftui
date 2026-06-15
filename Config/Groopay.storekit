@@ -1,0 +1,54 @@
+{
+  "identifier" : "D30513B6-99C4-4F89-8851-E1FB095C6907",
+  "nonRenewingSubscriptions" : [
+
+  ],
+  "products" : [
+    {
+      "displayPrice" : "2,99",
+      "duration" : 30,
+      "familyShareable" : false,
+      "groupNumber" : 1,
+      "identifier" : "com.groopay.app.userpro",
+      "localizations" : [
+        {
+          "description" : "Sınırsız grup, gelişmiş panel ve kategori analizi.",
+          "displayName" : "Groopay User Pro",
+          "locale" : "tr_TR"
+        },
+        {
+          "description" : "Unlimited groups, advanced dashboard & category analytics.",
+          "displayName" : "Groopay User Pro",
+          "locale" : "en_US"
+        }
+      ],
+      "recurringSubscriptionPeriod" : "P1M",
+      "subtype" : "normal",
+      "type" : "recurringSubscription"
+    }
+  ],
+  "settings" : {
+    "automaticallyEnableSync" : true,
+    "local" : true,
+    "subscriptionGroup" : {
+      "id" : "1",
+      "localizations" : [
+        {
+          "locale" : "tr_TR",
+          "name" : "Groopay Pro Abonelik",
+          "summary" : "Groopay User Pro aylık abonelik."
+        },
+        {
+          "locale" : "en_US",
+          "name" : "Groopay Pro Subscription",
+          "summary" : "Groopay User Pro monthly subscription."
+        }
+      ]
+    }
+  },
+  "version" : {
+    "major" : 1,
+    "minor" : 1,
+    "rationale" : "Monthly subscription for Groopay User Pro"
+  }
+}

@@ -1,4 +1,5 @@
 SUPABASE_URL = https:/$()/placeholder.supabase.co
 SUPABASE_ANON_KEY = placeholder
+REVENUECAT_API_KEY = placeholder
 
 #include? "Secrets.xcconfig"
