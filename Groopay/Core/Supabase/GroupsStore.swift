@@ -106,11 +106,19 @@ final class GroupsStore {
                 .execute()
                 .value
 
+            // pending + confirmed çekilir (pending UI'da onay akışı için lazım).
+            // computeBalance yalnızca confirmed olanları sayar, bakiye doğru kalır.
             async let settlementRows: [Settlement] = supabase
                 .from("settlements")
                 .select()
                 .in("group_id", values: groupIDs)
-                .eq("status", value: SettlementStatus.confirmed.rawValue)
+                .in(
+                    "status",
+                    values: [
+                        SettlementStatus.pending.rawValue,
+                        SettlementStatus.confirmed.rawValue
+                    ]
+                )
                 .execute()
                 .value
 
@@ -340,6 +348,71 @@ final class GroupsStore {
         }
 
         switch await rpc.deleteExpense(expenseId: expenseID, actorMemberId: actor) {
+        case .success:
+            await load()
+            return true
+        case .failure(let error):
+            errorMessage = error.localizedDescription
+            return false
+        }
+    }
+
+    // MARK: - Settlements
+
+    /// Borçlu "Ödedim" der → pending settlement oluşturulur; karşı taraf onaylar.
+    func markPaid(
+        groupID: UUID,
+        fromMember: UUID,
+        toMember: UUID,
+        amount: Int,
+        currency: String
+    ) async -> Bool {
+        guard let actor = currentMemberID(in: groupID) else {
+            errorMessage = "Üyelik bilgisi bulunamadı."
+            return false
+        }
+
+        let input = AddSettlementRPCInput(
+            groupId: groupID,
+            fromMember: fromMember,
+            toMember: toMember,
+            amount: amount,
+            currency: currency,
+            markedBy: actor,
+            note: nil
+        )
+
+        switch await rpc.addSettlement(input) {
+        case .success:
+            await load()
+            return true
+        case .failure(let error):
+            errorMessage = error.localizedDescription
+            return false
+        }
+    }
+
+    func confirmSettlement(groupID: UUID, settlementID: UUID) async -> Bool {
+        guard let actor = currentMemberID(in: groupID) else {
+            errorMessage = "Üyelik bilgisi bulunamadı."
+            return false
+        }
+        switch await rpc.confirmSettlement(settlementId: settlementID, confirmedBy: actor) {
+        case .success:
+            await load()
+            return true
+        case .failure(let error):
+            errorMessage = error.localizedDescription
+            return false
+        }
+    }
+
+    func rejectSettlement(groupID: UUID, settlementID: UUID) async -> Bool {
+        guard let actor = currentMemberID(in: groupID) else {
+            errorMessage = "Üyelik bilgisi bulunamadı."
+            return false
+        }
+        switch await rpc.rejectSettlement(settlementId: settlementID, confirmedBy: actor) {
         case .success:
             await load()
             return true

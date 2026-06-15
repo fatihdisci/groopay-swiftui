@@ -1,25 +1,39 @@
 import SwiftUI
+import UIKit
 
 struct BalancesTabView: View {
-    let snapshot: GroupSnapshot
-    let currentMemberID: UUID?
+    let store: GroupsStore
+    let groupID: UUID
 
     @State private var mode: BalanceMode = .raw
+    @State private var ibanCopied = false
+    @State private var busy = false
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
+    private var snapshot: GroupSnapshot? { store.snapshot(groupID) }
+    private var currentMemberID: UUID? { store.currentMemberID(in: groupID) }
+
     private var balances: [UUID: [String: Int]] {
-        snapshot.memberBalances()
+        snapshot?.memberBalances() ?? [:]
     }
 
     var body: some View {
-        VStack(spacing: 16) {
-            selfSummaryCard
-            modePicker
-            content
+        if let snapshot {
+            VStack(spacing: 16) {
+                selfSummaryCard
+                approvalSection(snapshot)
+                modePicker
+                content(snapshot)
+            }
+            .padding(.horizontal, 20)
+            .padding(.top, 4)
+            .animation(reduceMotion ? nil : .default, value: mode)
+            .alert("IBAN mesajı panoya kopyalandı", isPresented: $ibanCopied) {
+                Button("Tamam", role: .cancel) {}
+            } message: {
+                Text("Mesajı dilediğin uygulamada yapıştırıp gönderebilirsin.")
+            }
         }
-        .padding(.horizontal, 20)
-        .padding(.top, 4)
-        .animation(reduceMotion ? nil : .default, value: mode)
     }
 
     // MARK: - Self summary
@@ -70,6 +84,75 @@ struct BalancesTabView: View {
         .purpleTintedShadow(radius: 18, y: 9)
     }
 
+    // MARK: - Approval section (current user is recipient)
+
+    @ViewBuilder
+    private func approvalSection(_ snapshot: GroupSnapshot) -> some View {
+        if let currentMemberID {
+            let pending = snapshot.pendingSettlements(forRecipient: currentMemberID)
+            if !pending.isEmpty {
+                VStack(alignment: .leading, spacing: 10) {
+                    Text("ONAYINI BEKLEYEN ÖDEMELER")
+                        .font(.body(11, weight: .semibold))
+                        .tracking(1.0)
+                        .foregroundStyle(Color.textSecondary)
+                    VStack(spacing: 0) {
+                        ForEach(pending) { settlement in
+                            approvalRow(settlement, snapshot: snapshot)
+                            if settlement.id != pending.last?.id {
+                                Divider().padding(.leading, 16)
+                            }
+                        }
+                    }
+                    .padding(.vertical, 6)
+                    .background(Color.surface)
+                    .clipShape(RoundedRectangle(cornerRadius: ThemeRadius.card))
+                    .purpleTintedShadow()
+                }
+            }
+        }
+    }
+
+    private func approvalRow(_ settlement: Settlement, snapshot: GroupSnapshot) -> some View {
+        let payer = snapshot.member(id: settlement.fromMember)?.displayName ?? "Birisi"
+        return HStack(spacing: 10) {
+            VStack(alignment: .leading, spacing: 3) {
+                Text("\(payer) ödedi diyor")
+                    .font(.body(14, weight: .semibold))
+                    .foregroundStyle(Color.textPrimary)
+                Text(formatAmount(settlement.amount, currency: settlement.currency))
+                    .font(.body(13, weight: .medium))
+                    .foregroundStyle(Color.textSecondary)
+            }
+            Spacer()
+            Button {
+                runSettlementAction { await store.rejectSettlement(groupID: groupID, settlementID: settlement.id) }
+            } label: {
+                Text("Reddet")
+                    .font(.body(13, weight: .semibold))
+                    .foregroundStyle(Color.debt)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 7)
+                    .background(Color.debt.opacity(0.1))
+                    .clipShape(Capsule())
+            }
+            Button {
+                runSettlementAction { await store.confirmSettlement(groupID: groupID, settlementID: settlement.id) }
+            } label: {
+                Text("Onayla")
+                    .font(.body(13, weight: .semibold))
+                    .foregroundStyle(.white)
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 7)
+                    .background(Color.credit)
+                    .clipShape(Capsule())
+            }
+        }
+        .disabled(busy)
+        .padding(.horizontal, 14)
+        .padding(.vertical, 11)
+    }
+
     // MARK: - Mode picker
 
     private var modePicker: some View {
@@ -94,18 +177,18 @@ struct BalancesTabView: View {
     }
 
     @ViewBuilder
-    private var content: some View {
+    private func content(_ snapshot: GroupSnapshot) -> some View {
         switch mode {
         case .raw:
-            rawList
+            rawList(snapshot)
         case .simplified:
-            simplifiedList
+            simplifiedList(snapshot)
         }
     }
 
     // MARK: - Raw list
 
-    private var rawList: some View {
+    private func rawList(_ snapshot: GroupSnapshot) -> some View {
         VStack(spacing: 0) {
             ForEach(snapshot.activeMembers) { member in
                 rawRow(member: member, balance: balances[member.id] ?? [:])
@@ -158,12 +241,9 @@ struct BalancesTabView: View {
 
     // MARK: - Simplified list
 
-    private var transfers: [Transfer] {
-        simplifyDebts(balances: balances)
-    }
-
     @ViewBuilder
-    private var simplifiedList: some View {
+    private func simplifiedList(_ snapshot: GroupSnapshot) -> some View {
+        let transfers = simplifyDebts(balances: balances)
         if transfers.isEmpty {
             VStack(spacing: 10) {
                 Image(systemName: "checkmark.circle.fill")
@@ -178,7 +258,7 @@ struct BalancesTabView: View {
         } else {
             VStack(spacing: 0) {
                 ForEach(Array(transfers.enumerated()), id: \.offset) { index, transfer in
-                    transferRow(transfer)
+                    transferRow(transfer, snapshot: snapshot)
                     if index != transfers.count - 1 {
                         Divider().padding(.leading, 16)
                     }
@@ -191,28 +271,133 @@ struct BalancesTabView: View {
         }
     }
 
-    private func transferRow(_ transfer: Transfer) -> some View {
+    private func transferRow(_ transfer: Transfer, snapshot: GroupSnapshot) -> some View {
         let debtor = snapshot.member(id: transfer.fromMemberId)?.displayName ?? "?"
         let creditor = snapshot.member(id: transfer.toMemberId)?.displayName ?? "?"
-        return HStack(spacing: 10) {
-            Text(debtor)
-                .font(.body(14, weight: .semibold))
-                .foregroundStyle(Color.debt)
-                .lineLimit(1)
-            Image(systemName: "arrow.right")
-                .font(.system(size: 12, weight: .bold))
-                .foregroundStyle(Color.textTertiary)
-            Text(creditor)
-                .font(.body(14, weight: .semibold))
-                .foregroundStyle(Color.credit)
-                .lineLimit(1)
-            Spacer()
-            Text(formatAmount(transfer.amount, currency: transfer.currency))
-                .font(.display(15, weight: .semibold))
-                .foregroundStyle(Color.textPrimary)
+        let isMyDebt = currentMemberID == transfer.fromMemberId
+        let pending = snapshot.pendingSettlement(
+            from: transfer.fromMemberId,
+            to: transfer.toMemberId,
+            currency: transfer.currency
+        )
+
+        return VStack(spacing: 10) {
+            HStack(spacing: 10) {
+                Text(debtor)
+                    .font(.body(14, weight: .semibold))
+                    .foregroundStyle(Color.debt)
+                    .lineLimit(1)
+                Image(systemName: "arrow.right")
+                    .font(.system(size: 12, weight: .bold))
+                    .foregroundStyle(Color.textTertiary)
+                Text(creditor)
+                    .font(.body(14, weight: .semibold))
+                    .foregroundStyle(Color.credit)
+                    .lineLimit(1)
+                Spacer()
+                Text(formatAmount(transfer.amount, currency: transfer.currency))
+                    .font(.display(15, weight: .semibold))
+                    .foregroundStyle(Color.textPrimary)
+            }
+
+            if isMyDebt {
+                if pending != nil {
+                    HStack {
+                        Spacer()
+                        Label("Onay Bekleniyor", systemImage: "clock.fill")
+                            .font(.body(12, weight: .semibold))
+                            .foregroundStyle(Color.warning)
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 6)
+                            .background(Color.warning.opacity(0.12))
+                            .clipShape(Capsule())
+                    }
+                } else {
+                    HStack(spacing: 12) {
+                        Spacer()
+                        circleAction(
+                            title: "Ödedim",
+                            icon: "checkmark",
+                            tint: .credit
+                        ) {
+                            runSettlementAction {
+                                await store.markPaid(
+                                    groupID: groupID,
+                                    fromMember: transfer.fromMemberId,
+                                    toMember: transfer.toMemberId,
+                                    amount: transfer.amount,
+                                    currency: transfer.currency
+                                )
+                            }
+                        }
+                        circleAction(
+                            title: "IBAN İste",
+                            icon: "creditcard.fill",
+                            tint: Color(cssHex: "#8B5CF6") ?? .gradientEnd
+                        ) {
+                            copyIBANRequest(
+                                creditor: creditor,
+                                amount: transfer.amount,
+                                currency: transfer.currency,
+                                groupName: snapshot.group.name
+                            )
+                        }
+                    }
+                }
+            }
         }
+        .disabled(busy)
         .padding(.horizontal, 14)
         .padding(.vertical, 13)
+    }
+
+    private func circleAction(
+        title: String,
+        icon: String,
+        tint: Color,
+        action: @escaping () -> Void
+    ) -> some View {
+        Button(action: action) {
+            VStack(spacing: 4) {
+                ZStack {
+                    Circle()
+                        .fill(tint.opacity(0.15))
+                        .frame(width: 40, height: 40)
+                    Image(systemName: icon)
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundStyle(tint)
+                }
+                Text(title)
+                    .font(.body(10, weight: .medium))
+                    .foregroundStyle(Color.textSecondary)
+            }
+        }
+    }
+
+    // MARK: - Actions
+
+    private func runSettlementAction(_ operation: @escaping () async -> Bool) {
+        busy = true
+        Task {
+            _ = await operation()
+            busy = false
+        }
+    }
+
+    /// IBAN HİÇBİR yerde saklanmaz; sadece alacaklıdan IBAN istemek için
+    /// hazır bir mesaj panoya kopyalanır. Kullanıcı dilediği yerde gönderir.
+    private func copyIBANRequest(
+        creditor: String,
+        amount: Int,
+        currency: String,
+        groupName: String
+    ) {
+        let formatted = formatAmount(amount, currency: currency)
+        UIPasteboard.general.string = """
+        Merhaba \(creditor)! "\(groupName)" grubunda sana \(formatted) ödemem var. \
+        Ödemeyi yapabilmem için IBAN'ını paylaşır mısın? Teşekkürler!
+        """
+        ibanCopied = true
     }
 }
 
@@ -232,9 +417,10 @@ enum BalanceMode: String, CaseIterable, Identifiable {
 #Preview {
     ScrollView {
         BalancesTabView(
-            snapshot: PreviewSupport.snapshot,
-            currentMemberID: PreviewSupport.founderID
+            store: PreviewSupport.groupsStore,
+            groupID: PreviewSupport.groupID
         )
     }
     .background(Color.background)
+    .environment(PreviewSupport.authStore)
 }

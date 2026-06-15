@@ -25,6 +25,10 @@ struct GroupDetailView: View {
                 }
                 .toolbar {
                     ToolbarItemGroup(placement: .topBarTrailing) {
+                        ShareLink(item: summaryText(snapshot)) {
+                            Image(systemName: "square.and.arrow.up")
+                        }
+
                         NavigationLink {
                             MembersView(groupID: groupID, store: store)
                         } label: {
@@ -55,6 +59,27 @@ struct GroupDetailView: View {
 
     private var snapshot: GroupSnapshot? {
         store.groups.first { $0.id == groupID }
+    }
+
+    /// Platform-nötr metin özeti (WhatsApp vb. için sade düz yazı).
+    private func summaryText(_ snapshot: GroupSnapshot) -> String {
+        let transfers = simplifyDebts(balances: snapshot.memberBalances())
+        var lines = ["\(snapshot.group.name) — Hesap Özeti", ""]
+
+        if transfers.isEmpty {
+            lines.append("Herkes ödeşti, kimsenin kimseye borcu yok.")
+        } else {
+            for transfer in transfers {
+                let debtor = snapshot.member(id: transfer.fromMemberId)?.displayName ?? "?"
+                let creditor = snapshot.member(id: transfer.toMemberId)?.displayName ?? "?"
+                let amount = formatAmount(transfer.amount, currency: transfer.currency)
+                lines.append("\(debtor) → \(creditor): \(amount)")
+            }
+        }
+
+        lines.append("")
+        lines.append("Groopay ile hesaplandı.")
+        return lines.joined(separator: "\n")
     }
 
     private var addExpenseButton: some View {
@@ -113,11 +138,8 @@ struct GroupDetailView: View {
         case .expenses:
             expensesList(snapshot: snapshot)
         case .balances:
-            BalancesTabView(
-                snapshot: snapshot,
-                currentMemberID: store.currentMemberID(in: groupID)
-            )
-            .padding(.top, 4)
+            BalancesTabView(store: store, groupID: groupID)
+                .padding(.top, 4)
         }
     }
 

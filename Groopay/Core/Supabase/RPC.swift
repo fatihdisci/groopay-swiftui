@@ -146,7 +146,8 @@ struct AddSettlementRPCInput: Encodable, Sendable {
         )
         try container.encode(currency.uppercased(), forKey: .currency)
         try container.encode(markedBy, forKey: .markedBy)
-        try container.encodeIfPresent(note, forKey: .note)
+        // p_note her zaman gönderilir (nil ise null) — bkz. AddExpenseRPCInput.
+        try container.encode(note, forKey: .note)
     }
 }
 
@@ -233,8 +234,9 @@ struct RPCClient: Sendable {
 
     func addSettlement(
         _ input: AddSettlementRPCInput
-    ) async -> Result<UUID, RPCError> {
-        await value("add_settlement", params: input)
+    ) async -> Result<Void, RPCError> {
+        // Dönüş değeri kullanılmıyor; void çalıştır (bkz. addExpenseWithSplits).
+        await void("add_settlement", params: input)
     }
 
     func confirmSettlement(
