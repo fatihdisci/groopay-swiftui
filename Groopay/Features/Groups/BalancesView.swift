@@ -28,10 +28,10 @@ struct BalancesTabView: View {
             .padding(.horizontal, 20)
             .padding(.top, 4)
             .animation(reduceMotion ? nil : .default, value: mode)
-            .alert("IBAN mesajı panoya kopyalandı", isPresented: $ibanCopied) {
+            .alert("WhatsApp açılamadı", isPresented: $ibanCopied) {
                 Button("Tamam", role: .cancel) {}
             } message: {
-                Text("Mesajı dilediğin uygulamada yapıştırıp gönderebilirsin.")
+                Text("IBAN isteme mesajı panoya kopyalandı; dilediğin uygulamada yapıştırabilirsin.")
             }
         }
     }
@@ -335,7 +335,7 @@ struct BalancesTabView: View {
                             icon: "creditcard.fill",
                             tint: Color(cssHex: "#8B5CF6") ?? .gradientEnd
                         ) {
-                            copyIBANRequest(
+                            sendIBANRequest(
                                 creditor: creditor,
                                 amount: transfer.amount,
                                 currency: transfer.currency,
@@ -384,20 +384,44 @@ struct BalancesTabView: View {
         }
     }
 
-    /// IBAN HİÇBİR yerde saklanmaz; sadece alacaklıdan IBAN istemek için
-    /// hazır bir mesaj panoya kopyalanır. Kullanıcı dilediği yerde gönderir.
-    private func copyIBANRequest(
+    /// IBAN HİÇBİR yerde saklanmaz. Alacaklıdan IBAN istemek için hazır bir mesajla
+    /// doğrudan WhatsApp açılır (kişiyi kullanıcı seçer). WhatsApp uygulaması yoksa
+    /// wa.me web bağlantısına, o da açılamazsa panoya kopyalamaya düşer.
+    private func sendIBANRequest(
         creditor: String,
         amount: Int,
         currency: String,
         groupName: String
     ) {
         let formatted = formatAmount(amount, currency: currency)
-        UIPasteboard.general.string = """
+        let message = """
         Merhaba \(creditor)! "\(groupName)" grubunda sana \(formatted) ödemem var. \
         Ödemeyi yapabilmem için IBAN'ını paylaşır mısın? Teşekkürler!
         """
-        ibanCopied = true
+        // Her durumda panoya da koy (en son çare).
+        UIPasteboard.general.string = message
+
+        let encoded = message.addingPercentEncoding(
+            withAllowedCharacters: .urlQueryAllowed
+        ) ?? ""
+        let appURL = URL(string: "whatsapp://send?text=\(encoded)")
+        let webURL = URL(string: "https://wa.me/?text=\(encoded)")
+
+        if let appURL {
+            UIApplication.shared.open(appURL, options: [:]) { opened in
+                if !opened {
+                    if let webURL {
+                        UIApplication.shared.open(webURL, options: [:]) { webOpened in
+                            if !webOpened { ibanCopied = true }
+                        }
+                    } else {
+                        ibanCopied = true
+                    }
+                }
+            }
+        } else {
+            ibanCopied = true
+        }
     }
 }
 
