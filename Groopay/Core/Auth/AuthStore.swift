@@ -33,6 +33,13 @@ final class AuthStore {
         observeAuthState()
     }
 
+    init(previewProfile: Profile, supabase: SupabaseClient) {
+        self.supabase = supabase
+        sessionState = .identified
+        currentProfile = previewProfile
+        isRestoringSession = false
+    }
+
     func signInAnonymously() async {
         await performAuthAction {
             try await supabase.auth.signInAnonymously()

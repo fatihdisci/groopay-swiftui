@@ -10,28 +10,38 @@ final class GroupsStore {
     private(set) var isLoading = false
     private(set) var errorMessage: String?
     var presentedPaywall = false
+    var isUsingPreviewData: Bool {
+        usesPreviewData
+    }
 
     private let supabase: SupabaseClient
     private let rpc: RPCClient
+    private let previewUserID: UUID?
+    private let usesPreviewData: Bool
 
     init(supabase: SupabaseClient = SupabaseService.shared) {
         self.supabase = supabase
         rpc = RPCClient(supabase: supabase)
+        previewUserID = nil
+        usesPreviewData = false
     }
 
     init(
         previewGroups: [GroupSnapshot],
         previewActivities: [Activity] = [],
+        previewUserID: UUID? = nil,
         supabase: SupabaseClient
     ) {
         self.supabase = supabase
         rpc = RPCClient(supabase: supabase)
+        self.previewUserID = previewUserID
+        usesPreviewData = true
         groups = previewGroups
         activities = previewActivities
     }
 
     var overallBalance: [String: Int] {
-        guard let userID = supabase.auth.currentUser?.id else { return [:] }
+        guard let userID = currentUserID else { return [:] }
         var result: [String: Int] = [:]
 
         for snapshot in groups {
@@ -55,13 +65,15 @@ final class GroupsStore {
     }
 
     var createdNonDemoGroupCount: Int {
-        guard let userID = supabase.auth.currentUser?.id else { return 0 }
+        guard let userID = currentUserID else { return 0 }
         return groups.filter {
             $0.group.createdBy == userID && !$0.group.isDemo
         }.count
     }
 
     func load() async {
+        guard !usesPreviewData else { return }
+
         isLoading = true
         errorMessage = nil
         defer { isLoading = false }
@@ -245,7 +257,7 @@ final class GroupsStore {
     // MARK: - Expenses
 
     var currentUserID: UUID? {
-        supabase.auth.currentUser?.id
+        supabase.auth.currentUser?.id ?? previewUserID
     }
 
     func snapshot(_ id: UUID) -> GroupSnapshot? {
