@@ -22,7 +22,7 @@ final class BalanceTests: XCTestCase {
             computeBalance(
                 expenses: [expense],
                 splits: splits,
-                confirmedSettlements: [],
+                settlements: [],
                 for: payer
             ),
             ["TRY": 5_000]
@@ -31,7 +31,7 @@ final class BalanceTests: XCTestCase {
             computeBalance(
                 expenses: [expense],
                 splits: splits,
-                confirmedSettlements: [],
+                settlements: [],
                 for: friend
             ),
             ["TRY": -5_000]
@@ -58,7 +58,7 @@ final class BalanceTests: XCTestCase {
                 Split(id: UUID(), expenseId: tryExpense.id, memberId: friend, shareAmount: 10_000),
                 Split(id: UUID(), expenseId: eurExpense.id, memberId: friend, shareAmount: 5_000),
             ],
-            confirmedSettlements: [],
+            settlements: [],
             for: payer
         )
 
@@ -73,7 +73,7 @@ final class BalanceTests: XCTestCase {
             computeBalance(
                 expenses: [],
                 splits: [],
-                confirmedSettlements: [confirmed, pending],
+                settlements: [confirmed, pending],
                 for: payer
             ),
             ["TRY": 2_000]
@@ -82,7 +82,7 @@ final class BalanceTests: XCTestCase {
             computeBalance(
                 expenses: [],
                 splits: [],
-                confirmedSettlements: [confirmed, pending],
+                settlements: [confirmed, pending],
                 for: friend
             ),
             ["TRY": -2_000]
@@ -109,7 +109,7 @@ final class BalanceTests: XCTestCase {
                         shareAmount: 10_000
                     )
                 ],
-                confirmedSettlements: [],
+                settlements: [],
                 for: payer
             ),
             [:]

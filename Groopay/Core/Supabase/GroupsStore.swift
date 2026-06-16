@@ -52,7 +52,7 @@ final class GroupsStore {
             let balance = computeBalance(
                 expenses: snapshot.expenses,
                 splits: snapshot.splits,
-                confirmedSettlements: snapshot.settlements,
+                settlements: snapshot.settlements,
                 for: member.id
             )
 
@@ -119,7 +119,7 @@ final class GroupsStore {
                 .value
 
             // pending + confirmed çekilir (pending UI'da onay akışı için lazım).
-            // computeBalance yalnızca confirmed olanları sayar, bakiye doğru kalır.
+            // computeBalance internally filters only confirmed settlements.
             async let settlementRows: [Settlement] = supabase
                 .from("settlements")
                 .select()

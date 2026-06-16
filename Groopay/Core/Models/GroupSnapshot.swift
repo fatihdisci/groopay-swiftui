@@ -55,7 +55,7 @@ struct GroupSnapshot: Identifiable, Equatable, Sendable {
                     computeBalance(
                         expenses: expenses,
                         splits: splits,
-                        confirmedSettlements: settlements,
+                        settlements: settlements,
                         for: member.id
                     )
                 )

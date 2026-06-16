@@ -12,7 +12,7 @@ struct CurrencyBalance: Equatable, Sendable {
 func computeBalance(
     expenses: [Expense],
     splits: [Split],
-    confirmedSettlements: [Settlement],
+    settlements: [Settlement],
     for memberId: UUID
 ) -> [String: Int] {
     var balance = CurrencyBalance()
@@ -31,7 +31,7 @@ func computeBalance(
         balance[expense.currency] -= split.shareAmount
     }
 
-    for settlement in confirmedSettlements
+    for settlement in settlements
         where settlement.status == .confirmed {
         if settlement.fromMember == memberId {
             balance[settlement.currency] += settlement.amount
