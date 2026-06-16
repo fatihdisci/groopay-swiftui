@@ -308,13 +308,13 @@ struct EditGroupView: View {
     private func transferAndLeave(to member: Member) async {
         guard let currentMember else { return }
         isWorking = true
+        defer { isWorking = false }
+
         guard await store.transferOwnership(
             groupID: groupID,
             memberID: member.id
-        ) else {
-            isWorking = false
-            return
-        }
+        ) else { return }
+
         if await store.removeMember(
             groupID: groupID,
             memberID: currentMember.id
@@ -322,7 +322,6 @@ struct EditGroupView: View {
             showTransferPicker = false
             dismiss()
         }
-        isWorking = false
     }
 }
 
