@@ -187,6 +187,13 @@ final class AuthStore {
         }
     }
 
+    /// Yerel oturumu kapatır. Hesap silindikten sonra da çağrılır: SDK önce
+    /// yerel oturumu temizleyip `.signedOut` olayını yayar, sunucudan dönen
+    /// 404/403/401'i (kullanıcı artık yok) yutar; bu yüzden güvenle çağrılabilir.
+    func signOut() async {
+        try? await supabase.auth.signOut()
+    }
+
     func clearError() {
         errorMessage = nil
     }

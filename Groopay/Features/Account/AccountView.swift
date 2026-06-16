@@ -571,7 +571,10 @@ struct AccountView: View {
         do {
             _ = try await SupabaseService.shared.functions
                 .invoke("delete-account")
-            await authStore.loadProfile()
+            // Hesap sunucuda silindi; yerel oturumu kapat. (Profili yeniden
+            // yüklemeye çalışmak silinmiş satırı `.single()` ile okuyup
+            // "Cannot coerce the result to a single JSON object" hatası verirdi.)
+            await authStore.signOut()
         } catch {
             withAnimation {
                 toastMessage = String(
