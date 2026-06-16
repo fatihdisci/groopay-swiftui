@@ -48,6 +48,14 @@ struct BalancesTabView: View {
             } message: {
                 Text("IBAN isteme mesajı panoya kopyalandı; dilediğin uygulamada yapıştırabilirsin.")
             }
+            .alert("İşlem başarısız", isPresented: Binding(
+                get: { store.errorMessage != nil },
+                set: { if !$0 { store.clearError() } }
+            )) {
+                Button("Tamam", role: .cancel) { store.clearError() }
+            } message: {
+                Text(store.errorMessage ?? "")
+            }
         }
     }
 
