@@ -25,9 +25,11 @@ struct GroopayApp: App {
             _authStore = State(initialValue: PreviewSupport.authStore)
             _screenshotGroupsStore = State(initialValue: PreviewSupport.groupsStore)
         } else {
+            // RevenueCat'i AuthStore'dan önce yapılandır: auth dinleyicisi
+            // oturum gelir gelmez `logIn` çağıracak, SDK hazır olmalı.
+            PurchasesManager.shared.configure()
             _authStore = State(initialValue: AuthStore())
             _screenshotGroupsStore = State(initialValue: nil)
-            PurchasesManager.shared.configure()
         }
     }
 

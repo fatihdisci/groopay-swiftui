@@ -211,11 +211,41 @@ final class AuthStore {
         guard let session else {
             sessionState = .signedOut
             currentProfile = nil
+            await PurchasesManager.shared.logOut()
             return
         }
 
         sessionState = session.user.isAnonymous ? .anonymous : .identified
         await loadProfile()
+        // RevenueCat kimliğini Supabase kullanıcısına bağla (webhook eşleşmesi için),
+        // sonra cihazdaki entitlement ile profili uzlaştır.
+        await PurchasesManager.shared.logIn(userID: session.user.id.uuidString)
+        await reconcileProEntitlement()
+    }
+
+    /// Cihazdaki RevenueCat entitlement'ı aktifken profil hâlâ free görünüyorsa
+    /// profili Pro'ya geçirir. Webhook gecikmesini/eksik eşleşmesini telafi eder
+    /// ve kimlik bağlanmadan önce yapılmış satın almaları kurtarır.
+    func reconcileProEntitlement() async {
+        guard currentProfile?.userPro == false else { return }
+        guard await PurchasesManager.shared.refreshCustomerInfo() else { return }
+        await setProActive()
+    }
+
+    /// Profili Pro'ya geçirip yeniden yükler. RevenueCat satın alımı/geri yüklemesi
+    /// aktif entitlement döndürdüğünde çağrılır; webhook'u beklemeden anında etki eder.
+    func setProActive() async {
+        guard let userID = supabase.auth.currentUser?.id else { return }
+        do {
+            try await supabase
+                .from("profiles")
+                .update(["user_pro": true])
+                .eq("id", value: userID)
+                .execute()
+            await loadProfile()
+        } catch {
+            errorMessage = error.localizedDescription
+        }
     }
 
     private func performAuthAction(

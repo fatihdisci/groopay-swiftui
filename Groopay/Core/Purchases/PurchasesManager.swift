@@ -46,6 +46,37 @@ final class PurchasesManager {
         Purchases.configure(withAPIKey: apiKey)
     }
 
+    /// Supabase kullanıcı kimliğini RevenueCat'e bağlar. Webhook'un satın alımı
+    /// doğru profile (`profiles.user_pro`) eşleyebilmesi için zorunludur — aksi
+    /// halde RC anonim bir app user id kullanır ve webhook profili güncelleyemez.
+    /// Anonim bir oturumda yapılmış satın alım varsa `logIn` onu bu kimliğe
+    /// taşır (alias), böylece eski satın almalar da kurtulur.
+    func logIn(userID: String) async {
+        guard Purchases.isConfigured else { return }
+        do {
+            _ = try await Purchases.shared.logIn(userID)
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+    }
+
+    func logOut() async {
+        guard Purchases.isConfigured else { return }
+        _ = try? await Purchases.shared.logOut()
+    }
+
+    /// Sunucudan taze `CustomerInfo` çekip Pro entitlement'ının aktif olup
+    /// olmadığını döndürür. Açılışta profil ile entitlement'ı uzlaştırmak için.
+    func refreshCustomerInfo() async -> Bool {
+        guard Purchases.isConfigured else { return false }
+        do {
+            let info = try await Purchases.shared.customerInfo()
+            return info.entitlements[Self.entitlementID]?.isActive == true
+        } catch {
+            return false
+        }
+    }
+
     func loadOfferings() async {
         isLoading = true
         errorMessage = nil

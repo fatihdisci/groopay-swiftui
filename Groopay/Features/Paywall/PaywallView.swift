@@ -42,6 +42,7 @@ private let proFeatures: [ProFeature] = [
 struct PaywallView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.locale) private var locale
+    @Environment(AuthStore.self) private var authStore
     @State private var purchases = PurchasesManager.shared
     @State private var selectedFeature = 0
     @State private var isPurchasing = false
@@ -238,7 +239,10 @@ struct PaywallView: View {
         Button {
             Task {
                 isPurchasing = true
-                purchaseSuccess = await purchases.purchase()
+                let success = await purchases.purchase()
+                // Satın alma başarılıysa profili webhook'u beklemeden Pro yap.
+                if success { await authStore.setProActive() }
+                purchaseSuccess = success
                 isPurchasing = false
             }
         } label: {
@@ -279,7 +283,9 @@ struct PaywallView: View {
             Button("Satın Almaları Geri Yükle") {
                 Task {
                     isPurchasing = true
-                    purchaseSuccess = await purchases.restorePurchases()
+                    let success = await purchases.restorePurchases()
+                    if success { await authStore.setProActive() }
+                    purchaseSuccess = success
                     isPurchasing = false
                 }
             }
@@ -336,4 +342,5 @@ struct PaywallView: View {
 
 #Preview {
     PaywallView()
+        .environment(PreviewSupport.authStore)
 }
