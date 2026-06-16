@@ -5,6 +5,10 @@ struct Split: Codable, Identifiable, Equatable, Sendable {
     let expenseId: UUID
     let memberId: UUID
     var shareAmount: Int
+    /// Split'in para birimi — parent expense ile aynıdır.
+    /// CodingKeys'te yok, DB splits tablosunda da currency kolonu yok;
+    /// varsayılan TRY. Çoklu-currency gelince expense_id JOIN ile çekilecek.
+    var currency: String = "TRY"
 
     enum CodingKeys: String, CodingKey {
         case id
@@ -17,12 +21,14 @@ struct Split: Codable, Identifiable, Equatable, Sendable {
         id: UUID,
         expenseId: UUID,
         memberId: UUID,
-        shareAmount: Int
+        shareAmount: Int,
+        currency: String = "TRY"
     ) {
         self.id = id
         self.expenseId = expenseId
         self.memberId = memberId
         self.shareAmount = shareAmount
+        self.currency = currency.uppercased()
     }
 
     init(from decoder: Decoder) throws {
@@ -30,9 +36,10 @@ struct Split: Codable, Identifiable, Equatable, Sendable {
         id = try container.decode(UUID.self, forKey: .id)
         expenseId = try container.decode(UUID.self, forKey: .expenseId)
         memberId = try container.decode(UUID.self, forKey: .memberId)
+        currency = "TRY"
         shareAmount = try container.decodeMinorAmount(
             forKey: .shareAmount,
-            currency: "TRY"
+            currency: currency
         )
     }
 
@@ -42,7 +49,7 @@ struct Split: Codable, Identifiable, Equatable, Sendable {
         try container.encode(expenseId, forKey: .expenseId)
         try container.encode(memberId, forKey: .memberId)
         try container.encode(
-            decimalAmount(fromMinor: shareAmount, currency: "TRY"),
+            decimalAmount(fromMinor: shareAmount, currency: currency),
             forKey: .shareAmount
         )
     }

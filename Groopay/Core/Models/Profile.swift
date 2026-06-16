@@ -1,6 +1,6 @@
 import Foundation
 
-struct Profile: Codable, Equatable, Sendable {
+struct Profile: Codable, Identifiable, Equatable, Sendable {
     let id: UUID
     var displayName: String
     var avatarColor: String
