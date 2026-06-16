@@ -1,6 +1,54 @@
 {
   "sourceLanguage" : "tr",
   "strings" : {
+    "Çıkış Yap" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sign Out"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Çıkış Yap"
+          }
+        }
+      }
+    },
+    "Çıkış yapılsın mı?" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sign out?"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Çıkış yapılsın mı?"
+          }
+        }
+      }
+    },
+    "Verilerin korunur. Apple ile tekrar giriş yaparak geri dönebilirsin." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your data is kept — sign in with Apple again to come back."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verilerin korunur. Apple ile tekrar giriş yaparak geri dönebilirsin."
+          }
+        }
+      }
+    },
     "/ay" : {
       "localizations" : {
         "en" : {

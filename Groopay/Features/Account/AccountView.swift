@@ -9,6 +9,7 @@ struct AccountView: View {
     @State private var showPaywall = false
     @State private var showProfileEditor = false
     @State private var showDeleteConfirm = false
+    @State private var showSignOutConfirm = false
     @State private var isDeleting = false
     @State private var isExporting = false
     @State private var toastMessage: String?
@@ -47,9 +48,12 @@ struct AccountView: View {
                     // Yasal
                     legalSection
 
-                    // Tehlikeli
+                    // Oturum / Tehlikeli
                     Spacer()
                         .frame(height: 12)
+                    if authStore.sessionState == .identified {
+                        signOutButton
+                    }
                     dangerZone
 
                     Spacer()
@@ -91,6 +95,18 @@ struct AccountView: View {
             Button("Vazgeç", role: .cancel) {}
         } message: {
             Text("Bu işlem geri alınamaz. Tüm grup verilerine erişimin silinir ve Pro aboneliğin iptal olur.")
+        }
+        .confirmationDialog(
+            "Çıkış yapılsın mı?",
+            isPresented: $showSignOutConfirm,
+            titleVisibility: .visible
+        ) {
+            Button("Çıkış Yap", role: .destructive) {
+                Task { await authStore.signOut() }
+            }
+            Button("Vazgeç", role: .cancel) {}
+        } message: {
+            Text("Verilerin korunur. Apple ile tekrar giriş yaparak geri dönebilirsin.")
         }
         .overlay(alignment: .bottom) {
             if let message = toastMessage {
@@ -408,6 +424,29 @@ struct AccountView: View {
             }
         }
         .padding(18)
+        .background(Color.surface)
+        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .purpleTintedShadow()
+    }
+
+    // MARK: - Sign Out
+
+    private var signOutButton: some View {
+        Button {
+            showSignOutConfirm = true
+        } label: {
+            HStack(spacing: 14) {
+                Image(systemName: "rectangle.portrait.and.arrow.right")
+                    .font(.system(size: 16))
+                    .foregroundStyle(Color.textSecondary)
+                Text("Çıkış Yap")
+                    .font(.body(15, weight: .medium))
+                    .foregroundStyle(Color.textPrimary)
+                Spacer()
+            }
+            .padding(.horizontal, 18)
+            .padding(.vertical, 16)
+        }
         .background(Color.surface)
         .clipShape(RoundedRectangle(cornerRadius: 16))
         .purpleTintedShadow()
