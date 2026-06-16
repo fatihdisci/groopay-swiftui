@@ -23,6 +23,17 @@ struct MembersView: View {
         .background(Color.background)
         .navigationTitle("Üyeler")
         .navigationBarTitleDisplayMode(.inline)
+        .alert(
+            "İşlem başarısız",
+            isPresented: Binding(
+                get: { store.errorMessage != nil },
+                set: { if !$0 { store.clearError() } }
+            )
+        ) {
+            Button("Tamam", role: .cancel) { store.clearError() }
+        } message: {
+            Text(store.errorMessage ?? "")
+        }
     }
 
     private var snapshot: GroupSnapshot? {
@@ -104,7 +115,7 @@ struct MembersView: View {
                     .font(.body(14, weight: .semibold))
                     .disabled(ghostName.trimmingCharacters(
                         in: .whitespacesAndNewlines
-                    ).isEmpty)
+                    ).isEmpty || isWorking)
                 }
                 .padding(14)
                 .background(Color.surface)

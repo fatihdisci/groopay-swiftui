@@ -65,6 +65,7 @@ struct AccountView: View {
         }
         .navigationTitle("Hesabım")
         .navigationBarTitleDisplayMode(.inline)
+        .tipsButton()
         .sheet(isPresented: $showPaywall) {
             PaywallView()
         }

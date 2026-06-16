@@ -37,6 +37,7 @@ struct ActivityView: View {
         }
         .navigationTitle("Aktivite")
         .navigationBarTitleDisplayMode(.inline)
+        .tipsButton()
         .task { await store.load() }
         .refreshable { await store.load() }
         .sheet(isPresented: $showPaywall) {

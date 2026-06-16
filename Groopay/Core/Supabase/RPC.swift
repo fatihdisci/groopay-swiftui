@@ -322,6 +322,19 @@ struct RPCClient: Sendable {
         )
     }
 
+    func addGhostMember(
+        groupId: UUID,
+        displayName: String
+    ) async -> Result<UUID, RPCError> {
+        await value(
+            "add_ghost_member",
+            params: AddGhostMemberParams(
+                groupId: groupId,
+                displayName: displayName
+            )
+        )
+    }
+
     func createInvite(
         groupId: UUID,
         expiresInDays: Int = 7
@@ -431,6 +444,16 @@ private struct TokenParams: Encodable {
 
     enum CodingKeys: String, CodingKey {
         case token = "p_token"
+    }
+}
+
+struct AddGhostMemberParams: Encodable {
+    let groupId: UUID
+    let displayName: String
+
+    enum CodingKeys: String, CodingKey {
+        case groupId = "p_group_id"
+        case displayName = "p_display_name"
     }
 }
 

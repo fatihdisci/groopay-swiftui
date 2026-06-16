@@ -17,6 +17,7 @@ struct GroupsView: View {
         )
         .navigationTitle("Gruplar")
         .navigationBarTitleDisplayMode(.inline)
+        .tipsButton()
         .task {
             await store.load()
         }

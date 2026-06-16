@@ -460,15 +460,13 @@ final class GroupsStore {
         displayName: String
     ) async -> Bool {
         do {
-            try await supabase
-                .from("group_members")
-                .insert(
-                    GhostMemberInsert(
-                        groupId: groupID,
-                        displayName: displayName
-                    )
-                )
+            let _: UUID = try await supabase
+                .rpc("add_ghost_member", params: AddGhostMemberParams(
+                    groupId: groupID,
+                    displayName: displayName
+                ))
                 .execute()
+                .value
             await load()
             return true
         } catch {
@@ -618,20 +616,6 @@ private struct GroupUpdate: Encodable {
         case description
         case avatarEmoji = "avatar_emoji"
         case avatarColor = "avatar_color"
-    }
-}
-
-private struct GhostMemberInsert: Encodable {
-    let groupId: UUID
-    let userId: UUID? = nil
-    let displayName: String
-    let role = MemberRole.member
-
-    enum CodingKeys: String, CodingKey {
-        case groupId = "group_id"
-        case userId = "user_id"
-        case displayName = "display_name"
-        case role
     }
 }
 
