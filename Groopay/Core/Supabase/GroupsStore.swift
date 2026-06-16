@@ -73,6 +73,7 @@ final class GroupsStore {
 
     func load() async {
         guard !usesPreviewData else { return }
+        guard !isLoading else { return }
 
         isLoading = true
         errorMessage = nil
@@ -459,17 +460,14 @@ final class GroupsStore {
         groupID: UUID,
         displayName: String
     ) async -> Bool {
-        do {
-            let _: UUID = try await supabase
-                .rpc("add_ghost_member", params: AddGhostMemberParams(
-                    groupId: groupID,
-                    displayName: displayName
-                ))
-                .execute()
-                .value
+        switch await rpc.addGhostMember(
+            groupId: groupID,
+            displayName: displayName
+        ) {
+        case .success:
             await load()
             return true
-        } catch {
+        case .failure(let error):
             errorMessage = error.localizedDescription
             return false
         }
