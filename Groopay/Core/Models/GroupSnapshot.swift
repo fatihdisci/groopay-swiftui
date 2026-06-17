@@ -15,6 +15,17 @@ struct GroupSnapshot: Identifiable, Equatable, Sendable {
         members.filter(\.isActive)
     }
 
+    var ledgerMembers: [Member] {
+        let referencedMemberIDs = Set(
+            expenses.map(\.paidBy)
+                + splits.map(\.memberId)
+                + settlements.flatMap { [$0.fromMember, $0.toMember] }
+        )
+        return members.filter { member in
+            member.isActive || referencedMemberIDs.contains(member.id)
+        }
+    }
+
     func currentMember(userID: UUID?) -> Member? {
         guard let userID else { return nil }
         return members.first { $0.userId == userID && $0.isActive }
@@ -50,6 +61,23 @@ struct GroupSnapshot: Identifiable, Equatable, Sendable {
     func memberBalances() -> [UUID: [String: Int]] {
         Dictionary(
             uniqueKeysWithValues: activeMembers.map { member in
+                (
+                    member.id,
+                    computeBalance(
+                        expenses: expenses,
+                        splits: splits,
+                        settlements: settlements,
+                        for: member.id
+                    )
+                )
+            }
+        )
+    }
+
+    /// Geçmiş kayıtlarla ilişkili pasif üyeleri de gösteren defter bakiyesi.
+    func ledgerBalances() -> [UUID: [String: Int]] {
+        Dictionary(
+            uniqueKeysWithValues: ledgerMembers.map { member in
                 (
                     member.id,
                     computeBalance(

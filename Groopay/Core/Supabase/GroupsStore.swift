@@ -18,6 +18,8 @@ final class GroupsStore {
     private let rpc: RPCClient
     private let previewUserID: UUID?
     private let usesPreviewData: Bool
+    private var needsReloadAfterCurrentLoad = false
+    private var realtimeRefreshTask: Task<Void, Never>?
 
     init(supabase: SupabaseClient = SupabaseService.shared) {
         self.supabase = supabase
@@ -73,11 +75,13 @@ final class GroupsStore {
 
     func load() async {
         guard !usesPreviewData else { return }
-        guard !isLoading else { return }
+        guard !isLoading else {
+            needsReloadAfterCurrentLoad = true
+            return
+        }
 
         isLoading = true
         errorMessage = nil
-        defer { isLoading = false }
 
         do {
             let memberships: [GroupIDRow] = try await supabase
@@ -90,6 +94,9 @@ final class GroupsStore {
             let groupIDs = Array(Set(memberships.map(\.groupId)))
             guard !groupIDs.isEmpty else {
                 groups = []
+                activities = []
+                isLoading = false
+                await runPendingReloadIfNeeded()
                 return
             }
 
@@ -178,6 +185,9 @@ final class GroupsStore {
         } catch {
             errorMessage = error.localizedDescription
         }
+
+        isLoading = false
+        await runPendingReloadIfNeeded()
     }
 
     /// Aktivite akışı en iyi çaba ile yüklenir; bir sorun olsa bile grup
@@ -199,6 +209,17 @@ final class GroupsStore {
 
     /// Realtime tetiklemesiyle önbelleği geçersiz kıl (manuel invalidate).
     func refreshFromRealtime() async {
+        realtimeRefreshTask?.cancel()
+        realtimeRefreshTask = Task { [weak self] in
+            try? await Task.sleep(for: .milliseconds(350))
+            guard !Task.isCancelled else { return }
+            await self?.load()
+        }
+    }
+
+    private func runPendingReloadIfNeeded() async {
+        guard needsReloadAfterCurrentLoad else { return }
+        needsReloadAfterCurrentLoad = false
         await load()
     }
 
@@ -564,14 +585,14 @@ final class GroupsStore {
                 )
 
             guard response.success else {
-                errorMessage = response.error ?? localized("Gruba katılınamadı.")
+                errorMessage = joinErrorMessage(response.error)
                 return false
             }
 
             await load()
             return true
         } catch {
-            errorMessage = error.localizedDescription
+            errorMessage = joinErrorMessage(error.localizedDescription)
             return false
         }
     }
@@ -585,6 +606,16 @@ final class GroupsStore {
             localized: key,
             locale: LocalizationStore.currentLocale()
         )
+    }
+
+    private func joinErrorMessage(_ message: String?) -> String {
+        let fallback = localized("Gruba katılınamadı.")
+        guard let message else { return fallback }
+        if message.localizedCaseInsensitiveContains("removed")
+            || message.localizedCaseInsensitiveContains("cannot rejoin") {
+            return localized("Bu gruptan çıkarıldığın için davet koduyla tekrar katılamazsın.")
+        }
+        return message
     }
 
     private static func isLimitError(_ error: RPCError) -> Bool {

@@ -4,6 +4,12 @@ struct DashboardView: View {
     @Environment(AuthStore.self) private var authStore
     @Environment(\.locale) private var locale
     @State private var showPaywall = false
+    @State private var selectedTimeFilter: TimeFilter = .month
+    @State private var selectedDonutCurrency: String?
+    @State private var selectedDonutSegment: Int?
+    @State private var isRecentActivityExpanded = false
+    @State private var activitySearchText = ""
+    @State private var debouncedActivitySearchText = ""
     let store: GroupsStore
 
     private var isPro: Bool {
@@ -43,6 +49,19 @@ struct DashboardView: View {
         .sheet(isPresented: $showPaywall) {
             PaywallView()
         }
+        .onChange(of: selectedTimeFilter) { _, _ in
+            withAnimation(.spring(response: 0.35)) {
+                selectedDonutSegment = nil
+                selectedDonutCurrency = defaultDonutCurrency
+                activitySearchText = ""
+                debouncedActivitySearchText = ""
+            }
+        }
+        .task(id: activitySearchText) {
+            try? await Task.sleep(for: .milliseconds(300))
+            guard !Task.isCancelled else { return }
+            debouncedActivitySearchText = activitySearchText
+        }
     }
 
     // MARK: - Empty
@@ -68,7 +87,13 @@ struct DashboardView: View {
     // MARK: - Overall Balance (herkese açık)
 
     private var overallBalanceCard: some View {
-        let balances = store.overallBalance
+        let balances = isPro
+            ? DashboardAnalytics.overallBalance(
+                groups: store.groups,
+                userID: store.currentUserID,
+                filter: selectedTimeFilter
+            )
+            : store.overallBalance
 
         return VStack(spacing: 10) {
             HStack {
@@ -121,11 +146,19 @@ struct DashboardView: View {
 
     @ViewBuilder
     private var proContent: some View {
-        // Kategori Analizi
+        timeFilterPicker
+        donutSection
         categorySection
-
-        // Son Aktivite
         recentActivitySection
+    }
+
+    private var timeFilterPicker: some View {
+        Picker("Zaman Filtresi", selection: $selectedTimeFilter) {
+            ForEach(TimeFilter.allCases) { filter in
+                Text(filter.title).tag(filter)
+            }
+        }
+        .pickerStyle(.segmented)
     }
 
     // MARK: - Free Teaser
@@ -178,8 +211,101 @@ struct DashboardView: View {
 
     // MARK: - Category Analysis
 
+    private var donutSection: some View {
+        let stats = categoryStats(filter: selectedTimeFilter)
+        let currencies = donutCurrencies(from: stats)
+        let currency = selectedDonutCurrency ?? defaultDonutCurrency ?? currencies.first
+        let segments = donutSegments(stats: stats, currency: currency)
+        let total = segments.reduce(0) { $0 + $1.value }
+
+        return VStack(alignment: .leading, spacing: 14) {
+            HStack {
+                Text("Harcama Dağılımı")
+                    .font(.display(17, weight: .bold))
+                    .foregroundStyle(Color.textPrimary)
+                Spacer()
+                if currencies.count > 1 {
+                    Menu {
+                        ForEach(currencies, id: \.self) { item in
+                            Button(item) {
+                                withAnimation(.spring(response: 0.35)) {
+                                    selectedDonutCurrency = item
+                                    selectedDonutSegment = nil
+                                }
+                            }
+                        }
+                    } label: {
+                        HStack(spacing: 6) {
+                            Text(currency ?? "")
+                                .font(.body(12, weight: .semibold))
+                            Image(systemName: "chevron.down")
+                                .font(.system(size: 10, weight: .bold))
+                        }
+                        .foregroundStyle(Color.primaryTheme)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 7)
+                        .background(Color.surfaceTinted)
+                        .clipShape(Capsule())
+                    }
+                }
+            }
+
+            if segments.isEmpty {
+                Text("Henüz kategori verisi yok.")
+                    .font(.body(14))
+                    .foregroundStyle(Color.textTertiary)
+                    .padding(.vertical, 8)
+            } else {
+                DonutChart(
+                    segments: segments,
+                    centerText: formatAmount(total, currency: currency ?? ""),
+                    selectedSegment: $selectedDonutSegment
+                )
+                .frame(maxWidth: .infinity)
+
+                if let selectedDonutSegment,
+                   segments.indices.contains(selectedDonutSegment) {
+                    let segment = segments[selectedDonutSegment]
+                    let percent = total > 0
+                        ? Int((Double(segment.value) / Double(total) * 100).rounded())
+                        : 0
+                    HStack(spacing: 10) {
+                        Circle()
+                            .fill(segment.color)
+                            .frame(width: 10, height: 10)
+                        Text(segment.label)
+                            .font(.body(14, weight: .semibold))
+                            .foregroundStyle(Color.textPrimary)
+                        Spacer()
+                        Text(formatAmount(segment.value, currency: currency ?? ""))
+                            .font(.body(13, weight: .semibold))
+                            .foregroundStyle(Color.textSecondary)
+                        Text(
+                            String(
+                                format: String(localized: "Toplamın %lld%%'i", locale: locale),
+                                locale: locale,
+                                Int64(percent)
+                            )
+                        )
+                        .font(.body(12, weight: .medium))
+                        .foregroundStyle(Color.textTertiary)
+                    }
+                    .padding(14)
+                    .frame(maxWidth: .infinity)
+                    .background(Color.surface)
+                    .clipShape(RoundedRectangle(cornerRadius: ThemeRadius.card))
+                    .transition(.opacity.combined(with: .move(edge: .bottom)))
+                }
+            }
+        }
+        .padding(18)
+        .background(Color.background)
+        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .purpleTintedShadow()
+    }
+
     private var categorySection: some View {
-        let stats = categoryStats()
+        let stats = categoryStats(filter: selectedTimeFilter)
 
         return VStack(alignment: .leading, spacing: 14) {
             Text("Harcama Kategorileri")
@@ -192,8 +318,11 @@ struct DashboardView: View {
                     .foregroundStyle(Color.textTertiary)
                     .padding(.vertical, 8)
             } else {
-                ForEach(stats.prefix(6)) { stat in
-                    categoryBar(stat)
+                LazyVStack(spacing: 12) {
+                    ForEach(stats.prefix(6)) { stat in
+                        categoryBar(stat, maxAmount: stats.first?.totalForSorting ?? 1)
+                            .transition(.slide.combined(with: .opacity))
+                    }
                 }
             }
         }
@@ -203,11 +332,12 @@ struct DashboardView: View {
         .purpleTintedShadow()
     }
 
-    private func categoryBar(_ stat: CategoryStat) -> some View {
-        let maxAmount = categoryStats().first?.amount ?? 1
-        let fraction = maxAmount > 0 ? Double(stat.amount) / Double(maxAmount) : 0
+    private func categoryBar(_ stat: CategoryStat, maxAmount: Int) -> some View {
+        let fraction = maxAmount > 0
+            ? Double(stat.totalForSorting) / Double(maxAmount)
+            : 0
 
-        return VStack(spacing: 6) {
+        return VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 10) {
                 Image(systemName: stat.category.icon)
                     .font(.system(size: 13, weight: .semibold))
@@ -219,10 +349,25 @@ struct DashboardView: View {
                     .foregroundStyle(Color.textPrimary)
 
                 Spacer()
+            }
 
-                Text(formatAmount(stat.amount, currency: stat.currency))
-                    .font(.body(14, weight: .semibold))
-                    .foregroundStyle(Color.textSecondary)
+            FlowPills(items: stat.currencyAmounts) { item in
+                HStack(spacing: 6) {
+                    Text(formatAmount(item.amount, currency: item.currency))
+                        .font(.body(12, weight: .semibold))
+                    Text(item.currency.uppercased())
+                        .font(.body(10, weight: .semibold))
+                        .foregroundStyle(stat.category.color)
+                        .padding(.horizontal, 5)
+                        .padding(.vertical, 2)
+                        .background(stat.category.color.opacity(0.12))
+                        .clipShape(Capsule())
+                }
+                .foregroundStyle(Color.textSecondary)
+                .padding(.horizontal, 10)
+                .padding(.vertical, 6)
+                .background(Color.surfaceTinted)
+                .clipShape(Capsule())
             }
 
             GeometryReader { geo in
@@ -246,28 +391,66 @@ struct DashboardView: View {
     // MARK: - Recent Activity
 
     private var recentActivitySection: some View {
-        let recent = store.activities.prefix(10)
+        let filtered = filteredActivities()
+        let searched = searchedActivities(from: filtered)
+        let visible = Array(searched.prefix(10))
 
         return VStack(alignment: .leading, spacing: 14) {
-            Text("Son Aktiviteler")
-                .font(.display(17, weight: .bold))
-                .foregroundStyle(Color.textPrimary)
+            Button {
+                withAnimation(.spring(response: 0.35)) {
+                    isRecentActivityExpanded.toggle()
+                }
+            } label: {
+                HStack {
+                    Image(systemName: isRecentActivityExpanded ? "chevron.down" : "chevron.right")
+                        .font(.system(size: 12, weight: .bold))
+                        .foregroundStyle(Color.primaryTheme)
+                        .frame(width: 18)
+                    Text("Son Aktiviteler")
+                        .font(.display(17, weight: .bold))
+                        .foregroundStyle(Color.textPrimary)
+                    Text("(\(searched.count)/\(filtered.count))")
+                        .font(.body(13, weight: .semibold))
+                        .foregroundStyle(Color.textTertiary)
+                    Spacer()
+                }
+            }
+            .buttonStyle(.plain)
 
-            if recent.isEmpty {
-                Text("Henüz aktivite yok.")
-                    .font(.body(14))
-                    .foregroundStyle(Color.textTertiary)
-                    .padding(.vertical, 8)
-            } else {
-                VStack(spacing: 0) {
-                    ForEach(Array(recent)) { activity in
-                        dashboardActivityRow(activity)
-                        if activity.id != recent.last?.id {
-                            Divider()
-                                .padding(.leading, 52)
+            if isRecentActivityExpanded {
+                VStack(spacing: 12) {
+                    HStack(spacing: 10) {
+                        Image(systemName: "magnifyingglass")
+                            .font(.system(size: 14, weight: .semibold))
+                            .foregroundStyle(Color.textTertiary)
+                        TextField("Arama", text: $activitySearchText)
+                            .font(.body(14))
+                            .textInputAutocapitalization(.never)
+                            .autocorrectionDisabled()
+                    }
+                    .padding(12)
+                    .background(Color.surfaceTinted)
+                    .clipShape(RoundedRectangle(cornerRadius: ThemeRadius.button))
+
+                    if visible.isEmpty {
+                        Text(searched.isEmpty && !debouncedActivitySearchText.isEmpty ? "Sonuç yok" : "Henüz aktivite yok.")
+                            .font(.body(14))
+                            .foregroundStyle(Color.textTertiary)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(.vertical, 8)
+                    } else {
+                        VStack(spacing: 0) {
+                            ForEach(visible) { activity in
+                                dashboardActivityRow(activity)
+                                if activity.id != visible.last?.id {
+                                    Divider()
+                                        .padding(.leading, 52)
+                                }
+                            }
                         }
                     }
                 }
+                .transition(.move(edge: .top).combined(with: .opacity))
             }
         }
         .padding(18)
@@ -329,35 +512,111 @@ struct DashboardView: View {
 
     // MARK: - Data helpers
 
-    private struct CategoryStat: Identifiable {
-        var id: String { category.id }
-        let category: ExpenseCategory
-        let amount: Int
-        let currency: String
+    private var defaultDonutCurrency: String? {
+        let totals = categoryStats(filter: selectedTimeFilter)
+            .flatMap(\.currencyAmounts)
+            .reduce(into: [String: Int]()) { result, item in
+                result[item.currency.uppercased(), default: 0] += item.amount
+            }
+        return totals.max { $0.value < $1.value }?.key
     }
 
-    private func categoryStats() -> [CategoryStat] {
-        var map: [String: (amount: Int, currency: String, category: ExpenseCategory)] = [:]
+    private func categoryStats(filter: TimeFilter) -> [CategoryStat] {
+        DashboardAnalytics.categoryStats(
+            groups: store.groups,
+            filter: filter
+        )
+    }
 
-        for snapshot in store.groups {
-            for expense in snapshot.expenses where expense.deletedAt == nil {
-                let cat = ExpenseCategory.find(expense.category)
-                let key = "\(expense.currency.uppercased())-\(cat.id)"
-
-                var current = map[key] ?? (0, expense.currency, cat)
-                current.0 += expense.amount
-                map[key] = current
+    private func donutCurrencies(from stats: [CategoryStat]) -> [String] {
+        let totals = stats
+            .flatMap(\.currencyAmounts)
+            .reduce(into: [String: Int]()) { result, item in
+                result[item.currency.uppercased(), default: 0] += item.amount
             }
+        return totals.sorted { lhs, rhs in
+            if lhs.value == rhs.value { return lhs.key < rhs.key }
+            return lhs.value > rhs.value
         }
+        .map(\.key)
+    }
 
-        return map.values
-            .map { CategoryStat(category: $0.category, amount: $0.amount, currency: $0.currency) }
-            .sorted { $0.amount > $1.amount }
+    private func donutSegments(
+        stats: [CategoryStat],
+        currency: String?
+    ) -> [DonutChart.Segment] {
+        guard let currency else { return [] }
+        return stats.compactMap { stat -> DonutChart.Segment? in
+            let amount = stat.amount(for: currency)
+            guard amount > 0 else { return nil }
+            return DonutChart.Segment(
+                color: stat.category.color,
+                label: categoryTitle(stat.category),
+                value: amount
+            )
+        }
+    }
+
+    private func filteredActivities() -> [Activity] {
+        DashboardAnalytics.filteredActivities(
+            store.activities,
+            filter: selectedTimeFilter
+        )
+        .sorted {
+            ($0.createdAt ?? .distantPast) > ($1.createdAt ?? .distantPast)
+        }
+    }
+
+    private func searchedActivities(from activities: [Activity]) -> [Activity] {
+        let query = debouncedActivitySearchText
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !query.isEmpty else { return activities }
+
+        return activities.filter { activity in
+            let presentation = ActivityPresentation(
+                activity: activity,
+                actorName: actorName(activity),
+                locale: locale
+            )
+            let haystack = [
+                presentation.title,
+                presentation.subtitle ?? "",
+                groupName(activity.groupId)
+            ]
+            .joined(separator: " ")
+
+            return haystack.range(
+                of: query,
+                options: [.caseInsensitive, .diacriticInsensitive],
+                locale: locale
+            ) != nil
+        }
     }
 
     private func groupName(_ groupID: UUID) -> String {
         store.groups.first { $0.id == groupID }?.group.name
             ?? String(localized: "Grup", locale: locale)
+    }
+
+    private func categoryTitle(_ category: ExpenseCategory) -> String {
+        switch category.id {
+        case "food":
+            return String(localized: "Yemek", locale: locale)
+        case "transport":
+            return String(localized: "Ulaşım", locale: locale)
+        case "accommodation":
+            return String(localized: "Konaklama", locale: locale)
+        case "shopping":
+            return String(localized: "Alışveriş", locale: locale)
+        case "entertainment":
+            return String(localized: "Eğlence", locale: locale)
+        case "groceries":
+            return String(localized: "Market", locale: locale)
+        case "bills":
+            return String(localized: "Faturalar", locale: locale)
+        default:
+            return String(localized: "Diğer", locale: locale)
+        }
     }
 
     private func actorName(_ activity: Activity) -> String? {
@@ -406,6 +665,215 @@ struct DashboardView: View {
             formatter.locale = locale
             formatter.setLocalizedDateFormatFromTemplate("d MMM")
             return formatter.string(from: date)
+        }
+    }
+}
+
+enum TimeFilter: String, CaseIterable, Identifiable {
+    case week
+    case month
+    case all
+
+    var id: String { rawValue }
+
+    var title: LocalizedStringResource {
+        switch self {
+        case .week: "Bu Hafta"
+        case .month: "Bu Ay"
+        case .all: "Tüm Zamanlar"
+        }
+    }
+
+    func since(
+        now: Date = Date(),
+        calendar: Calendar = .current
+    ) -> Date? {
+        switch self {
+        case .week:
+            return calendar.dateInterval(of: .weekOfYear, for: now)?.start
+        case .month:
+            return calendar.dateInterval(of: .month, for: now)?.start
+        case .all:
+            return nil
+        }
+    }
+}
+
+struct CurrencyAmount: Hashable {
+    let currency: String
+    let amount: Int
+}
+
+struct CategoryStat: Identifiable {
+    var id: String { category.id }
+    let category: ExpenseCategory
+    let currencyAmounts: [CurrencyAmount]
+    let totalForSorting: Int
+
+    func amount(for currency: String) -> Int {
+        currencyAmounts.first {
+            $0.currency.uppercased() == currency.uppercased()
+        }?.amount ?? 0
+    }
+}
+
+enum DashboardAnalytics {
+    static func overallBalance(
+        groups: [GroupSnapshot],
+        userID: UUID?,
+        filter: TimeFilter,
+        now: Date = Date(),
+        calendar: Calendar = .current
+    ) -> [String: Int] {
+        guard let userID else { return [:] }
+        var result: [String: Int] = [:]
+
+        for snapshot in groups {
+            guard let member = snapshot.currentMember(userID: userID) else {
+                continue
+            }
+            let expenses = filteredExpenses(
+                snapshot.expenses,
+                filter: filter,
+                now: now,
+                calendar: calendar
+            )
+            let expenseIDs = Set(expenses.map(\.id))
+            let splits = snapshot.splits.filter {
+                expenseIDs.contains($0.expenseId)
+            }
+            let settlements = filteredSettlements(
+                snapshot.settlements,
+                filter: filter,
+                now: now,
+                calendar: calendar
+            )
+            let balance = computeBalance(
+                expenses: expenses,
+                splits: splits,
+                settlements: settlements,
+                for: member.id
+            )
+
+            for (currency, amount) in balance {
+                result[currency, default: 0] += amount
+            }
+        }
+
+        return result.filter { $0.value != 0 }
+    }
+
+    static func categoryStats(
+        groups: [GroupSnapshot],
+        filter: TimeFilter,
+        now: Date = Date(),
+        calendar: Calendar = .current
+    ) -> [CategoryStat] {
+        var amountsByCategory: [String: (category: ExpenseCategory, amounts: [String: Int])] = [:]
+
+        for snapshot in groups {
+            for expense in filteredExpenses(
+                snapshot.expenses,
+                filter: filter,
+                now: now,
+                calendar: calendar
+            ) {
+                let category = ExpenseCategory.find(expense.category)
+                var entry = amountsByCategory[category.id] ?? (category, [:])
+                entry.amounts[expense.currency.uppercased(), default: 0] += expense.amount
+                amountsByCategory[category.id] = entry
+            }
+        }
+
+        return amountsByCategory.values
+            .map { entry in
+                let currencyAmounts = entry.amounts
+                    .map { CurrencyAmount(currency: $0.key, amount: $0.value) }
+                    .sorted { lhs, rhs in
+                        if lhs.amount == rhs.amount {
+                            return lhs.currency < rhs.currency
+                        }
+                        return lhs.amount > rhs.amount
+                    }
+                return CategoryStat(
+                    category: entry.category,
+                    currencyAmounts: currencyAmounts,
+                    totalForSorting: currencyAmounts.reduce(0) { $0 + $1.amount }
+                )
+            }
+            .sorted { lhs, rhs in
+                if lhs.totalForSorting == rhs.totalForSorting {
+                    return lhs.category.id < rhs.category.id
+                }
+                return lhs.totalForSorting > rhs.totalForSorting
+            }
+    }
+
+    static func filteredActivities(
+        _ activities: [Activity],
+        filter: TimeFilter,
+        now: Date = Date(),
+        calendar: Calendar = .current
+    ) -> [Activity] {
+        guard let since = filter.since(now: now, calendar: calendar) else {
+            return activities
+        }
+        return activities.filter { activity in
+            guard let createdAt = activity.createdAt else { return false }
+            return createdAt >= since
+        }
+    }
+
+    private static func filteredExpenses(
+        _ expenses: [Expense],
+        filter: TimeFilter,
+        now: Date,
+        calendar: Calendar
+    ) -> [Expense] {
+        expenses.filter { expense in
+            guard expense.deletedAt == nil else { return false }
+            guard let since = filter.since(now: now, calendar: calendar) else {
+                return true
+            }
+            guard let createdAt = expense.createdAt else { return false }
+            return createdAt >= since
+        }
+    }
+
+    private static func filteredSettlements(
+        _ settlements: [Settlement],
+        filter: TimeFilter,
+        now: Date,
+        calendar: Calendar
+    ) -> [Settlement] {
+        settlements.filter { settlement in
+            guard settlement.status == .confirmed else { return false }
+            guard let since = filter.since(now: now, calendar: calendar) else {
+                return true
+            }
+            guard let date = settlement.confirmedAt ?? settlement.createdAt else {
+                return false
+            }
+            return date >= since
+        }
+    }
+}
+
+private struct FlowPills<Item: Hashable, Content: View>: View {
+    let items: [Item]
+    @ViewBuilder var content: (Item) -> Content
+
+    var body: some View {
+        LazyVGrid(
+            columns: [
+                GridItem(.adaptive(minimum: 116), spacing: 8, alignment: .leading)
+            ],
+            alignment: .leading,
+            spacing: 8
+        ) {
+            ForEach(items, id: \.self) { item in
+                content(item)
+            }
         }
     }
 }

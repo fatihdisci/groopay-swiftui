@@ -8,6 +8,7 @@ struct MembersView: View {
     @State private var ghostName = ""
     @State private var inviteCode: String?
     @State private var isWorking = false
+    @State private var memberPendingRemoval: Member?
 
     var body: some View {
         ScrollView {
@@ -33,6 +34,25 @@ struct MembersView: View {
             Button("Tamam", role: .cancel) { store.clearError() }
         } message: {
             Text(store.errorMessage ?? "")
+        }
+        .confirmationDialog(
+            "Üyeyi gruptan çıkar?",
+            isPresented: Binding(
+                get: { memberPendingRemoval != nil },
+                set: { if !$0 { memberPendingRemoval = nil } }
+            ),
+            titleVisibility: .visible
+        ) {
+            Button("Üyeyi Çıkar", role: .destructive) {
+                guard let member = memberPendingRemoval else { return }
+                Task { await remove(member) }
+            }
+
+            Button("Vazgeç", role: .cancel) {
+                memberPendingRemoval = nil
+            }
+        } message: {
+            Text("Bu üye tekrar davet koduyla katılamaz. Geçmiş masrafları ve bakiyesi grupta korunur.")
         }
     }
 
@@ -69,7 +89,10 @@ struct MembersView: View {
                                 : Color.textTertiary
                         )
                         .frame(maxWidth: .infinity, minHeight: 46)
-                        .background(Color.surface)
+                        .background(
+                            RoundedRectangle(cornerRadius: ThemeRadius.button)
+                                .fill(Color.surface)
+                        )
                         .overlay(
                             RoundedRectangle(cornerRadius: ThemeRadius.button)
                                 .stroke(
@@ -78,6 +101,7 @@ struct MembersView: View {
                                         : Color.textTertiary.opacity(0.2)
                                 )
                         )
+                        .clipShape(RoundedRectangle(cornerRadius: ThemeRadius.button))
                 }
                 .disabled(!isFounder)
 
@@ -171,9 +195,18 @@ struct MembersView: View {
                             .background(Color.primaryTheme.opacity(0.1))
                             .clipShape(Capsule())
                     }
+                    if !member.isActive {
+                        Text("ÇIKARILDI")
+                            .font(.body(9, weight: .semibold))
+                            .foregroundStyle(Color.textTertiary)
+                            .padding(.horizontal, 7)
+                            .padding(.vertical, 4)
+                            .background(Color.surfaceTinted)
+                            .clipShape(Capsule())
+                    }
                 }
 
-                Text(member.isGhost ? "Hayalet" : "Gerçek üye")
+                Text(memberSubtitle(member))
                     .font(.body(12, weight: .medium))
                     .foregroundStyle(
                         member.isGhost
@@ -188,22 +221,37 @@ struct MembersView: View {
                 && member.role != .founder
                 && member.isActive {
                 Button(role: .destructive) {
-                    Task {
-                        _ = await store.removeMember(
-                            groupID: groupID,
-                            memberID: member.id
-                        )
-                    }
+                    memberPendingRemoval = member
                 } label: {
-                    Image(systemName: "person.crop.circle.badge.minus")
-                        .frame(width: 44, height: 44)
+                    if isWorking && memberPendingRemoval?.id == member.id {
+                        ProgressView()
+                            .tint(Color.debt)
+                            .frame(width: 44, height: 44)
+                    } else {
+                        Image(systemName: "person.crop.circle.badge.minus")
+                            .frame(width: 44, height: 44)
+                    }
                 }
+                .disabled(isWorking)
             }
         }
         .padding(14)
         .background(Color.surface)
         .clipShape(RoundedRectangle(cornerRadius: ThemeRadius.card))
         .opacity(member.isActive ? 1 : 0.6)
+    }
+
+    private func memberSubtitle(_ member: Member) -> LocalizedStringResource {
+        if !member.isActive { return "Eski üye" }
+        return member.isGhost ? "Hayalet" : "Gerçek üye"
+    }
+
+    private func remove(_ member: Member) async {
+        isWorking = true
+        if await store.removeMember(groupID: groupID, memberID: member.id) {
+            memberPendingRemoval = nil
+        }
+        isWorking = false
     }
 
     private func addGhost() async {

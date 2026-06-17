@@ -33,11 +33,23 @@ final class AuthStore {
         observeAuthState()
     }
 
-    init(previewProfile: Profile, supabase: SupabaseClient) {
+    init(
+        previewSessionState: SessionState,
+        previewProfile: Profile? = nil,
+        supabase: SupabaseClient
+    ) {
         self.supabase = supabase
-        sessionState = .identified
+        sessionState = previewSessionState
         currentProfile = previewProfile
         isRestoringSession = false
+    }
+
+    convenience init(previewProfile: Profile, supabase: SupabaseClient) {
+        self.init(
+            previewSessionState: .identified,
+            previewProfile: previewProfile,
+            supabase: supabase
+        )
     }
 
     func signInAnonymously() async {
@@ -192,6 +204,7 @@ final class AuthStore {
     /// 404/403/401'i (kullanıcı artık yok) yutar; bu yüzden güvenle çağrılabilir.
     func signOut() async {
         try? await supabase.auth.signOut()
+        await apply(session: nil)
     }
 
     func clearError() {

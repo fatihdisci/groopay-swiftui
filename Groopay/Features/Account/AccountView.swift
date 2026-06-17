@@ -119,76 +119,28 @@ struct AccountView: View {
     // MARK: - Profil
 
     private var profileCard: some View {
-        HStack(spacing: 16) {
-            Button {
-                guard authStore.currentProfile != nil else { return }
-                showProfileEditor = true
-            } label: {
-                HStack(spacing: 16) {
-                    GradientAvatar(
-                        name: authStore.currentProfile?.displayName ?? "?",
-                        color: authStore.currentProfile?.avatarColor
-                            ?? AvatarPalette.fallback,
-                        size: 56
-                    )
+        profileCardContent
+            .padding(18)
+            .background(Color.surface)
+            .clipShape(RoundedRectangle(cornerRadius: 16))
+            .purpleTintedShadow()
+    }
 
-                    VStack(alignment: .leading, spacing: 4) {
-                        if authStore.sessionState == .anonymous {
-                            Text(
-                                authStore.currentProfile?.displayName
-                                    ?? String(
-                                        localized: "Misafir Kullanıcı",
-                                        locale: localizationStore.locale
-                                    )
-                            )
-                                .font(.display(18, weight: .bold))
-                                .foregroundStyle(Color.textPrimary)
-                            Text("Pro için Apple ile giriş yap")
-                                .font(.body(14))
-                                .foregroundStyle(Color.textSecondary)
-                        } else {
-                            Text(
-                                authStore.currentProfile?.displayName
-                                    ?? String(
-                                        localized: "Kullanıcı",
-                                        locale: localizationStore.locale
-                                    )
-                            )
-                                .font(.display(18, weight: .bold))
-                                .foregroundStyle(Color.textPrimary)
+    @ViewBuilder
+    private var profileCardContent: some View {
+        if authStore.sessionState == .anonymous {
+            VStack(alignment: .leading, spacing: 16) {
+                profileIdentity
 
-                            HStack(spacing: 6) {
-                                if authStore.currentProfile?.userPro == true {
-                                    Image(systemName: "diamond.fill")
-                                        .font(.system(size: 11))
-                                    Text("Pro")
-                                        .font(.body(12, weight: .semibold))
-                                } else {
-                                    Text("Ücretsiz")
-                                        .font(.body(12, weight: .medium))
-                                }
-                            }
-                            .foregroundStyle(.white)
-                            .padding(.horizontal, 10)
-                            .padding(.vertical, 4)
-                            .background(
-                                authStore.currentProfile?.userPro == true
-                                    ? LinearGradient(colors: [.gradientStart, .gradientEnd], startPoint: .leading, endPoint: .trailing)
-                                    : LinearGradient(colors: [Color.textTertiary, Color.textTertiary], startPoint: .leading, endPoint: .trailing)
-                            )
-                            .clipShape(Capsule())
-                        }
-                    }
-                }
-            }
-            .buttonStyle(.plain)
-
-            Spacer()
-
-            if authStore.sessionState == .anonymous {
                 AppleSignInButton()
-                    .frame(width: 150)
-            } else {
+                    .frame(maxWidth: .infinity)
+            }
+        } else {
+            HStack(spacing: 16) {
+                profileIdentity
+
+                Spacer(minLength: 12)
+
                 Button {
                     showProfileEditor = true
                 } label: {
@@ -203,10 +155,79 @@ struct AccountView: View {
                 .accessibilityLabel("Profili Düzenle")
             }
         }
-        .padding(18)
-        .background(Color.surface)
-        .clipShape(RoundedRectangle(cornerRadius: 16))
-        .purpleTintedShadow()
+    }
+
+    private var profileIdentity: some View {
+        Button {
+            guard authStore.currentProfile != nil else { return }
+            showProfileEditor = true
+        } label: {
+            HStack(alignment: .center, spacing: 14) {
+                GradientAvatar(
+                    name: authStore.currentProfile?.displayName ?? "?",
+                    color: authStore.currentProfile?.avatarColor
+                        ?? AvatarPalette.fallback,
+                    size: 56
+                )
+
+                VStack(alignment: .leading, spacing: 4) {
+                    if authStore.sessionState == .anonymous {
+                        Text(
+                            authStore.currentProfile?.displayName
+                                ?? String(
+                                    localized: "Misafir Kullanıcı",
+                                    locale: localizationStore.locale
+                                )
+                        )
+                            .font(.display(18, weight: .bold))
+                            .foregroundStyle(Color.textPrimary)
+                            .lineLimit(2)
+                            .fixedSize(horizontal: false, vertical: true)
+                        Text("Pro için Apple ile giriş yap")
+                            .font(.body(14))
+                            .foregroundStyle(Color.textSecondary)
+                            .lineLimit(2)
+                            .fixedSize(horizontal: false, vertical: true)
+                    } else {
+                        Text(
+                            authStore.currentProfile?.displayName
+                                ?? String(
+                                    localized: "Kullanıcı",
+                                    locale: localizationStore.locale
+                                )
+                        )
+                            .font(.display(18, weight: .bold))
+                            .foregroundStyle(Color.textPrimary)
+                            .lineLimit(2)
+                            .fixedSize(horizontal: false, vertical: true)
+
+                        HStack(spacing: 6) {
+                            if authStore.currentProfile?.userPro == true {
+                                Image(systemName: "diamond.fill")
+                                    .font(.system(size: 11))
+                                Text("Pro")
+                                    .font(.body(12, weight: .semibold))
+                            } else {
+                                Text("Ücretsiz")
+                                    .font(.body(12, weight: .medium))
+                            }
+                        }
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 4)
+                        .background(
+                            authStore.currentProfile?.userPro == true
+                                ? LinearGradient(colors: [.gradientStart, .gradientEnd], startPoint: .leading, endPoint: .trailing)
+                                : LinearGradient(colors: [Color.textTertiary, Color.textTertiary], startPoint: .leading, endPoint: .trailing)
+                        )
+                        .clipShape(Capsule())
+                    }
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+            }
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
     }
 
     // MARK: - Pro
@@ -643,7 +664,15 @@ struct AccountView: View {
 
 // MARK: - Helpers
 
-#Preview {
+#Preview("Guest Account") {
+    NavigationStack {
+        AccountView(store: PreviewSupport.groupsStore)
+    }
+    .environment(PreviewSupport.anonymousAuthStore)
+    .environment(LocalizationStore())
+}
+
+#Preview("Apple Account") {
     NavigationStack {
         AccountView(store: PreviewSupport.groupsStore)
     }

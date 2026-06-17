@@ -285,17 +285,48 @@ struct AddExpenseView: View {
 
     // MARK: - Description
 
+    private var isDescriptionEmpty: Bool {
+        description.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
+
     private var descriptionField: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("Açıklama")
-                .font(.body(13, weight: .semibold))
-                .foregroundStyle(Color.textSecondary)
-            TextField("Örn. Akşam yemeği", text: $description)
+            HStack(spacing: 8) {
+                Text("Açıklama")
+                    .font(.body(13, weight: .semibold))
+                    .foregroundStyle(Color.textSecondary)
+
+                Text("Zorunlu")
+                    .font(.body(11, weight: .semibold))
+                    .foregroundStyle(Color.debt)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .background(Color.debt.opacity(0.1))
+                    .clipShape(Capsule())
+            }
+
+            TextField("Kısa açıklama yaz", text: $description)
                 .font(.body(16))
                 .foregroundStyle(Color.textPrimary)
                 .padding(14)
                 .background(Color.surface)
                 .clipShape(RoundedRectangle(cornerRadius: 14))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 14)
+                        .stroke(
+                            isDescriptionEmpty
+                                ? Color.debt.opacity(0.35)
+                                : Color.clear,
+                            lineWidth: 1
+                        )
+                )
+
+            if isDescriptionEmpty {
+                Label("Kaydetmek için açıklama gerekli.", systemImage: "exclamationmark.circle.fill")
+                    .font(.body(12, weight: .medium))
+                    .foregroundStyle(Color.debt)
+                    .transition(.opacity)
+            }
         }
     }
 

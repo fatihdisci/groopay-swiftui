@@ -18,6 +18,18 @@ enum PreviewSupport {
         AuthStore(previewProfile: previewProfile, supabase: supabase)
     }
 
+    static var signedOutAuthStore: AuthStore {
+        AuthStore(previewSessionState: .signedOut, supabase: supabase)
+    }
+
+    static var anonymousAuthStore: AuthStore {
+        AuthStore(
+            previewSessionState: .anonymous,
+            previewProfile: anonymousPreviewProfile,
+            supabase: supabase
+        )
+    }
+
     static var groupsStore: GroupsStore {
         GroupsStore(
             previewGroups: snapshots,
@@ -42,6 +54,20 @@ enum PreviewSupport {
             userPro: true,
             userProPurchasedAt: Date().addingTimeInterval(-2_592_000),
             createdAt: Date().addingTimeInterval(-7_776_000)
+        )
+    }
+
+    private static var anonymousPreviewProfile: Profile {
+        Profile(
+            id: userID,
+            displayName: String(localized: "Misafir Kullanıcı"),
+            avatarColor: AvatarPalette.fallback,
+            locale: isEnglish ? "en" : "tr",
+            preferredCurrency: isEnglish ? "USD" : "TRY",
+            expoPushToken: nil,
+            userPro: false,
+            userProPurchasedAt: nil,
+            createdAt: Date().addingTimeInterval(-86_400)
         )
     }
 

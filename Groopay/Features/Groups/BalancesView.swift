@@ -16,7 +16,7 @@ struct BalancesTabView: View {
     private var currentMemberID: UUID? { store.currentMemberID(in: groupID) }
 
     private var balances: [UUID: [String: Int]] {
-        snapshot?.memberBalances() ?? [:]
+        snapshot?.ledgerBalances() ?? [:]
     }
 
     var body: some View {
@@ -140,7 +140,12 @@ struct BalancesTabView: View {
         let payer = snapshot.member(id: settlement.fromMember)?.displayName ?? "Birisi"
         return HStack(spacing: 10) {
             VStack(alignment: .leading, spacing: 3) {
-                Text("\(payer) ödedi diyor")
+                Text(
+                    String(
+                        format: String(localized: "%@ ödedi diyor"),
+                        payer
+                    )
+                )
                     .font(.body(14, weight: .semibold))
                     .foregroundStyle(Color.textPrimary)
                 Text(formatAmount(settlement.amount, currency: settlement.currency))
@@ -213,9 +218,9 @@ struct BalancesTabView: View {
 
     private func rawList(_ snapshot: GroupSnapshot) -> some View {
         VStack(spacing: 0) {
-            ForEach(snapshot.activeMembers) { member in
+            ForEach(snapshot.ledgerMembers) { member in
                 rawRow(member: member, balance: balances[member.id] ?? [:])
-                if member.id != snapshot.activeMembers.last?.id {
+                if member.id != snapshot.ledgerMembers.last?.id {
                     Divider().padding(.leading, 60)
                 }
             }
@@ -233,9 +238,18 @@ struct BalancesTabView: View {
                 color: member.avatarColor,
                 size: 38
             )
-            Text(member.displayName)
-                .font(.body(15, weight: .medium))
-                .foregroundStyle(Color.textPrimary)
+            VStack(alignment: .leading, spacing: 4) {
+                Text(member.displayName)
+                    .font(.body(15, weight: .medium))
+                    .foregroundStyle(
+                        member.isActive ? Color.textPrimary : Color.textTertiary
+                    )
+                if !member.isActive {
+                    Text("Çıkarıldı")
+                        .font(.body(11, weight: .semibold))
+                        .foregroundStyle(Color.textTertiary)
+                }
+            }
             Spacer()
 
             if balance.isEmpty {
@@ -298,6 +312,9 @@ struct BalancesTabView: View {
         let debtor = snapshot.member(id: transfer.fromMemberId)?.displayName ?? "?"
         let creditor = snapshot.member(id: transfer.toMemberId)?.displayName ?? "?"
         let isMyDebt = currentMemberID == transfer.fromMemberId
+        let debtorIsActive = snapshot.member(id: transfer.fromMemberId)?.isActive == true
+        let creditorIsActive = snapshot.member(id: transfer.toMemberId)?.isActive == true
+        let canSettle = debtorIsActive && creditorIsActive
         let pending = snapshot.pendingSettlement(
             from: transfer.fromMemberId,
             to: transfer.toMemberId,
@@ -323,7 +340,7 @@ struct BalancesTabView: View {
                     .foregroundStyle(Color.textPrimary)
             }
 
-            if isMyDebt {
+            if isMyDebt && canSettle {
                 if let pending = pending {
                     HStack(spacing: 8) {
                         Spacer()
@@ -377,6 +394,17 @@ struct BalancesTabView: View {
                             )
                         }
                     }
+                }
+            } else if !canSettle {
+                HStack {
+                    Spacer()
+                    Label("Eski üye bakiyesi", systemImage: "archivebox.fill")
+                        .font(.body(12, weight: .semibold))
+                        .foregroundStyle(Color.textTertiary)
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 6)
+                        .background(Color.surfaceTinted)
+                        .clipShape(Capsule())
                 }
             }
         }

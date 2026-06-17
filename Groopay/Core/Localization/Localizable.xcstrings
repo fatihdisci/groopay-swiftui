@@ -1,50 +1,12 @@
 {
   "sourceLanguage" : "tr",
   "strings" : {
-    "Çıkış Yap" : {
+    "(%lld/%lld)" : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sign Out"
-          }
-        },
         "tr" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Çıkış Yap"
-          }
-        }
-      }
-    },
-    "Çıkış yapılsın mı?" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sign out?"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Çıkış yapılsın mı?"
-          }
-        }
-      }
-    },
-    "Verilerin korunur. Apple ile tekrar giriş yaparak geri dönebilirsin." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Your data is kept — sign in with Apple again to come back."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Verilerin korunur. Apple ile tekrar giriş yaparak geri dönebilirsin."
+            "state" : "new",
+            "value" : "(%1$lld/%2$lld)"
           }
         }
       }
@@ -188,7 +150,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ ödedi diyor"
+            "value" : "%@ ödedim diyor"
           }
         }
       }
@@ -469,6 +431,9 @@
         }
       }
     },
+    "Adil paylaşım" : {
+
+    },
     "Adınızı girin" : {
       "localizations" : {
         "en" : {
@@ -613,6 +578,22 @@
         }
       }
     },
+    "Arama" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Search"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Arama"
+          }
+        }
+      }
+    },
     "Aramak için Pro'ya geç" : {
       "localizations" : {
         "en" : {
@@ -710,6 +691,7 @@
       }
     },
     "auth.subtitle" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -757,6 +739,22 @@
         }
       }
     },
+    "Aylık Pro" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Monthly Pro"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aylık Pro"
+          }
+        }
+      }
+    },
     "Ayrıl" : {
       "localizations" : {
         "en" : {
@@ -769,6 +767,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ayrıl"
+          }
+        }
+      }
+    },
+    "Ayrılmadan önce grupta başka bir gerçek üye olmalı. Yeni bir üye davet et veya grubu sil." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "There must be another real member in the group before you leave. Invite a new member or delete the group."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ayrılmadan önce grupta başka bir gerçek üye olmalı. Yeni bir üye davet et veya grubu sil."
           }
         }
       }
@@ -901,6 +915,70 @@
         }
       }
     },
+    "Bu Ay" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This Month"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu Ay"
+          }
+        }
+      }
+    },
+    "Bu gruptan çıkarıldığın için davet koduyla tekrar katılamazsın." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You were removed from this group, so you cannot rejoin with an invite code."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu gruptan çıkarıldığın için davet koduyla tekrar katılamazsın."
+          }
+        }
+      }
+    },
+    "Bu Hafta" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This Week"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu Hafta"
+          }
+        }
+      }
+    },
+    "Bu işlem geri alınamaz. Grup, masraflar ve ödeme kayıtları silinir." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This cannot be undone. The group, expenses, and payment records will be deleted."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu işlem geri alınamaz. Grup, masraflar ve ödeme kayıtları silinir."
+          }
+        }
+      }
+    },
     "Bu işlem geri alınamaz. Tüm grup verilerine erişimin silinir ve Pro aboneliğin iptal olur." : {
       "localizations" : {
         "en" : {
@@ -933,6 +1011,22 @@
         }
       }
     },
+    "Bu üye tekrar davet koduyla katılamaz. Geçmiş masrafları ve bakiyesi grupta korunur." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This member cannot rejoin with an invite code. Their past expenses and balance will stay in the group."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu üye tekrar davet koduyla katılamaz. Geçmiş masrafları ve bakiyesi grupta korunur."
+          }
+        }
+      }
+    },
     "Bugün" : {
       "localizations" : {
         "en" : {
@@ -948,6 +1042,73 @@
           }
         }
       }
+    },
+    "ÇIKARILDI" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "REMOVED"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ÇIKARILDI"
+          }
+        }
+      }
+    },
+    "Çıkarıldı" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Removed"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Çıkarıldı"
+          }
+        }
+      }
+    },
+    "Çıkış Yap" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sign Out"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Çıkış Yap"
+          }
+        }
+      }
+    },
+    "Çıkış yapılsın mı?" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sign out?"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Çıkış yapılsın mı?"
+          }
+        }
+      }
+    },
+    "Close" : {
+
     },
     "common.ok" : {
       "localizations" : {
@@ -1030,6 +1191,7 @@
       }
     },
     "Devam Et" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1221,6 +1383,41 @@
         }
       }
     },
+    "Eski üye" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Former member"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eski üye"
+          }
+        }
+      }
+    },
+    "Eski üye bakiyesi" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Former member balance"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eski üye bakiyesi"
+          }
+        }
+      }
+    },
+    "Ev, tatil ve arkadaş hesaplarını ayrı ayrı takip et." : {
+
+    },
     "Farklı kod gir" : {
       "localizations" : {
         "en" : {
@@ -1281,6 +1478,38 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Geçersiz avatar rengi."
+          }
+        }
+      }
+    },
+    "Geçmiş masrafların ve bakiyen grupta korunur." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your past expenses and balance will stay in the group."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Geçmiş masrafların ve bakiyen grupta korunur."
+          }
+        }
+      }
+    },
+    "Gelişmiş analiz" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Advanced analytics"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gelişmiş analiz"
           }
         }
       }
@@ -1473,6 +1702,7 @@
       }
     },
     "Groopay User Pro" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1648,6 +1878,9 @@
         }
       }
     },
+    "Grupları yönet" : {
+
+    },
     "Gruplarındaki masraf ve ödemeler burada görünecek." : {
       "localizations" : {
         "en" : {
@@ -1660,6 +1893,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Gruplarındaki masraf ve ödemeler burada görünecek."
+          }
+        }
+      }
+    },
+    "Gruplarını sınırsız yönet, harcamaları daha hızlı analiz et." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Manage unlimited groups and analyze expenses faster."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gruplarını sınırsız yönet, harcamaları daha hızlı analiz et."
           }
         }
       }
@@ -1728,6 +1977,22 @@
         }
       }
     },
+    "Harcama Dağılımı" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Spending Breakdown"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Harcama Dağılımı"
+          }
+        }
+      }
+    },
     "Harcama Kategorileri" : {
       "localizations" : {
         "en" : {
@@ -1743,6 +2008,9 @@
           }
         }
       }
+    },
+    "Harcamaları bölüş, kimin ne ödeyeceğini gör, gruplarını tek yerde takip et." : {
+
     },
     "Harcamalarını kategorilere göre analiz et, nereye ne kadar gittiğini görselleştir." : {
       "localizations" : {
@@ -1791,6 +2059,9 @@
           }
         }
       }
+    },
+    "Hemen dene; Pro satın alırken Apple ile giriş yap." : {
+
     },
     "Henüz aktivite yok" : {
       "localizations" : {
@@ -2032,6 +2303,9 @@
         }
       }
     },
+    "İpuçları" : {
+
+    },
     "İşlem başarısız" : {
       "localizations" : {
         "en" : {
@@ -2144,6 +2418,22 @@
         }
       }
     },
+    "Kaydetmek için açıklama gerekli." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Description is required to save."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kaydetmek için açıklama gerekli."
+          }
+        }
+      }
+    },
     "Kısa açıklama" : {
       "localizations" : {
         "en" : {
@@ -2156,6 +2446,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kısa açıklama"
+          }
+        }
+      }
+    },
+    "Kısa açıklama yaz" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Write a short description"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kısa açıklama yaz"
           }
         }
       }
@@ -2268,6 +2574,38 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kuruculuğu Devret"
+          }
+        }
+      }
+    },
+    "Kuruculuğu seçtiğin üyeye devredip ardından gruptan ayrılacaksın. Geçmiş masrafların ve bakiyen korunur." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You will transfer ownership to the selected member and then leave the group. Your past expenses and balance will be preserved."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kuruculuğu seçtiğin üyeye devredip ardından gruptan ayrılacaksın. Geçmiş masrafların ve bakiyen korunur."
+          }
+        }
+      }
+    },
+    "Kuruculuk devredilemiyor" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ownership cannot be transferred"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kuruculuk devredilemiyor"
           }
         }
       }
@@ -2400,6 +2738,9 @@
         }
       }
     },
+    "Masrafları eşit, oranlı veya kişiye göre böl." : {
+
+    },
     "Merhaba %@! \"%@\" grubunda sana %@ ödemem var. Ödemeyi yapabilmem için IBAN'ını paylaşır mısın? Teşekkürler!" : {
       "localizations" : {
         "en" : {
@@ -2415,6 +2756,9 @@
           }
         }
       }
+    },
+    "Misafir başla" : {
+
     },
     "Misafir Kullanıcı" : {
       "localizations" : {
@@ -2742,6 +3086,7 @@
       }
     },
     "Örn. Akşam yemeği" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -2934,6 +3279,22 @@
         }
       }
     },
+    "Pro’ya Geç" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Upgrade to Pro"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pro’ya Geç"
+          }
+        }
+      }
+    },
     "Profil güncellendi." : {
       "localizations" : {
         "en" : {
@@ -3062,6 +3423,22 @@
         }
       }
     },
+    "Satın almaların geri yüklendi." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your purchases have been restored."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Satın almaların geri yüklendi."
+          }
+        }
+      }
+    },
     "Seç" : {
       "localizations" : {
         "en" : {
@@ -3110,6 +3487,22 @@
         }
       }
     },
+    "Sınırsız grup" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unlimited groups"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sınırsız grup"
+          }
+        }
+      }
+    },
     "Sınırsız Grup" : {
       "localizations" : {
         "en" : {
@@ -3138,6 +3531,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Son Aktiviteler"
+          }
+        }
+      }
+    },
+    "Sonuç yok" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No results"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sonuç yok"
           }
         }
       }
@@ -3238,6 +3647,25 @@
         }
       }
     },
+    "Tips" : {
+
+    },
+    "Toplam" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Total"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toplam"
+          }
+        }
+      }
+    },
     "Toplam borç: %@" : {
       "localizations" : {
         "en" : {
@@ -3250,6 +3678,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Toplam borç: %@"
+          }
+        }
+      }
+    },
+    "Toplamın %lld%%'i" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld%% of total"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toplamın %lld%%'i"
           }
         }
       }
@@ -3287,6 +3731,7 @@
       }
     },
     "Tüm özelliklere sınırsız erişim." : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -3298,6 +3743,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tüm özelliklere sınırsız erişim."
+          }
+        }
+      }
+    },
+    "Tüm Zamanlar" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "All Time"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tüm Zamanlar"
           }
         }
       }
@@ -3430,6 +3891,38 @@
         }
       }
     },
+    "Üyeyi Çıkar" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remove Member"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Üyeyi Çıkar"
+          }
+        }
+      }
+    },
+    "Üyeyi gruptan çıkar?" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remove member from group?"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Üyeyi gruptan çıkar?"
+          }
+        }
+      }
+    },
     "Vazgeç" : {
       "localizations" : {
         "en" : {
@@ -3474,6 +3967,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Verilerimi Dışa Aktar"
+          }
+        }
+      }
+    },
+    "Verilerin korunur. Apple ile tekrar giriş yaparak geri dönebilirsin." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your data is kept — sign in with Apple again to come back."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verilerin korunur. Apple ile tekrar giriş yaparak geri dönebilirsin."
           }
         }
       }
@@ -3602,6 +4111,38 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Yeni üye olarak katıl"
+          }
+        }
+      }
+    },
+    "Zaman Filtresi" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Time Filter"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zaman Filtresi"
+          }
+        }
+      }
+    },
+    "Zorunlu" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Required"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zorunlu"
           }
         }
       }

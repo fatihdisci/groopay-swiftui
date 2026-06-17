@@ -116,6 +116,51 @@ final class BalanceTests: XCTestCase {
         )
     }
 
+    func testLedgerBalancesIncludeInactiveMembersWithHistory() {
+        let expense = makeExpense(
+            id: UUID(),
+            payer: payer,
+            amount: 10_000,
+            currency: "TRY"
+        )
+        let snapshot = GroupSnapshot(
+            group: Group(
+                id: groupID,
+                name: "Trip",
+                photoURL: nil,
+                baseCurrency: "TRY",
+                createdBy: payer,
+                isPro: false,
+                proPurchasedBy: nil,
+                proPurchasedAt: nil,
+                isDemo: false,
+                archived: false,
+                description: nil,
+                avatarEmoji: nil,
+                avatarColor: "#6366F1",
+                createdAt: nil
+            ),
+            members: [
+                makeMember(id: payer, name: "Founder", isActive: true),
+                makeMember(id: friend, name: "Removed", isActive: false)
+            ],
+            expenses: [expense],
+            splits: [
+                Split(
+                    id: UUID(),
+                    expenseId: expense.id,
+                    memberId: friend,
+                    shareAmount: 10_000
+                )
+            ],
+            settlements: []
+        )
+
+        XCTAssertEqual(snapshot.activeMembers.map(\.id), [payer])
+        XCTAssertEqual(Set(snapshot.ledgerMembers.map(\.id)), [payer, friend])
+        XCTAssertEqual(snapshot.ledgerBalances()[friend], ["TRY": -10_000])
+    }
+
     private func makeExpense(
         id: UUID,
         payer: UUID,
@@ -150,6 +195,22 @@ final class BalanceTests: XCTestCase {
             currency: "TRY",
             status: status,
             markedBy: payer
+        )
+    }
+
+    private func makeMember(
+        id: UUID,
+        name: String,
+        isActive: Bool
+    ) -> Member {
+        Member(
+            id: id,
+            groupId: groupID,
+            userId: UUID(),
+            displayName: name,
+            avatarColor: "#6366F1",
+            role: id == payer ? .founder : .member,
+            isActive: isActive
         )
     }
 }

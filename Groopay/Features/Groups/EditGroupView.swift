@@ -15,6 +15,7 @@ struct EditGroupView: View {
     @State private var showDeleteConfirmation = false
     @State private var showLeaveConfirmation = false
     @State private var showTransferPicker = false
+    @State private var showFounderLeaveBlocked = false
 
     private let colors = [
         "#6366F1", "#8B5CF6", "#EC4899", "#F59E0B",
@@ -57,6 +58,9 @@ struct EditGroupView: View {
                     }
                 }
             }
+            Button("Vazgeç", role: .cancel) {}
+        } message: {
+            Text("Bu işlem geri alınamaz. Grup, masraflar ve ödeme kayıtları silinir.")
         }
         .confirmationDialog(
             "Gruptan ayrılmak istiyor musun?",
@@ -66,6 +70,14 @@ struct EditGroupView: View {
             Button("Ayrıl", role: .destructive) {
                 Task { await leave() }
             }
+            Button("Vazgeç", role: .cancel) {}
+        } message: {
+            Text("Geçmiş masrafların ve bakiyen grupta korunur.")
+        }
+        .alert("Kuruculuk devredilemiyor", isPresented: $showFounderLeaveBlocked) {
+            Button("Tamam", role: .cancel) {}
+        } message: {
+            Text("Ayrılmadan önce grupta başka bir gerçek üye olmalı. Yeni bir üye davet et veya grubu sil.")
         }
         .sheet(isPresented: $showTransferPicker) {
             transferSheet
@@ -204,7 +216,7 @@ struct EditGroupView: View {
             Button {
                 if isFounder {
                     if transferCandidates.isEmpty {
-                        showDeleteConfirmation = true
+                        showFounderLeaveBlocked = true
                     } else {
                         showTransferPicker = true
                     }
@@ -235,20 +247,31 @@ struct EditGroupView: View {
 
     private var transferSheet: some View {
         NavigationStack {
-            List(transferCandidates) { member in
-                Button {
-                    Task { await transferAndLeave(to: member) }
-                } label: {
-                    HStack {
-                        GradientAvatar(
-                            name: member.displayName,
-                            color: member.avatarColor,
-                            size: 38
-                        )
-                        Text(member.displayName)
-                            .foregroundStyle(Color.textPrimary)
-                        Spacer()
-                        Image(systemName: "chevron.right")
+            List {
+                Section {
+                    Text("Kuruculuğu seçtiğin üyeye devredip ardından gruptan ayrılacaksın. Geçmiş masrafların ve bakiyen korunur.")
+                        .font(.body(13))
+                        .foregroundStyle(Color.textSecondary)
+                }
+
+                Section {
+                    ForEach(transferCandidates) { member in
+                        Button {
+                            Task { await transferAndLeave(to: member) }
+                        } label: {
+                            HStack {
+                                GradientAvatar(
+                                    name: member.displayName,
+                                    color: member.avatarColor,
+                                    size: 38
+                                )
+                                Text(member.displayName)
+                                    .foregroundStyle(Color.textPrimary)
+                                Spacer()
+                                Image(systemName: "chevron.right")
+                            }
+                        }
+                        .disabled(isWorking)
                     }
                 }
             }

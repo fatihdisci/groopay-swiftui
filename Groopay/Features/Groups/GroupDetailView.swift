@@ -285,6 +285,14 @@ struct GroupHeader: View {
                 color: snapshot.group.avatarColor,
                 size: 64
             )
+            .padding(6)
+            .background(.white.opacity(0.16))
+            .clipShape(Circle())
+            .overlay(
+                Circle()
+                    .stroke(.white.opacity(0.22), lineWidth: 1)
+            )
+
             Text(snapshot.group.name)
                 .font(.display(26, weight: .extraBold))
                 .foregroundStyle(.white)
@@ -304,8 +312,9 @@ struct GroupHeader: View {
         .background(
             LinearGradient(
                 colors: [
-                    Color(cssHex: "#6366F1") ?? .gradientStart,
-                    Color(cssHex: "#8B5CF6") ?? .gradientEnd
+                    Color(cssHex: "#4338CA") ?? .gradientStart,
+                    Color(cssHex: "#7C3AED") ?? .gradientEnd,
+                    Color(cssHex: "#A855F7") ?? .gradientEnd
                 ],
                 startPoint: .topLeading,
                 endPoint: .bottomTrailing

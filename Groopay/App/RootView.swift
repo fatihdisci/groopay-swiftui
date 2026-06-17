@@ -48,8 +48,14 @@ struct RootView: View {
     }
 }
 
-#Preview {
+#Preview("Signed Out Root") {
     RootView()
-        .environment(AuthStore())
+        .environment(PreviewSupport.signedOutAuthStore)
+        .environment(LocalizationStore())
+}
+
+#Preview("Signed In Root") {
+    RootView()
+        .environment(PreviewSupport.authStore)
         .environment(LocalizationStore())
 }
