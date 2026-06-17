@@ -20,8 +20,12 @@ struct PaymentSheet: View {
     @State private var showError = false
     @FocusState private var isFocused: Bool
 
+    /// Kullanıcının girdiği tutar minor birime çevrilir. config.debtAmount da
+    /// minor'dur; ikisi aynı birimde karşılaştırılır. (Önceki sürüm girişi ham
+    /// tamsayı olarak alıp minor sanıyordu → kısmi ödemeler 100 kat yanlış
+    /// kaydediliyordu.)
     private var parsedAmount: Int {
-        Int(amountText.filter(\.isNumber)) ?? 0
+        parseMoneyInputToMinor(amountText, currency: config.currency)
     }
 
     private var isValid: Bool {
@@ -31,7 +35,12 @@ struct PaymentSheet: View {
     init(config: PaymentSheetConfig, onPay: @escaping (Int) -> Void) {
         self.config = config
         self.onPay = onPay
-        _amountText = State(initialValue: String(config.debtAmount))
+        _amountText = State(
+            initialValue: Self.editableAmount(
+                minor: config.debtAmount,
+                currency: config.currency
+            )
+        )
     }
 
     var body: some View {
@@ -61,12 +70,15 @@ struct PaymentSheet: View {
                         TextField("0", text: $amountText)
                             .font(.display(38, weight: .extraBold))
                             .foregroundStyle(Color.textPrimary)
-                            .keyboardType(.numberPad)
+                            .keyboardType(.decimalPad)
                             .multilineTextAlignment(.center)
                             .focused($isFocused)
                             .onChange(of: amountText) { _, newValue in
-                                // Sadece rakam karakterleri
-                                let filtered = newValue.filter(\.isNumber)
+                                // Rakam ve ondalık ayıracı karakterlerine izin ver;
+                                // ayrıştırma parseMoneyInputToMinor ile yapılır.
+                                let filtered = newValue.filter {
+                                    $0.isNumber || $0 == "." || $0 == ","
+                                }
                                 if filtered != newValue {
                                     amountText = filtered
                                 }
@@ -159,6 +171,29 @@ struct PaymentSheet: View {
             )
         }
         return ""
+    }
+
+    /// Minor tutarı düzenlenebilir major-birim metnine çevirir (ör. 50050 → "500.50",
+    /// 50000 → "500"). AddExpenseView'daki dönüşümle aynı kuralı izler.
+    private static func editableAmount(minor: Int, currency: String) -> String {
+        guard minor != 0 else { return "" }
+        let decimals = getDecimals(currency)
+        let negative = minor < 0
+        let magnitude = abs(minor)
+
+        guard decimals > 0 else {
+            return "\(negative ? "-" : "")\(magnitude)"
+        }
+
+        var scale = 1
+        for _ in 0..<decimals { scale *= 10 }
+        let whole = magnitude / scale
+        let fraction = magnitude % scale
+        guard fraction != 0 else {
+            return "\(negative ? "-" : "")\(whole)"
+        }
+        let fractionString = String(format: "%0\(decimals)d", fraction)
+        return "\(negative ? "-" : "")\(whole).\(fractionString)"
     }
 }
 

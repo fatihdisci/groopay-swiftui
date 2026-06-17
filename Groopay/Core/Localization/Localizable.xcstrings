@@ -2033,7 +2033,20 @@
       }
     },
     "İşlem başarısız" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Action failed"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "İşlem başarısız"
+          }
+        }
+      }
     },
     "Kalan %@ → %@" : {
       "localizations" : {
