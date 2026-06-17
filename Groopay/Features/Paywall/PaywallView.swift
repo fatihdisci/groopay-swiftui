@@ -274,7 +274,11 @@ struct PaywallView: View {
 
     private var bottomPurchaseBar: some View {
         VStack(spacing: 10) {
-            continueButton
+            if authStore.canPurchase {
+                continueButton
+            } else {
+                guestPurchaseGate
+            }
             footerLinks
         }
         .padding(.horizontal, 22)
@@ -286,6 +290,18 @@ struct PaywallView: View {
             Rectangle()
                 .fill(Color.textTertiary.opacity(0.14))
                 .frame(height: 1)
+        }
+    }
+
+    private var guestPurchaseGate: some View {
+        VStack(spacing: 8) {
+            AppleSignInButton()
+                .frame(maxWidth: .infinity, minHeight: 52)
+
+            Text("account.appleRequired")
+                .font(.body(11, weight: .medium))
+                .foregroundStyle(Color.textSecondary)
+                .multilineTextAlignment(.center)
         }
     }
 
@@ -383,6 +399,7 @@ struct PaywallView: View {
     }
 
     private func purchase() async {
+        guard authStore.canPurchase else { return }
         isPurchasing = true
         let success = await purchases.purchase()
         if success { await authStore.setProActive() }
