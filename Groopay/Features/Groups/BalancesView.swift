@@ -80,11 +80,11 @@ struct BalancesTabView: View {
             } else {
                 let currencies = selfBalance.keys.sorted()
                 VStack(alignment: .leading, spacing: 8) {
-                    ForEach(Array(currencies.enumerated()), id: \.element) { index, currency in
+                    ForEach(currencies, id: \.self) { currency in
                         let amount = selfBalance[currency, default: 0]
                         HStack(alignment: .firstTextBaseline, spacing: 8) {
                             Text(formatAmount(abs(amount), currency: currency))
-                                .font(.display(index == 0 ? 34 : 20, weight: .extraBold))
+                                .font(.display(20, weight: .extraBold))
                                 .foregroundStyle(.white)
                             Text(amount >= 0 ? "alacaklısın" : "borçlusun")
                                 .font(.body(13, weight: .medium))
