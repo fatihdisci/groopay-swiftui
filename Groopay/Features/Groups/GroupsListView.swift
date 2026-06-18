@@ -177,7 +177,7 @@ private struct GroupCard: View {
     @ViewBuilder
     private var debtPills: some View {
         if !debts.isEmpty {
-            HStack(spacing: 6) {
+            VStack(alignment: .leading, spacing: 4) {
                 ForEach(debts, id: \.currency) { debt in
                     HStack(spacing: 5) {
                         Text(formatAmount(abs(debt.amount), currency: debt.currency))
@@ -185,6 +185,8 @@ private struct GroupCard: View {
                         Text("borçlusun")
                             .font(.body(11, weight: .medium))
                     }
+                    .lineLimit(1)
+                    .fixedSize(horizontal: true, vertical: false)
                     .foregroundStyle(Color.debt)
                     .padding(.horizontal, 9)
                     .padding(.vertical, 4)
