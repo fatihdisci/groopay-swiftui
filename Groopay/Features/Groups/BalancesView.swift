@@ -343,15 +343,9 @@ struct BalancesTabView: View {
     private func transferRow(_ transfer: Transfer, snapshot: GroupSnapshot) -> some View {
         let debtor = snapshot.member(id: transfer.fromMemberId)?.displayName ?? "?"
         let creditor = snapshot.member(id: transfer.toMemberId)?.displayName ?? "?"
-        let isMyDebt = currentMemberID == transfer.fromMemberId
         let debtorIsActive = snapshot.member(id: transfer.fromMemberId)?.isActive == true
         let creditorIsActive = snapshot.member(id: transfer.toMemberId)?.isActive == true
         let canSettle = debtorIsActive && creditorIsActive
-        let pending = snapshot.pendingSettlement(
-            from: transfer.fromMemberId,
-            to: transfer.toMemberId,
-            currency: transfer.currency
-        )
 
         return VStack(spacing: 10) {
             HStack(spacing: 10) {
@@ -372,70 +366,7 @@ struct BalancesTabView: View {
                     .foregroundStyle(Color.textPrimary)
             }
 
-            if isMyDebt && canSettle {
-                if let pending = pending {
-                    HStack(spacing: 8) {
-                        Spacer()
-                        Button {
-                            runSettlementAction {
-                                await store.rejectSettlement(groupID: groupID, settlementID: pending.id)
-                            }
-                        } label: {
-                            Image(systemName: "xmark.circle.fill")
-                                .font(.system(size: 18))
-                                .foregroundStyle(Color.textTertiary)
-                        }
-                        Label(
-                            "\(formatAmount(pending.amount, currency: pending.currency)) onay bekliyor",
-                            systemImage: "clock.fill"
-                        )
-                            .font(.body(12, weight: .semibold))
-                            .foregroundStyle(Color.warning)
-                            .padding(.horizontal, 12)
-                            .padding(.vertical, 6)
-                            .background(Color.warning.opacity(0.12))
-                            .clipShape(Capsule())
-                    }
-                } else {
-                    HStack(spacing: 12) {
-                        circleAction(
-                            title: "Ödedim",
-                            icon: "checkmark",
-                            tint: .credit
-                        ) {
-                            paymentSheet = PaymentSheetConfig(
-                                debtAmount: transfer.amount,
-                                currency: transfer.currency,
-                                debtorName: creditor,
-                                groupID: groupID,
-                                fromMember: transfer.fromMemberId,
-                                toMember: transfer.toMemberId
-                            )
-                        }
-                        .frame(maxWidth: .infinity)
-                        circleAction(
-                            title: "IBAN İste",
-                            icon: "creditcard.fill",
-                            tint: Color(cssHex: "#8B5CF6") ?? .gradientEnd
-                        ) {
-                            sendIBANRequest(
-                                creditor: creditor,
-                                amount: transfer.amount,
-                                currency: transfer.currency,
-                                groupName: snapshot.group.name
-                            )
-                        }
-                        .frame(maxWidth: .infinity)
-                    }
-                    .padding(12)
-                    .background(Color.primaryTheme.opacity(0.07))
-                    .overlay {
-                        RoundedRectangle(cornerRadius: ThemeRadius.button)
-                            .stroke(Color.primaryTheme.opacity(0.22), lineWidth: 1)
-                    }
-                    .clipShape(RoundedRectangle(cornerRadius: ThemeRadius.button))
-                }
-            } else if !canSettle {
+            if !canSettle {
                 HStack {
                     Spacer()
                     Label("Eski üye bakiyesi", systemImage: "archivebox.fill")
