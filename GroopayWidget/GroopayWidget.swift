@@ -100,7 +100,7 @@ private struct GroopayBalanceWidgetView: View {
             Label(title, systemImage: icon)
                 .font(.system(size: 11, weight: .semibold))
                 .foregroundStyle(color)
-            ForEach(entry.summary.byCurrency.keys.sorted().prefix(2), id: \.self) { currency in
+            ForEach(entry.summary.byCurrency.keys.sorted(), id: \.self) { currency in
                 let amount = entry.summary.byCurrency[currency]?[keyPath: keyPath] ?? 0
                 Text(format(amount, currency: currency))
                     .font(.system(size: 15, weight: .bold, design: .rounded))

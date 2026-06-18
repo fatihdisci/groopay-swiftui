@@ -687,11 +687,26 @@ struct DashboardView: View {
     }
 
     private func activityAmount(_ activity: Activity) -> String? {
-        guard let amount = activity.metadata["amount"]?.intValue,
+        guard let rawAmount = activity.metadata["amount"]?.intValue,
               let currency = activity.metadata["currency"]?.stringValue else {
             return nil
         }
-        return formatAmount(amount, currency: currency)
+        // metadata'daki amount backend'ten major birimde (ondalık) geldiği için
+        // formatAmount'ın beklediği minor birime çeviriyoruz.
+        let decimals = getDecimals(currency)
+        let minor: Int
+        if decimals > 0 {
+            var result = rawAmount
+            for _ in 0..<decimals {
+                let multiplied = result.multipliedReportingOverflow(by: 10)
+                guard !multiplied.overflow else { return nil }
+                result = multiplied.partialValue
+            }
+            minor = result
+        } else {
+            minor = rawAmount
+        }
+        return formatAmount(minor, currency: currency)
     }
 
     private func timeAgo(_ date: Date) -> String {
