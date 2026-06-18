@@ -6,6 +6,7 @@ struct GroupDetailView: View {
     @Environment(\.locale) private var locale
     @State private var selectedTab = GroupDetailTab.expenses
     @State private var presentedExpense: ExpenseSheet?
+    @State private var didApplyInitialTab = false
 
     var body: some View {
         SwiftUI.Group {
@@ -52,10 +53,28 @@ struct GroupDetailView: View {
             }
         }
         .navigationBarTitleDisplayMode(.inline)
+        .task(id: snapshot != nil) {
+            // Veri yüklendikten sonra bir kez çalışır: kullanıcının bu grupta
+            // borcu varsa grup doğrudan Ödeşme sekmesinde açılır. Sonradan elle
+            // sekme değiştirilirse override edilmez (didApplyInitialTab koruması).
+            guard snapshot != nil, !didApplyInitialTab else { return }
+            didApplyInitialTab = true
+            if currentUserOwes { selectedTab = .balances }
+        }
     }
 
     private var snapshot: GroupSnapshot? {
         store.groups.first { $0.id == groupID }
+    }
+
+    /// Mevcut kullanıcının bu grupta herhangi bir para biriminde borcu var mı?
+    private var currentUserOwes: Bool {
+        guard let snapshot,
+              let memberID = store.currentMemberID(in: groupID) else {
+            return false
+        }
+        let balance = snapshot.ledgerBalances()[memberID] ?? [:]
+        return balance.values.contains { $0 < 0 }
     }
 
     /// Platform-nötr metin özeti (WhatsApp vb. için sade düz yazı).
@@ -224,7 +243,7 @@ private enum GroupDetailTab: String, CaseIterable, Identifiable {
 
     var id: String { rawValue }
     var title: LocalizedStringResource {
-        self == .expenses ? "Masraflar" : "Bakiyeler"
+        self == .expenses ? "Masraflar" : "Ödeşme"
     }
 }
 
