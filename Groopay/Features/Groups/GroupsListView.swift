@@ -31,7 +31,7 @@ struct GroupsListView: View {
             LazyVStack(spacing: 14) {
                 ForEach(store.groups) { snapshot in
                     NavigationLink(value: GroupRoute.detail(snapshot.id)) {
-                        GroupCard(snapshot: snapshot)
+                        GroupCard(snapshot: snapshot, balance: selfBalance(snapshot))
                     }
                     .buttonStyle(.plain)
                 }
@@ -40,6 +40,13 @@ struct GroupsListView: View {
             .padding(.top, 8)
             .padding(.bottom, 108)
         }
+    }
+
+    /// Mevcut kullanıcının bu gruptaki net bakiyesi (sıfır olanlar elenir).
+    /// Negatif = borçlu, pozitif = alacaklı.
+    private func selfBalance(_ snapshot: GroupSnapshot) -> [String: Int] {
+        guard let memberID = store.currentMemberID(in: snapshot.id) else { return [:] }
+        return (snapshot.ledgerBalances()[memberID] ?? [:]).filter { $0.value != 0 }
     }
 
     private var emptyState: some View {
@@ -123,6 +130,13 @@ struct GroupsListView: View {
 
 private struct GroupCard: View {
     let snapshot: GroupSnapshot
+    let balance: [String: Int]
+
+    /// En büyük mutlak değere sahip para birimini öne çıkarır (kart tek satırda
+    /// özetlesin diye). Birden çok para birimi varsa baskın olanı gösterir.
+    private var dominant: (currency: String, amount: Int)? {
+        balance.max { abs($0.value) < abs($1.value) }.map { ($0.key, $0.value) }
+    }
 
     var body: some View {
         HStack(spacing: 14) {
@@ -132,7 +146,7 @@ private struct GroupCard: View {
                 color: snapshot.group.avatarColor
             )
 
-            VStack(alignment: .leading, spacing: 5) {
+            VStack(alignment: .leading, spacing: 6) {
                 Text(snapshot.group.name)
                     .font(.display(17))
                     .foregroundStyle(Color.textPrimary)
@@ -140,6 +154,7 @@ private struct GroupCard: View {
                 Text("\(snapshot.activeMembers.count) aktif üye")
                     .font(.body(13))
                     .foregroundStyle(Color.textSecondary)
+                statusPill
             }
 
             Spacer()
@@ -152,6 +167,32 @@ private struct GroupCard: View {
         .background(Color.surface)
         .clipShape(RoundedRectangle(cornerRadius: ThemeRadius.card))
         .purpleTintedShadow()
+    }
+
+    @ViewBuilder
+    private var statusPill: some View {
+        if let dominant {
+            let isDebt = dominant.amount < 0
+            HStack(spacing: 5) {
+                Text(formatAmount(abs(dominant.amount), currency: dominant.currency))
+                    .font(.body(12, weight: .semibold))
+                Text(isDebt ? "borçlusun" : "alacaklısın")
+                    .font(.body(11, weight: .medium))
+            }
+            .foregroundStyle(isDebt ? Color.debt : Color.credit)
+            .padding(.horizontal, 9)
+            .padding(.vertical, 4)
+            .background((isDebt ? Color.debt : Color.credit).opacity(0.12))
+            .clipShape(Capsule())
+        } else {
+            HStack(spacing: 4) {
+                Image(systemName: "checkmark.circle.fill")
+                    .font(.system(size: 11))
+                Text("Ödeştin")
+                    .font(.body(11, weight: .medium))
+            }
+            .foregroundStyle(Color.textTertiary)
+        }
     }
 }
 
