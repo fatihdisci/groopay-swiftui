@@ -9,6 +9,7 @@ struct BalancesTabView: View {
     @State private var ibanCopied = false
     @State private var busy = false
     @State private var paymentSheet: PaymentSheetConfig?
+    @State private var showSettleSheet = false
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.locale) private var locale
 
@@ -66,6 +67,11 @@ struct BalancesTabView: View {
         return balances[currentMemberID] ?? [:]
     }
 
+    /// Kullanıcının herhangi bir para biriminde borcu var mı?
+    private var selfOwes: Bool {
+        selfBalance.values.contains { $0 < 0 }
+    }
+
     private var selfSummaryCard: some View {
         VStack(alignment: .leading, spacing: 14) {
             Text("SENİN DURUMUN")
@@ -93,6 +99,29 @@ struct BalancesTabView: View {
                     }
                 }
             }
+
+            // Borcu olan kullanıcı için tek dokunuşla, odaklı ödeme akışı.
+            if selfOwes {
+                Button {
+                    showSettleSheet = true
+                } label: {
+                    HStack(spacing: 8) {
+                        Image(systemName: "checkmark.circle.fill")
+                            .font(.system(size: 15, weight: .semibold))
+                        Text("Borcunu Öde")
+                            .font(.body(15, weight: .semibold))
+                        Spacer()
+                        Image(systemName: "arrow.right")
+                            .font(.system(size: 13, weight: .bold))
+                    }
+                    .foregroundStyle(Color.primaryTheme)
+                    .padding(.horizontal, 16)
+                    .frame(maxWidth: .infinity, minHeight: 48)
+                    .background(.white)
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                }
+                .padding(.top, 2)
+            }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(20)
@@ -105,6 +134,9 @@ struct BalancesTabView: View {
         )
         .clipShape(RoundedRectangle(cornerRadius: 20))
         .purpleTintedShadow(radius: 18, y: 9)
+        .sheet(isPresented: $showSettleSheet) {
+            SettleDebtsSheet(store: store, groupID: groupID)
+        }
     }
 
     // MARK: - Approval section (current user is recipient)
@@ -463,41 +495,66 @@ struct BalancesTabView: View {
         currency: String,
         groupName: String
     ) {
-        let formatted = formatAmount(amount, currency: currency)
-        let message = String(
-            format: String(
-                localized: "Merhaba %@! \"%@\" grubunda sana %@ ödemem var. Ödemeyi yapabilmem için IBAN'ını paylaşır mısın? Teşekkürler!",
-                locale: locale
-            ),
+        sendIBANRequestViaWhatsApp(
+            creditor: creditor,
+            amount: amount,
+            currency: currency,
+            groupName: groupName,
             locale: locale,
-            creditor,
-            groupName,
-            formatted
+            onClipboardFallback: { ibanCopied = true }
         )
-        // Her durumda panoya da koy (en son çare).
-        UIPasteboard.general.string = message
+    }
+}
 
-        let encoded = message.addingPercentEncoding(
-            withAllowedCharacters: .urlQueryAllowed
-        ) ?? ""
-        let appURL = URL(string: "whatsapp://send?text=\(encoded)")
-        let webURL = URL(string: "https://wa.me/?text=\(encoded)")
+/// IBAN HİÇBİR yerde saklanmaz. Alacaklıdan IBAN istemek için hazır bir mesajla
+/// doğrudan WhatsApp açılır (kişiyi kullanıcı seçer). WhatsApp uygulaması yoksa
+/// wa.me web bağlantısına, o da açılamazsa panoya kopyalamaya düşer. Mesaj her
+/// durumda panoya da konur; yalnızca panoya düşüldüğünde `onClipboardFallback`
+/// çağrılır. BalancesTabView ve SettleDebtsSheet aynı mantığı paylaşsın diye
+/// dosya seviyesinde tutulur.
+@MainActor
+func sendIBANRequestViaWhatsApp(
+    creditor: String,
+    amount: Int,
+    currency: String,
+    groupName: String,
+    locale: Locale,
+    onClipboardFallback: @escaping () -> Void
+) {
+    let formatted = formatAmount(amount, currency: currency)
+    let message = String(
+        format: String(
+            localized: "Merhaba %@! \"%@\" grubunda sana %@ ödemem var. Ödemeyi yapabilmem için IBAN'ını paylaşır mısın? Teşekkürler!",
+            locale: locale
+        ),
+        locale: locale,
+        creditor,
+        groupName,
+        formatted
+    )
+    // Her durumda panoya da koy (en son çare).
+    UIPasteboard.general.string = message
 
-        if let appURL {
-            UIApplication.shared.open(appURL, options: [:]) { opened in
-                if !opened {
-                    if let webURL {
-                        UIApplication.shared.open(webURL, options: [:]) { webOpened in
-                            if !webOpened { ibanCopied = true }
-                        }
-                    } else {
-                        ibanCopied = true
+    let encoded = message.addingPercentEncoding(
+        withAllowedCharacters: .urlQueryAllowed
+    ) ?? ""
+    let appURL = URL(string: "whatsapp://send?text=\(encoded)")
+    let webURL = URL(string: "https://wa.me/?text=\(encoded)")
+
+    if let appURL {
+        UIApplication.shared.open(appURL, options: [:]) { opened in
+            if !opened {
+                if let webURL {
+                    UIApplication.shared.open(webURL, options: [:]) { webOpened in
+                        if !webOpened { onClipboardFallback() }
                     }
+                } else {
+                    onClipboardFallback()
                 }
             }
-        } else {
-            ibanCopied = true
         }
+    } else {
+        onClipboardFallback()
     }
 }
 

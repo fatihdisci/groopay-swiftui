@@ -4173,6 +4173,86 @@
           }
         }
       }
+    },
+    "Borçların": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your Debts"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Borçların"
+          }
+        }
+      }
+    },
+    "Borcunu Öde": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pay Your Debt"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Borcunu Öde"
+          }
+        }
+      }
+    },
+    "İptal": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cancel"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "İptal"
+          }
+        }
+      }
+    },
+    "Eski üye — ödeşme yapılamaz": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Former member — can't settle"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Eski üye — ödeşme yapılamaz"
+          }
+        }
+      }
+    },
+    "Bu grupta borcun yok": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You have no debt in this group"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bu grupta borcun yok"
+          }
+        }
+      }
     }
   },
   "version": "1.0"
