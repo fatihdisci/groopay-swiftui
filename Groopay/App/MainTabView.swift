@@ -22,8 +22,15 @@ struct MainTabView: View {
 
             NavigationStack(path: $router.groupPath) {
                 GroupsView(store: groupsStore)
-                    .navigationDestination(for: UUID.self) { groupID in
-                        GroupDetailView(groupID: groupID, store: groupsStore)
+                    .navigationDestination(for: GroupRoute.self) { route in
+                        switch route {
+                        case .detail(let groupID):
+                            GroupDetailView(groupID: groupID, store: groupsStore)
+                        case .members(let groupID):
+                            MembersView(groupID: groupID, store: groupsStore)
+                        case .edit(let groupID):
+                            EditGroupView(groupID: groupID, store: groupsStore)
+                        }
                     }
             }
             .tag(MainTab.groups)

@@ -8,15 +8,21 @@ enum MainTab: Hashable {
     case account
 }
 
+enum GroupRoute: Hashable {
+    case detail(UUID)
+    case members(UUID)
+    case edit(UUID)
+}
+
 @MainActor
 @Observable
 final class AppRouter {
     var selectedTab: MainTab = .dashboard
-    var groupPath: [UUID] = []
+    var groupPath: [GroupRoute] = []
 
     func openGroup(_ groupID: UUID) {
         selectedTab = .groups
-        groupPath = [groupID]
+        groupPath = [.detail(groupID)]
     }
 }
 
