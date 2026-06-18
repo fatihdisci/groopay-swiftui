@@ -132,10 +132,13 @@ private struct GroupCard: View {
     let snapshot: GroupSnapshot
     let balance: [String: Int]
 
-    /// En büyük mutlak değere sahip para birimini öne çıkarır (kart tek satırda
-    /// özetlesin diye). Birden çok para birimi varsa baskın olanı gösterir.
-    private var dominant: (currency: String, amount: Int)? {
-        balance.max { abs($0.value) < abs($1.value) }.map { ($0.key, $0.value) }
+    /// Yalnızca kullanıcının borçlu olduğu (negatif) bakiyeler, para birimine
+    /// göre ayrı ayrı. Borç yoksa boştur.
+    private var debts: [(currency: String, amount: Int)] {
+        balance
+            .filter { $0.value < 0 }
+            .map { (currency: $0.key, amount: $0.value) }
+            .sorted { abs($0.amount) > abs($1.amount) }
     }
 
     var body: some View {
@@ -154,7 +157,7 @@ private struct GroupCard: View {
                 Text("\(snapshot.activeMembers.count) aktif üye")
                     .font(.body(13))
                     .foregroundStyle(Color.textSecondary)
-                statusPill
+                debtPills
             }
 
             Spacer()
@@ -169,29 +172,26 @@ private struct GroupCard: View {
         .purpleTintedShadow()
     }
 
+    /// Borç varsa her para birimi için ayrı bir pill; borç yoksa hiçbir şey
+    /// gösterilmez.
     @ViewBuilder
-    private var statusPill: some View {
-        if let dominant {
-            let isDebt = dominant.amount < 0
-            HStack(spacing: 5) {
-                Text(formatAmount(abs(dominant.amount), currency: dominant.currency))
-                    .font(.body(12, weight: .semibold))
-                Text(isDebt ? "borçlusun" : "alacaklısın")
-                    .font(.body(11, weight: .medium))
+    private var debtPills: some View {
+        if !debts.isEmpty {
+            HStack(spacing: 6) {
+                ForEach(debts, id: \.currency) { debt in
+                    HStack(spacing: 5) {
+                        Text(formatAmount(abs(debt.amount), currency: debt.currency))
+                            .font(.body(12, weight: .semibold))
+                        Text("borçlusun")
+                            .font(.body(11, weight: .medium))
+                    }
+                    .foregroundStyle(Color.debt)
+                    .padding(.horizontal, 9)
+                    .padding(.vertical, 4)
+                    .background(Color.debt.opacity(0.12))
+                    .clipShape(Capsule())
+                }
             }
-            .foregroundStyle(isDebt ? Color.debt : Color.credit)
-            .padding(.horizontal, 9)
-            .padding(.vertical, 4)
-            .background((isDebt ? Color.debt : Color.credit).opacity(0.12))
-            .clipShape(Capsule())
-        } else {
-            HStack(spacing: 4) {
-                Image(systemName: "checkmark.circle.fill")
-                    .font(.system(size: 11))
-                Text("Ödeştin")
-                    .font(.body(11, weight: .medium))
-            }
-            .foregroundStyle(Color.textTertiary)
         }
     }
 }
