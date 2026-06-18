@@ -5,7 +5,7 @@ struct BalancesTabView: View {
     let store: GroupsStore
     let groupID: UUID
 
-    @State private var mode: BalanceMode = .raw
+    @State private var mode: BalanceMode = .simplified
     @State private var ibanCopied = false
     @State private var busy = false
     @State private var paymentSheet: PaymentSheetConfig?
@@ -366,7 +366,6 @@ struct BalancesTabView: View {
                     }
                 } else {
                     HStack(spacing: 12) {
-                        Spacer()
                         circleAction(
                             title: "Ödedim",
                             icon: "checkmark",
@@ -381,6 +380,7 @@ struct BalancesTabView: View {
                                 toMember: transfer.toMemberId
                             )
                         }
+                        .frame(maxWidth: .infinity)
                         circleAction(
                             title: "IBAN İste",
                             icon: "creditcard.fill",
@@ -393,7 +393,15 @@ struct BalancesTabView: View {
                                 groupName: snapshot.group.name
                             )
                         }
+                        .frame(maxWidth: .infinity)
                     }
+                    .padding(12)
+                    .background(Color.primaryTheme.opacity(0.07))
+                    .overlay {
+                        RoundedRectangle(cornerRadius: ThemeRadius.button)
+                            .stroke(Color.primaryTheme.opacity(0.22), lineWidth: 1)
+                    }
+                    .clipShape(RoundedRectangle(cornerRadius: ThemeRadius.button))
                 }
             } else if !canSettle {
                 HStack {
@@ -423,15 +431,15 @@ struct BalancesTabView: View {
             VStack(spacing: 4) {
                 ZStack {
                     Circle()
-                        .fill(tint.opacity(0.15))
-                        .frame(width: 40, height: 40)
+                        .fill(tint.opacity(0.18))
+                        .frame(width: 46, height: 46)
                     Image(systemName: icon)
                         .font(.system(size: 16, weight: .semibold))
                         .foregroundStyle(tint)
                 }
                 Text(title)
-                    .font(.body(10, weight: .medium))
-                    .foregroundStyle(Color.textSecondary)
+                    .font(.body(12, weight: .semibold))
+                    .foregroundStyle(Color.textPrimary)
             }
         }
     }
@@ -494,8 +502,8 @@ struct BalancesTabView: View {
 }
 
 enum BalanceMode: String, CaseIterable, Identifiable {
-    case raw
     case simplified
+    case raw
 
     var id: String { rawValue }
     var title: LocalizedStringResource {

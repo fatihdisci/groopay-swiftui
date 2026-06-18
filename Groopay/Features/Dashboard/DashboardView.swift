@@ -10,6 +10,7 @@ struct DashboardView: View {
     @State private var isRecentActivityExpanded = false
     @State private var activitySearchText = ""
     @State private var debouncedActivitySearchText = ""
+    @State private var activityFilter = ActivityFilter()
     let store: GroupsStore
 
     private var isPro: Bool {
@@ -87,13 +88,7 @@ struct DashboardView: View {
     // MARK: - Overall Balance (herkese açık)
 
     private var overallBalanceCard: some View {
-        let balances = isPro
-            ? DashboardAnalytics.overallBalance(
-                groups: store.groups,
-                userID: store.currentUserID,
-                filter: selectedTimeFilter
-            )
-            : store.overallBalance
+        let summary = store.balanceSummary
 
         return VStack(spacing: 10) {
             HStack {
@@ -104,25 +99,36 @@ struct DashboardView: View {
                 Spacer()
             }
 
-            if balances.isEmpty {
+            if summary.byCurrency.isEmpty {
                 Text("Henüz borç/alacak yok")
                     .font(.body(14))
                     .foregroundStyle(.white.opacity(0.65))
                     .padding(.vertical, 8)
             } else {
-                ForEach(balances.keys.sorted(), id: \.self) { currency in
-                    let amount = balances[currency, default: 0]
-                    HStack {
-                        Text(currency)
-                            .font(.body(13, weight: .semibold))
-                            .foregroundStyle(.white.opacity(0.82))
-                        Spacer()
-                        Text(formatAmount(abs(amount), currency: currency))
-                            .font(.display(26, weight: .extraBold))
-                            .foregroundStyle(.white)
-                        Text(amount >= 0 ? "alacaklısın" : "borçlusun")
-                            .font(.body(12, weight: .medium))
-                            .foregroundStyle(.white.opacity(0.70))
+                ForEach(summary.rows) { row in
+                    VStack(spacing: 7) {
+                        HStack {
+                            Text(row.currency)
+                                .font(.body(13, weight: .semibold))
+                                .foregroundStyle(.white.opacity(0.82))
+                            Spacer()
+                        }
+                        HStack(spacing: 12) {
+                            balanceMetric(
+                                title: "Toplam Alacak",
+                                amount: row.amounts.receivable,
+                                currency: row.currency,
+                                icon: "arrow.down.left",
+                                color: .credit
+                            )
+                            balanceMetric(
+                                title: "Toplam Borç",
+                                amount: row.amounts.debt,
+                                currency: row.currency,
+                                icon: "arrow.up.right",
+                                color: .debt
+                            )
+                        }
                     }
                 }
             }
@@ -140,6 +146,27 @@ struct DashboardView: View {
         )
         .clipShape(RoundedRectangle(cornerRadius: 20))
         .purpleTintedShadow(radius: 18, y: 9)
+    }
+
+    private func balanceMetric(
+        title: LocalizedStringResource,
+        amount: Int,
+        currency: String,
+        icon: String,
+        color: Color
+    ) -> some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Label(title, systemImage: icon)
+                .font(.body(10, weight: .semibold))
+                .foregroundStyle(.white.opacity(0.72))
+            Text(formatAmount(amount, currency: currency))
+                .font(.display(18, weight: .extraBold))
+                .foregroundStyle(.white)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(10)
+        .background(color.opacity(0.20))
+        .clipShape(RoundedRectangle(cornerRadius: 12))
     }
 
     // MARK: - Pro Content
@@ -306,21 +333,37 @@ struct DashboardView: View {
 
     private var categorySection: some View {
         let stats = categoryStats(filter: selectedTimeFilter)
+        let currencies = donutCurrencies(from: stats)
+        let currency = selectedDonutCurrency ?? defaultDonutCurrency ?? currencies.first
+        let visibleStats = stats
+            .filter { stat in currency.map { stat.amount(for: $0) > 0 } ?? false }
+            .sorted { $0.amount(for: currency ?? "") > $1.amount(for: currency ?? "") }
+        let maximum = visibleStats.map { $0.amount(for: currency ?? "") }.max() ?? 1
 
         return VStack(alignment: .leading, spacing: 14) {
-            Text("Harcama Kategorileri")
-                .font(.display(17, weight: .bold))
-                .foregroundStyle(Color.textPrimary)
+            HStack {
+                Text("Harcama Kategorileri")
+                    .font(.display(17, weight: .bold))
+                    .foregroundStyle(Color.textPrimary)
+                Spacer()
+                Text(currency ?? "")
+                    .font(.body(12, weight: .semibold))
+                    .foregroundStyle(Color.primaryTheme)
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 6)
+                    .background(Color.surfaceTinted)
+                    .clipShape(Capsule())
+            }
 
-            if stats.isEmpty {
+            if visibleStats.isEmpty {
                 Text("Henüz kategori verisi yok.")
                     .font(.body(14))
                     .foregroundStyle(Color.textTertiary)
                     .padding(.vertical, 8)
             } else {
                 LazyVStack(spacing: 12) {
-                    ForEach(stats.prefix(6)) { stat in
-                        categoryBar(stat, maxAmount: stats.first?.totalForSorting ?? 1)
+                    ForEach(visibleStats.prefix(6)) { stat in
+                        categoryBar(stat, currency: currency ?? "", maxAmount: maximum)
                             .transition(.slide.combined(with: .opacity))
                     }
                 }
@@ -332,9 +375,10 @@ struct DashboardView: View {
         .purpleTintedShadow()
     }
 
-    private func categoryBar(_ stat: CategoryStat, maxAmount: Int) -> some View {
+    private func categoryBar(_ stat: CategoryStat, currency: String, maxAmount: Int) -> some View {
+        let amount = stat.amount(for: currency)
         let fraction = maxAmount > 0
-            ? Double(stat.totalForSorting) / Double(maxAmount)
+            ? Double(amount) / Double(maxAmount)
             : 0
 
         return VStack(alignment: .leading, spacing: 8) {
@@ -351,11 +395,10 @@ struct DashboardView: View {
                 Spacer()
             }
 
-            FlowPills(items: stat.currencyAmounts) { item in
-                HStack(spacing: 6) {
-                    Text(formatAmount(item.amount, currency: item.currency))
+            HStack(spacing: 6) {
+                    Text(formatAmount(amount, currency: currency))
                         .font(.body(12, weight: .semibold))
-                    Text(item.currency.uppercased())
+                    Text(currency.uppercased())
                         .font(.body(10, weight: .semibold))
                         .foregroundStyle(stat.category.color)
                         .padding(.horizontal, 5)
@@ -368,7 +411,6 @@ struct DashboardView: View {
                 .padding(.vertical, 6)
                 .background(Color.surfaceTinted)
                 .clipShape(Capsule())
-            }
 
             GeometryReader { geo in
                 ZStack(alignment: .leading) {
@@ -431,6 +473,14 @@ struct DashboardView: View {
                     .padding(12)
                     .background(Color.surfaceTinted)
                     .clipShape(RoundedRectangle(cornerRadius: ThemeRadius.button))
+
+                    HStack {
+                        ActivityFilterButton(
+                            filter: $activityFilter,
+                            groups: store.groups
+                        )
+                        Spacer()
+                    }
 
                     if visible.isEmpty {
                         Text(searched.isEmpty && !debouncedActivitySearchText.isEmpty ? "Sonuç yok" : "Henüz aktivite yok.")
@@ -562,6 +612,13 @@ struct DashboardView: View {
             store.activities,
             filter: selectedTimeFilter
         )
+        .filter {
+            activityFilter.matches(
+                $0,
+                groups: store.groups,
+                userID: store.currentUserID
+            )
+        }
         .sorted {
             ($0.createdAt ?? .distantPast) > ($1.createdAt ?? .distantPast)
         }

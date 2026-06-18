@@ -203,6 +203,7 @@ final class AuthStore {
     /// yerel oturumu temizleyip `.signedOut` olayını yayar, sunucudan dönen
     /// 404/403/401'i (kullanıcı artık yok) yutar; bu yüzden güvenle çağrılabilir.
     func signOut() async {
+        await PushNotificationService.shared.removeCurrentToken()
         try? await supabase.auth.signOut()
         await apply(session: nil)
     }

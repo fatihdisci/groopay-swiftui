@@ -77,6 +77,13 @@ struct NewGroupSheet: View {
             Spacer()
         }
         .background(Color.background)
+        .navigationTitle("Yeni Grup")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button("Kapat") { dismiss() }
+            }
+        }
         .task {
             isFocused = true
         }

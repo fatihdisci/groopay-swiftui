@@ -27,7 +27,9 @@ struct GroupsView: View {
         .sheet(item: $presentedSheet) { sheet in
             switch sheet {
             case .new:
-                NewGroupSheet(store: store)
+                NavigationStack {
+                    NewGroupSheet(store: store)
+                }
                     .presentationDetents([.medium])
                     .presentationCornerRadius(24)
                     .presentationDragIndicator(.visible)

@@ -20,6 +20,7 @@ struct GroupsListView: View {
                     groupList
                 }
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
 
             bottomBar
         }
@@ -60,63 +61,42 @@ struct GroupsListView: View {
                 .multilineTextAlignment(.center)
         }
         .padding(.horizontal, 40)
-        .padding(.bottom, 90)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+        .padding(.top, 110)
+        .padding(.bottom, 120)
     }
 
     private var bottomBar: some View {
         HStack(spacing: 12) {
-            if #available(iOS 26.0, *) {
-                Button(action: onJoin) {
-                    joinButtonLabel
-                }
-                .buttonStyle(.glass)
-                .tint(.primaryTheme)
+            Button(action: onJoin) {
+                joinButtonLabel
+                    .foregroundStyle(Color.primaryTheme)
+                    .background(Color.background)
+                    .overlay {
+                        RoundedRectangle(cornerRadius: ThemeRadius.button)
+                            .stroke(Color.primaryTheme.opacity(0.35), lineWidth: 1)
+                    }
+                    .clipShape(RoundedRectangle(cornerRadius: ThemeRadius.button))
+            }
 
-                Button(action: onCreate) {
-                    createButtonLabel
-                }
-                .buttonStyle(.glassProminent)
-                .tint(reachedLimit ? .textTertiary : .primaryTheme)
-            } else {
-                Button(action: onJoin) {
-                    joinButtonLabel
-                        .foregroundStyle(Color.primaryTheme)
-                        .background(.ultraThinMaterial)
-                        .overlay {
-                            RoundedRectangle(cornerRadius: ThemeRadius.button)
-                                .stroke(
-                                    Color.primaryTheme.opacity(0.35),
-                                    lineWidth: 1
-                                )
-                        }
-                        .clipShape(
-                            RoundedRectangle(cornerRadius: ThemeRadius.button)
-                        )
-                }
-
-                Button(action: onCreate) {
-                    createButtonLabel
-                        .foregroundStyle(.white)
-                        .background(
-                            LinearGradient(
-                                colors: reachedLimit
-                                    ? [.textTertiary, .textTertiary]
-                                    : [.gradientStart, .gradientEnd],
-                                startPoint: .leading,
-                                endPoint: .trailing
+            Button(action: onCreate) {
+                createButtonLabel
+                    .foregroundStyle(reachedLimit ? Color.textTertiary : Color.primaryTheme)
+                    .background(Color.background)
+                    .overlay {
+                        RoundedRectangle(cornerRadius: ThemeRadius.button)
+                            .stroke(
+                                reachedLimit ? Color.textTertiary.opacity(0.35) : Color.primaryTheme,
+                                lineWidth: 1.2
                             )
-                        )
-                        .clipShape(
-                            RoundedRectangle(cornerRadius: ThemeRadius.button)
-                        )
-                        .purpleTintedShadow(radius: 12, y: 5)
-                }
+                    }
+                    .clipShape(RoundedRectangle(cornerRadius: ThemeRadius.button))
             }
         }
         .padding(.horizontal, 20)
         .padding(.top, 12)
         .padding(.bottom, 10)
-        .background(.ultraThinMaterial)
+        .background(Color.background)
     }
 
     private var joinButtonLabel: some View {

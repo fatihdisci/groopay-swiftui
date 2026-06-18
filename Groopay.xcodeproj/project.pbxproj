@@ -10,6 +10,7 @@
 		3D6581B42FE1E0FA00E27976 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D6581B32FE1E0FA00E27976 /* StoreKit.framework */; };
 		A00000000000000000000001 /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = A00000000000000000000002 /* Supabase */; };
 		A00000000000000000000019 /* RevenueCat in Frameworks */ = {isa = PBXBuildFile; productRef = A00000000000000000000018 /* RevenueCat */; };
+		C00000000000000000000001 /* GroopayWidget.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = C00000000000000000000003 /* GroopayWidget.appex */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -20,6 +21,13 @@
 			remoteGlobalIDString = A00000000000000000000007;
 			remoteInfo = Groopay;
 		};
+		C00000000000000000000002 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A00000000000000000000010 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C00000000000000000000008;
+			remoteInfo = GroopayWidget;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -28,6 +36,7 @@
 		A00000000000000000000004 /* Base.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
 		A00000000000000000000005 /* Secrets.xcconfig.example */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Secrets.xcconfig.example; sourceTree = "<group>"; };
 		B00000000000000000000001 /* GroopayTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GroopayTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		C00000000000000000000003 /* GroopayWidget.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = GroopayWidget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -37,6 +46,13 @@
 				Resources/Info.plist,
 			);
 			target = A00000000000000000000007 /* Groopay */;
+		};
+		C00000000000000000000004 /* Exceptions for "GroopayWidget" folder in "GroopayWidget" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = C00000000000000000000008 /* GroopayWidget */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
@@ -54,7 +70,29 @@
 			path = GroopayTests;
 			sourceTree = "<group>";
 		};
+		C00000000000000000000005 /* GroopayWidget */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				C00000000000000000000004 /* Exceptions for "GroopayWidget" folder in "GroopayWidget" target */,
+			);
+			path = GroopayWidget;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		C00000000000000000000007 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				C00000000000000000000001 /* GroopayWidget.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		A00000000000000000000009 /* Frameworks */ = {
@@ -74,6 +112,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		C00000000000000000000006 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -81,6 +126,7 @@
 			isa = PBXGroup;
 			children = (
 				A00000000000000000000008 /* Groopay */,
+				C00000000000000000000005 /* GroopayWidget */,
 				B00000000000000000000003 /* GroopayTests */,
 				A0000000000000000000000B /* Config */,
 				AA1FF2D62FE0240600F57259 /* Frameworks */,
@@ -101,6 +147,7 @@
 			isa = PBXGroup;
 			children = (
 				A00000000000000000000003 /* Groopay.app */,
+				C00000000000000000000003 /* GroopayWidget.appex */,
 				B00000000000000000000001 /* GroopayTests.xctest */,
 			);
 			name = Products;
@@ -124,10 +171,12 @@
 				A0000000000000000000000E /* Sources */,
 				A00000000000000000000009 /* Frameworks */,
 				A0000000000000000000000F /* Resources */,
+				C00000000000000000000007 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				C0000000000000000000000B /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				A00000000000000000000008 /* Groopay */,
@@ -164,6 +213,28 @@
 			productReference = B00000000000000000000001 /* GroopayTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		C00000000000000000000008 /* GroopayWidget */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C0000000000000000000000E /* Build configuration list for PBXNativeTarget "GroopayWidget" */;
+			buildPhases = (
+				C0000000000000000000000A /* Sources */,
+				C00000000000000000000006 /* Frameworks */,
+				C00000000000000000000009 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				C00000000000000000000005 /* GroopayWidget */,
+			);
+			name = GroopayWidget;
+			packageProductDependencies = (
+			);
+			productName = GroopayWidget;
+			productReference = C00000000000000000000003 /* GroopayWidget.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -180,6 +251,9 @@
 					B00000000000000000000005 = {
 						CreatedOnToolsVersion = 26.5;
 						TestTargetID = A00000000000000000000007;
+					};
+					C00000000000000000000008 = {
+						CreatedOnToolsVersion = 26.5;
 					};
 				};
 			};
@@ -203,6 +277,7 @@
 			projectRoot = "";
 			targets = (
 				A00000000000000000000007 /* Groopay */,
+				C00000000000000000000008 /* GroopayWidget */,
 				B00000000000000000000005 /* GroopayTests */,
 			);
 		};
@@ -217,6 +292,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		B00000000000000000000008 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C00000000000000000000009 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -240,6 +322,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		C0000000000000000000000A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -247,6 +336,11 @@
 			isa = PBXTargetDependency;
 			target = A00000000000000000000007 /* Groopay */;
 			targetProxy = B00000000000000000000002 /* PBXContainerItemProxy */;
+		};
+		C0000000000000000000000B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C00000000000000000000008 /* GroopayWidget */;
+			targetProxy = C00000000000000000000002 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -384,7 +478,8 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = Groopay/Groopay.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 30;
+				APS_ENVIRONMENT = development;
+				CURRENT_PROJECT_VERSION = 31;
 				DEVELOPMENT_LANGUAGE = tr;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
@@ -394,7 +489,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.0;
+				MARKETING_VERSION = 1.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.groopay.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -415,7 +510,8 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = Groopay/Groopay.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 30;
+				APS_ENVIRONMENT = production;
+				CURRENT_PROJECT_VERSION = 31;
 				DEVELOPMENT_LANGUAGE = tr;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
@@ -425,7 +521,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.0;
+				MARKETING_VERSION = 1.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.groopay.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -476,6 +572,64 @@
 			};
 			name = Release;
 		};
+		C0000000000000000000000C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_ENTITLEMENTS = GroopayWidget/GroopayWidget.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 31;
+				DEVELOPMENT_LANGUAGE = tr;
+				DEVELOPMENT_TEAM = 8XPP7Z37GF;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = GroopayWidget/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.groopay.app.widget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		C0000000000000000000000D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_ENTITLEMENTS = GroopayWidget/GroopayWidget.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 31;
+				DEVELOPMENT_LANGUAGE = tr;
+				DEVELOPMENT_TEAM = 8XPP7Z37GF;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = GroopayWidget/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.groopay.app.widget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -502,6 +656,15 @@
 			buildConfigurations = (
 				B0000000000000000000000A /* Debug */,
 				B0000000000000000000000B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C0000000000000000000000E /* Build configuration list for PBXNativeTarget "GroopayWidget" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C0000000000000000000000C /* Debug */,
+				C0000000000000000000000D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

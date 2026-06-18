@@ -3,9 +3,11 @@ import RevenueCat
 
 @main
 struct GroopayApp: App {
+    @UIApplicationDelegateAdaptor(GroopayAppDelegate.self) private var appDelegate
     @State private var authStore: AuthStore
     @State private var localizationStore: LocalizationStore
     @State private var screenshotGroupsStore: GroupsStore?
+    @State private var router = AppRouter()
 
     init() {
         let screenshotMode = Self.hasArgument("-groopayScreenshots")
@@ -38,6 +40,7 @@ struct GroopayApp: App {
             content
                 .environment(authStore)
                 .environment(localizationStore)
+                .environment(router)
                 .environment(\.locale, localizationStore.locale)
                 .preferredColorScheme(.light)
         }

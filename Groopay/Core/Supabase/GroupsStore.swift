@@ -66,6 +66,10 @@ final class GroupsStore {
         return result.filter { $0.value != 0 }
     }
 
+    var balanceSummary: BalanceSummary {
+        BalanceSummary.calculate(groups: groups, userID: currentUserID)
+    }
+
     var createdNonDemoGroupCount: Int {
         guard let userID = currentUserID else { return 0 }
         return groups.filter {
@@ -95,6 +99,7 @@ final class GroupsStore {
             guard !groupIDs.isEmpty else {
                 groups = []
                 activities = []
+                WidgetBalanceSync.save(.empty)
                 isLoading = false
                 await runPendingReloadIfNeeded()
                 return
@@ -180,6 +185,8 @@ final class GroupsStore {
                     }
                 )
             }
+
+            WidgetBalanceSync.save(balanceSummary)
 
             await loadActivities(groupIDs: groupIDs)
         } catch {
@@ -308,7 +315,6 @@ final class GroupsStore {
             errorMessage = localized("Üyelik bilgisi bulunamadı.")
             return false
         }
-
         let input = AddExpenseRPCInput(
             groupId: groupID,
             description: description.trimmingCharacters(in: .whitespacesAndNewlines),
@@ -350,6 +356,10 @@ final class GroupsStore {
             errorMessage = localized("Üyelik bilgisi bulunamadı.")
             return false
         }
+        guard snapshot(groupID)?.expenses.first(where: { $0.id == expenseID })?.createdBy == actor else {
+            errorMessage = localized("Yalnızca masrafı ekleyen kişi düzenleyebilir.")
+            return false
+        }
 
         let input = UpdateExpenseRPCInput(
             expenseId: expenseID,
@@ -378,6 +388,10 @@ final class GroupsStore {
     func deleteExpense(expenseID: UUID, groupID: UUID) async -> Bool {
         guard let actor = currentMemberID(in: groupID) else {
             errorMessage = localized("Üyelik bilgisi bulunamadı.")
+            return false
+        }
+        guard snapshot(groupID)?.expenses.first(where: { $0.id == expenseID })?.createdBy == actor else {
+            errorMessage = localized("Yalnızca masrafı ekleyen kişi silebilir.")
             return false
         }
 

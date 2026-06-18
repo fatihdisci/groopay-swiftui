@@ -168,15 +168,17 @@ struct GroupDetailView: View {
         } else {
             LazyVStack(spacing: 12) {
                 ForEach(snapshot.expenses) { expense in
-                    Button {
-                        presentedExpense = .edit(expense)
-                    } label: {
-                        ExpenseCard(
-                            expense: expense,
-                            payer: snapshot.members.first { $0.id == expense.paidBy }
-                        )
+                    let canEdit = expense.createdBy == store.currentMemberID(in: groupID)
+                    ExpenseCard(
+                        expense: expense,
+                        payer: snapshot.members.first { $0.id == expense.paidBy },
+                        canEdit: canEdit,
+                        onEdit: { presentedExpense = .edit(expense) }
+                    )
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        if canEdit { presentedExpense = .edit(expense) }
                     }
-                    .buttonStyle(.plain)
                 }
             }
             .padding(.horizontal, 20)
@@ -233,6 +235,8 @@ private enum GroupDetailTab: String, CaseIterable, Identifiable {
 private struct ExpenseCard: View {
     let expense: Expense
     let payer: Member?
+    let canEdit: Bool
+    let onEdit: () -> Void
 
     private var category: ExpenseCategory {
         ExpenseCategory.find(expense.category)
@@ -263,9 +267,25 @@ private struct ExpenseCard: View {
 
             Spacer()
 
-            Text(formatAmount(expense.amount, currency: expense.currency))
-                .font(.display(17, weight: .semibold))
-                .foregroundStyle(Color.textPrimary)
+            VStack(alignment: .trailing, spacing: 8) {
+                Text(formatAmount(expense.amount, currency: expense.currency))
+                    .font(.display(17, weight: .semibold))
+                    .foregroundStyle(Color.textPrimary)
+
+                if canEdit {
+                    Button(action: onEdit) {
+                        Label("Düzenle", systemImage: "pencil")
+                            .font(.body(11, weight: .semibold))
+                            .foregroundStyle(Color.primaryTheme)
+                            .padding(.horizontal, 9)
+                            .frame(minHeight: 30)
+                            .background(Color.primaryTheme.opacity(0.10))
+                            .clipShape(Capsule())
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityHint("Masrafı düzenleme ekranını açar")
+                }
+            }
         }
         .padding(14)
         .background(Color.surface)

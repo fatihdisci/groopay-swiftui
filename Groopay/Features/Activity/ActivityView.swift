@@ -10,6 +10,7 @@ struct ActivityView: View {
     @State private var searchText = ""
     @State private var debouncedQuery = ""
     @State private var showPaywall = false
+    @State private var activityFilter = ActivityFilter()
 
     private var isPro: Bool {
         authStore.currentProfile?.userPro ?? false
@@ -24,9 +25,19 @@ struct ActivityView: View {
             } else {
                 ScrollView {
                     LazyVStack(alignment: .leading, spacing: 16, pinnedViews: []) {
-                        searchBar
-                        ForEach(sections, id: \.key) { section in
-                            sectionView(section)
+                        HStack(spacing: 10) {
+                            searchBar
+                            ActivityFilterButton(
+                                filter: $activityFilter,
+                                groups: store.groups
+                            )
+                        }
+                        if sections.isEmpty {
+                            filteredEmptyState
+                        } else {
+                            ForEach(sections, id: \.key) { section in
+                                sectionView(section)
+                            }
                         }
                     }
                     .padding(.horizontal, 20)
@@ -82,6 +93,7 @@ struct ActivityView: View {
                 proSearchCTA
             }
         }
+        .frame(maxWidth: .infinity)
     }
 
     private var proSearchCTA: some View {
@@ -114,9 +126,16 @@ struct ActivityView: View {
         let query = debouncedQuery
             .trimmingCharacters(in: .whitespacesAndNewlines)
             .lowercased(with: locale)
-        guard isPro, !query.isEmpty else { return store.activities }
+        let filterMatches = store.activities.filter {
+            activityFilter.matches(
+                $0,
+                groups: store.groups,
+                userID: store.currentUserID
+            )
+        }
+        guard isPro, !query.isEmpty else { return filterMatches }
 
-        return store.activities.filter { activity in
+        return filterMatches.filter { activity in
             let presentation = presentation(for: activity)
             let haystack = [
                 presentation.title,
@@ -181,6 +200,24 @@ struct ActivityView: View {
                 .multilineTextAlignment(.center)
         }
         .padding(.horizontal, 40)
+    }
+
+    private var filteredEmptyState: some View {
+        VStack(spacing: 10) {
+            Image(systemName: "line.3.horizontal.decrease.circle")
+                .font(.system(size: 34))
+                .foregroundStyle(Color.textTertiary)
+            Text("Filtrelere uygun aktivite yok")
+                .font(.body(15, weight: .semibold))
+                .foregroundStyle(Color.textPrimary)
+            Button("Filtreleri Temizle") {
+                activityFilter.reset()
+            }
+            .font(.body(13, weight: .semibold))
+            .foregroundStyle(Color.primaryTheme)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 48)
     }
 
     // MARK: - Lookups
