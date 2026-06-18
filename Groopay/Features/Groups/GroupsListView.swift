@@ -76,7 +76,7 @@ struct GroupsListView: View {
                     .background(Color.background)
                     .overlay {
                         RoundedRectangle(cornerRadius: ThemeRadius.button)
-                            .stroke(Color.primaryTheme.opacity(0.35), lineWidth: 1)
+                            .stroke(Color.primaryTheme, lineWidth: 1.2)
                     }
                     .clipShape(RoundedRectangle(cornerRadius: ThemeRadius.button))
             }
@@ -106,7 +106,7 @@ struct GroupsListView: View {
             "Gruba Katıl",
             systemImage: "rectangle.portrait.and.arrow.right"
         )
-        .font(.body(14, weight: .semibold))
+        .font(.body(15, weight: .semibold))
         .frame(maxWidth: .infinity, minHeight: 50)
         .contentShape(Rectangle())
     }
