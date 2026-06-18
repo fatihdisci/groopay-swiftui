@@ -100,6 +100,23 @@ struct PaymentSheet: View {
                 .background(Color.surfaceTinted)
                 .clipShape(RoundedRectangle(cornerRadius: 16))
 
+                // Bilgilendirme: gerçek bir banka transferi yapılmadığını,
+                // sadece karşı tarafa bildirim gönderildiğini netleştirir.
+                HStack(alignment: .top, spacing: 8) {
+                    Image(systemName: "info.circle.fill")
+                        .font(.system(size: 14))
+                        .foregroundStyle(Color.primaryTheme)
+                    Text("Bu işlem para göndermez. Karşı tarafa ödediğini bildirir; o onaylayınca borç kapanır.")
+                        .font(.body(12))
+                        .foregroundStyle(Color.textSecondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                .padding(12)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .background(Color.primaryTheme.opacity(0.07))
+                .clipShape(RoundedRectangle(cornerRadius: 12))
+                .padding(.top, 14)
+
                 // Error message
                 if showError {
                     Text(errorMessage)
@@ -120,7 +137,7 @@ struct PaymentSheet: View {
                         withAnimation { showError = true }
                     }
                 } label: {
-                    Text("Ödeme Bildir")
+                    Text("Ödedim, Onaya Gönder")
                         .font(.body(16, weight: .semibold))
                         .foregroundStyle(.white)
                         .frame(maxWidth: .infinity, minHeight: 52)
