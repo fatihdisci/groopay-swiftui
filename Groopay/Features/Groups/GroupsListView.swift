@@ -30,12 +30,7 @@ struct GroupsListView: View {
         ScrollView {
             LazyVStack(spacing: 14) {
                 ForEach(store.groups) { snapshot in
-                    NavigationLink {
-                        GroupDetailView(
-                            groupID: snapshot.id,
-                            store: store
-                        )
-                    } label: {
+                    NavigationLink(value: GroupRoute.detail(snapshot.id)) {
                         GroupCard(snapshot: snapshot)
                     }
                     .buttonStyle(.plain)

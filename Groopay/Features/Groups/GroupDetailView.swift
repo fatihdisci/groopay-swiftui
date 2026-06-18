@@ -30,15 +30,11 @@ struct GroupDetailView: View {
                             Image(systemName: "square.and.arrow.up")
                         }
 
-                        NavigationLink {
-                            MembersView(groupID: groupID, store: store)
-                        } label: {
+                        NavigationLink(value: GroupRoute.members(groupID)) {
                             Image(systemName: "person.2")
                         }
 
-                        NavigationLink {
-                            EditGroupView(groupID: groupID, store: store)
-                        } label: {
+                        NavigationLink(value: GroupRoute.edit(groupID)) {
                             Image(systemName: "slider.horizontal.3")
                         }
                     }
