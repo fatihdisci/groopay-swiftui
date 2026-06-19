@@ -9,35 +9,43 @@ final class PushNotificationService {
 
     private let supabase: SupabaseClient
     private var latestToken: String?
-    private let permissionPromptedKey = "groopay.push.permission-prompted"
+    private static let latestTokenKey = "groopay.push.latest-token"
     private static let pendingGroupKey = "groopay.push.pending-group"
 
     init(supabase: SupabaseClient = SupabaseService.shared) {
         self.supabase = supabase
+        latestToken = UserDefaults.standard.string(forKey: Self.latestTokenKey)
     }
 
     func requestAuthorizationIfNeeded(hasGroups: Bool) async {
         guard hasGroups else { return }
 
-        if UserDefaults.standard.bool(forKey: permissionPromptedKey) {
-            let settings = await UNUserNotificationCenter.current().notificationSettings()
-            if settings.authorizationStatus == .authorized || settings.authorizationStatus == .provisional {
-                UIApplication.shared.registerForRemoteNotifications()
-            }
-            await syncLatestToken()
-            return
+        let center = UNUserNotificationCenter.current()
+        let settings = await center.notificationSettings()
+        let granted: Bool
+
+        switch settings.authorizationStatus {
+        case .notDetermined:
+            granted = (try? await center.requestAuthorization(
+                options: [.alert, .badge, .sound]
+            )) == true
+        case .authorized, .provisional, .ephemeral:
+            granted = true
+        case .denied:
+            granted = false
+        @unknown default:
+            granted = false
         }
 
-        UserDefaults.standard.set(true, forKey: permissionPromptedKey)
-        let granted = (try? await UNUserNotificationCenter.current()
-            .requestAuthorization(options: [.alert, .badge, .sound])) == true
         if granted {
             UIApplication.shared.registerForRemoteNotifications()
         }
+        await syncLatestToken()
     }
 
     func received(deviceToken: Data) async {
         latestToken = deviceToken.map { String(format: "%02x", $0) }.joined()
+        UserDefaults.standard.set(latestToken, forKey: Self.latestTokenKey)
         await syncLatestToken()
     }
 
@@ -51,10 +59,16 @@ final class PushNotificationService {
             environment: Self.environment,
             deviceID: UIDevice.current.identifierForVendor?.uuidString
         )
-        _ = try? await supabase
-            .from("push_tokens")
-            .upsert(row, onConflict: "token")
-            .execute()
+        do {
+            try await supabase
+                .from("push_tokens")
+                .upsert(row, onConflict: "token")
+                .execute()
+        } catch {
+            #if DEBUG
+            print("Push token sync failed: \(error)")
+            #endif
+        }
     }
 
     func removeCurrentToken() async {
@@ -119,14 +133,23 @@ final class GroopayAppDelegate: NSObject, UIApplicationDelegate, UNUserNotificat
         }
     }
 
-    func userNotificationCenter(
+    func application(
+        _ application: UIApplication,
+        didFailToRegisterForRemoteNotificationsWithError error: any Error
+    ) {
+        #if DEBUG
+        print("APNs registration failed: \(error)")
+        #endif
+    }
+
+    nonisolated func userNotificationCenter(
         _ center: UNUserNotificationCenter,
         willPresent notification: UNNotification
     ) async -> UNNotificationPresentationOptions {
         [.banner, .list, .sound]
     }
 
-    func userNotificationCenter(
+    nonisolated func userNotificationCenter(
         _ center: UNUserNotificationCenter,
         didReceive response: UNNotificationResponse
     ) async {

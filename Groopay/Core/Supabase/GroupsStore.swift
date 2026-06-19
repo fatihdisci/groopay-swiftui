@@ -189,6 +189,9 @@ final class GroupsStore {
             WidgetBalanceSync.save(balanceSummary)
 
             await loadActivities(groupIDs: groupIDs)
+        } catch is CancellationError {
+            // Cancellation is lifecycle/control flow, not a user-facing failure.
+            // A later realtime event or view refresh will request another load.
         } catch {
             errorMessage = error.localizedDescription
         }
@@ -220,6 +223,11 @@ final class GroupsStore {
         realtimeRefreshTask = Task { [weak self] in
             try? await Task.sleep(for: .milliseconds(350))
             guard !Task.isCancelled else { return }
+
+            // The debounce task must stop being the cancellable task before the
+            // actual load starts. Otherwise a second realtime event cancels the
+            // in-flight Supabase requests and surfaces Swift.CancellationError.
+            self?.realtimeRefreshTask = nil
             await self?.load()
         }
     }

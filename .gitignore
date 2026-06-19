@@ -12,3 +12,4 @@ GoogleService-Info.plist
 # macOS
 .DS_Store
 .venv/
+supabase/.temp/
