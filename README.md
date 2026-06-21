@@ -7,6 +7,7 @@ Bu depo, Expo/React Native istemcisinin yerine geliştirilen SwiftUI uygulaması
 ## Güncel durum
 
 - Uygulama sürümü: **1.2.0 (build 34)**
+- Dağıtım durumu: **App Store incelemesine gönderildi** (21 Haziran 2026)
 - Platform: **iPhone, iOS 17.0+**
 - Arayüz: **SwiftUI**
 - Diller: **Türkçe ve İngilizce**
@@ -15,7 +16,7 @@ Bu depo, Expo/React Native istemcisinin yerine geliştirilen SwiftUI uygulaması
 - Bildirim: **APNs + Supabase Edge Function**
 - Widget: para birimi bazında toplam borç ve alacak özeti
 
-Son sürümde masraf ekleme akışı hızlandırıldı; grup bazlı tercihler, not ve tarih, masraf kopyalama ve silme işlemini geri alma eklendi. Boş durumlar doğrudan aksiyonlara bağlandı ve uygulama geri bildirimleri ortaklaştırıldı.
+1.2.0 sürümünde masraf ekleme akışı hızlandırıldı; grup bazlı tercihler, not ve tarih, masraf kopyalama ve silme işlemini geri alma eklendi. Etkileşimli masraf rehberi, tüm kullanıcılar için aktivite araması ve güvenli hesap verisi dışa aktarma tamamlandı. Boş durumlar doğrudan aksiyonlara bağlandı ve uygulama geri bildirimleri ortaklaştırıldı.
 
 ## Özellikler
 
