@@ -1,6 +1,326 @@
 {
   "sourceLanguage": "tr",
   "strings": {
+    "Önce bir grup": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Start with a group"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Önce bir grup"
+          }
+        }
+      }
+    },
+    "Arkadaşlarınla bir grup oluştur. Tüm ortak harcamalar tek bir yerde toplanır.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Create a group with friends. All shared expenses live in one place."
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Arkadaşlarınla bir grup oluştur. Tüm ortak harcamalar tek bir yerde toplanır."
+          }
+        }
+      }
+    },
+    "Hafta Sonu": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Weekend"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hafta Sonu"
+          }
+        }
+      }
+    },
+    "3 üye": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "3 members"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "3 üye"
+          }
+        }
+      }
+    },
+    "Örnek grup Hafta Sonu, üç üye: Sen, Ayşe, Mert": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sample group Weekend, three members: You, Ava, Noah"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Örnek grup Hafta Sonu, üç üye: Sen, Ayşe, Mert"
+          }
+        }
+      }
+    },
+    "Bir masraf ekle": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add an expense"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bir masraf ekle"
+          }
+        }
+      }
+    },
+    "Akşam yemeğini sen ödedin. Nasıl bölüşüleceğini seç; paylar anında güncellenir.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You paid for dinner. Choose how to split it; shares update instantly."
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Akşam yemeğini sen ödedin. Nasıl bölüşüleceğini seç; paylar anında güncellenir."
+          }
+        }
+      }
+    },
+    "Akşam yemeği": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dinner"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Akşam yemeği"
+          }
+        }
+      }
+    },
+    "Sen ödedin": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You paid"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sen ödedin"
+          }
+        }
+      }
+    },
+    "Eşit böl": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Split equally"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Eşit böl"
+          }
+        }
+      }
+    },
+    "Seçili kişiler": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Selected people"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Seçili kişiler"
+          }
+        }
+      }
+    },
+    "Sen": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sen"
+          }
+        }
+      }
+    },
+    "Ayşe": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ava"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ayşe"
+          }
+        }
+      }
+    },
+    "Mert": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Noah"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mert"
+          }
+        }
+      }
+    },
+    "Dahil değil": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not included"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dahil değil"
+          }
+        }
+      }
+    },
+    "Sonucu gör": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "See the result"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sonucu gör"
+          }
+        }
+      }
+    },
+    "Groopay kimin kime ne kadar borçlu olduğunu sadeleştirir.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Groopay simplifies who owes whom and how much."
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Groopay kimin kime ne kadar borçlu olduğunu sadeleştirir."
+          }
+        }
+      }
+    },
+    "Ödendi olarak işaretle": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mark as paid"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ödendi olarak işaretle"
+          }
+        }
+      }
+    },
+    "Son kullandıkların": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recently used"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Son kullandıkların"
+          }
+        }
+      }
+    },
+    "%@ önerisini uygula": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apply %@ suggestion"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ önerisini uygula"
+          }
+        }
+      }
+    },
     "Verilerin dışa aktarıldı.": {
       "localizations": {
         "en": {
