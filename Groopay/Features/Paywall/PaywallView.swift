@@ -73,13 +73,8 @@ struct PaywallView: View {
 
             closeButton
 
-            if let successMessage {
-                toast(successMessage)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
-                    .padding(.bottom, 30)
-                    .transition(.move(edge: .bottom).combined(with: .opacity))
-            }
         }
+        .appToast(message: $successMessage)
         .task {
             await purchases.loadOfferings()
             guard !reduceMotion else { return }
@@ -434,16 +429,6 @@ struct PaywallView: View {
         UIApplication.shared.open(url)
     }
 
-    private func toast(_ message: String) -> some View {
-        Text(message)
-            .font(.body(13, weight: .semibold))
-            .foregroundStyle(.white)
-            .padding(.horizontal, 16)
-            .padding(.vertical, 10)
-            .background(Color.textPrimary.opacity(0.9))
-            .clipShape(Capsule())
-            .shadow(color: .black.opacity(0.14), radius: 12, x: 0, y: 8)
-    }
 }
 
 // MARK: - Preview

@@ -109,11 +109,7 @@ struct AccountView: View {
         } message: {
             Text("Verilerin korunur. Apple ile tekrar giriş yaparak geri dönebilirsin.")
         }
-        .overlay(alignment: .bottom) {
-            if let message = toastMessage {
-                toastView(message)
-            }
-        }
+        .appToast(message: $toastMessage)
     }
 
     // MARK: - Profil
@@ -649,17 +645,6 @@ struct AccountView: View {
         isDeleting = false
     }
 
-    private func toastView(_ message: String) -> some View {
-        Text(message)
-            .font(.body(14, weight: .medium))
-            .foregroundStyle(.white)
-            .padding(.horizontal, 20)
-            .padding(.vertical, 12)
-            .background(Color.textPrimary.opacity(0.88))
-            .clipShape(Capsule())
-            .padding(.bottom, 36)
-            .transition(.move(edge: .bottom).combined(with: .opacity))
-    }
 }
 
 // MARK: - Helpers

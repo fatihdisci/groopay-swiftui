@@ -211,6 +211,23 @@ struct GroupDetailView: View {
             Text("Sağ alttaki + ile ilk masrafı ekle.")
                 .font(.body(13))
                 .foregroundStyle(Color.textTertiary)
+            Button {
+                presentedExpense = .new
+            } label: {
+                Label("İlk Masrafı Ekle", systemImage: "plus")
+                    .font(.body(15, weight: .semibold))
+                    .foregroundStyle(.white)
+                    .frame(maxWidth: 220, minHeight: 48)
+                    .background(
+                        LinearGradient(
+                            colors: [.gradientStart, .gradientEnd],
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
+                    .clipShape(RoundedRectangle(cornerRadius: ThemeRadius.button))
+            }
+            .padding(.top, 8)
         }
         .frame(maxWidth: .infinity)
         .padding(.top, 54)

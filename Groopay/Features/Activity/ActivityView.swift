@@ -4,6 +4,7 @@ struct ActivityView: View {
     let store: GroupsStore
 
     @Environment(AuthStore.self) private var authStore
+    @Environment(AppRouter.self) private var router
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.locale) private var locale
 
@@ -198,6 +199,23 @@ struct ActivityView: View {
                 .font(.body(14))
                 .foregroundStyle(Color.textSecondary)
                 .multilineTextAlignment(.center)
+            Button {
+                router.selectedTab = .groups
+            } label: {
+                Label("Gruplara Git", systemImage: "person.2.fill")
+                    .font(.body(15, weight: .semibold))
+                    .foregroundStyle(.white)
+                    .frame(maxWidth: 220, minHeight: 48)
+                    .background(
+                        LinearGradient(
+                            colors: [.gradientStart, .gradientEnd],
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
+                    .clipShape(RoundedRectangle(cornerRadius: ThemeRadius.button))
+            }
+            .padding(.top, 8)
         }
         .padding(.horizontal, 40)
     }
@@ -397,4 +415,5 @@ private struct ActivityRow: View {
         ActivityView(store: PreviewSupport.groupsStore)
     }
     .environment(PreviewSupport.authStore)
+    .environment(AppRouter())
 }

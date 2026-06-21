@@ -2,6 +2,7 @@ import SwiftUI
 
 struct DashboardView: View {
     @Environment(AuthStore.self) private var authStore
+    @Environment(AppRouter.self) private var router
     @Environment(\.locale) private var locale
     @State private var showPaywall = false
     @State private var selectedTimeFilter: TimeFilter = .month
@@ -82,7 +83,32 @@ struct DashboardView: View {
                 .foregroundStyle(Color.textSecondary)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 28)
+
+            Button {
+                router.selectedTab = .groups
+            } label: {
+                emptyStateButton("Gruplara Git", systemImage: "person.2.fill")
+            }
+            .padding(.top, 8)
         }
+    }
+
+    private func emptyStateButton(
+        _ title: LocalizedStringKey,
+        systemImage: String
+    ) -> some View {
+        Label(title, systemImage: systemImage)
+            .font(.body(15, weight: .semibold))
+            .foregroundStyle(.white)
+            .frame(maxWidth: 220, minHeight: 48)
+            .background(
+                LinearGradient(
+                    colors: [.gradientStart, .gradientEnd],
+                    startPoint: .leading,
+                    endPoint: .trailing
+                )
+            )
+            .clipShape(RoundedRectangle(cornerRadius: ThemeRadius.button))
     }
 
     // MARK: - Overall Balance (herkese açık)
@@ -955,4 +981,5 @@ private struct FlowPills<Item: Hashable, Content: View>: View {
         DashboardView(store: PreviewSupport.groupsStore)
     }
     .environment(PreviewSupport.authStore)
+    .environment(AppRouter())
 }
