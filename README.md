@@ -6,7 +6,7 @@ Bu depo, Expo/React Native istemcisinin yerine geliştirilen SwiftUI uygulaması
 
 ## Güncel durum
 
-- Uygulama sürümü: **1.2.0 (build 33)**
+- Uygulama sürümü: **1.2.0 (build 34)**
 - Platform: **iPhone, iOS 17.0+**
 - Arayüz: **SwiftUI**
 - Diller: **Türkçe ve İngilizce**
