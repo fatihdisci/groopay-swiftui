@@ -24,20 +24,27 @@ struct DashboardView: View {
                 .ignoresSafeArea()
 
             if store.isLoading && store.groups.isEmpty {
-                ProgressView().tint(.primaryTheme)
+                dashboardSkeleton
             } else if store.groups.isEmpty {
                 emptyState
             } else {
                 ScrollView {
                     VStack(spacing: 18) {
-                        // Genel Bakiye Kartı (herkese açık)
+                        // 1) Bakiyem (herkese açık)
                         overallBalanceCard
 
+                        // 2) Yapmam gerekenler (herkese açık)
+                        actionCenterSection
+
+                        // 3) Analiz (Pro; free kullanıcı teaser görür)
                         if isPro {
-                            proContent
+                            analysisContent
                         } else {
                             freeTeaser
                         }
+
+                        // 4) Son aktiviteler (herkese açık)
+                        recentActivitySection
                     }
                     .padding(20)
                     .padding(.bottom, 30)
@@ -64,6 +71,21 @@ struct DashboardView: View {
             guard !Task.isCancelled else { return }
             debouncedActivitySearchText = activitySearchText
         }
+    }
+
+    // MARK: - Skeleton (ilk yükleme)
+
+    private var dashboardSkeleton: some View {
+        ScrollView {
+            VStack(spacing: 18) {
+                SkeletonBlock(height: 120, cornerRadius: 20)
+                SkeletonBlock(height: 90, cornerRadius: 16)
+                SkeletonBlock(height: 220, cornerRadius: 16)
+                SkeletonBlock(height: 160, cornerRadius: 16)
+            }
+            .padding(20)
+        }
+        .accessibilityHidden(true)
     }
 
     // MARK: - Empty
@@ -195,14 +217,139 @@ struct DashboardView: View {
         .clipShape(RoundedRectangle(cornerRadius: 12))
     }
 
-    // MARK: - Pro Content
+    // MARK: - Analiz (Pro Content)
 
     @ViewBuilder
-    private var proContent: some View {
+    private var analysisContent: some View {
         timeFilterPicker
         donutSection
         categorySection
-        recentActivitySection
+    }
+
+    // MARK: - Yapmam Gerekenler (Action Center)
+
+    private var actionCenterSection: some View {
+        let items = DashboardActionItem.build(
+            groups: store.groups,
+            userID: store.currentUserID
+        )
+
+        return VStack(alignment: .leading, spacing: 12) {
+            Text("Yapmam Gerekenler")
+                .font(.display(17, weight: .bold))
+                .foregroundStyle(Color.textPrimary)
+                .frame(maxWidth: .infinity, alignment: .leading)
+
+            if items.isEmpty {
+                actionCenterEmptyState
+            } else {
+                VStack(spacing: 10) {
+                    ForEach(items) { item in
+                        actionCard(item)
+                    }
+                }
+            }
+        }
+        .padding(18)
+        .background(Color.surface)
+        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .purpleTintedShadow()
+    }
+
+    private var actionCenterEmptyState: some View {
+        HStack(spacing: 12) {
+            Image(systemName: "checkmark.circle.fill")
+                .font(.system(size: 24))
+                .foregroundStyle(Color.credit)
+            Text("Şu an yapman gereken bir işlem yok")
+                .font(.body(14, weight: .medium))
+                .foregroundStyle(Color.textSecondary)
+            Spacer(minLength: 0)
+        }
+        .padding(.vertical, 6)
+    }
+
+    @ViewBuilder
+    private func actionCard(_ item: DashboardActionItem) -> some View {
+        Button {
+            router.openGroup(item.groupID, section: .balances)
+        } label: {
+            switch item {
+            case let .debt(_, groupName, currency, amount):
+                actionRow(
+                    icon: "arrow.down.circle.fill",
+                    tint: .debt,
+                    title: String(
+                        format: String(localized: "%@ grubunda borcun var", locale: locale),
+                        locale: locale,
+                        groupName
+                    ),
+                    detail: String(
+                        format: String(localized: "Borcun %@", locale: locale),
+                        locale: locale,
+                        formatAmount(amount, currency: currency)
+                    )
+                )
+            case let .pendingApproval(_, groupName, _, fromName, currency, amount):
+                actionRow(
+                    icon: "checkmark.seal.fill",
+                    tint: .warning,
+                    title: String(
+                        format: String(localized: "%@ ödeme yaptı diyor", locale: locale),
+                        locale: locale,
+                        fromName
+                    ),
+                    detail: String(
+                        format: String(localized: "%1$@ • %2$@ onayını bekliyor", locale: locale),
+                        locale: locale,
+                        groupName,
+                        formatAmount(amount, currency: currency)
+                    )
+                )
+            }
+        }
+        .buttonStyle(.plain)
+    }
+
+    private func actionRow(
+        icon: String,
+        tint: Color,
+        title: String,
+        detail: String
+    ) -> some View {
+        HStack(spacing: 12) {
+            ZStack {
+                Circle()
+                    .fill(tint.opacity(0.15))
+                    .frame(width: 40, height: 40)
+                Image(systemName: icon)
+                    .font(.system(size: 17, weight: .semibold))
+                    .foregroundStyle(tint)
+            }
+            VStack(alignment: .leading, spacing: 3) {
+                Text(title)
+                    .font(.body(14, weight: .semibold))
+                    .foregroundStyle(Color.textPrimary)
+                    .lineLimit(2)
+                Text(detail)
+                    .font(.body(12, weight: .medium))
+                    .foregroundStyle(tint)
+                    .lineLimit(2)
+            }
+            Spacer(minLength: 4)
+            Image(systemName: "chevron.right")
+                .font(.system(size: 13, weight: .semibold))
+                .foregroundStyle(Color.textTertiary)
+        }
+        .padding(12)
+        .frame(minHeight: 56)
+        .background(Color.surfaceTinted)
+        .clipShape(RoundedRectangle(cornerRadius: ThemeRadius.button))
+        .contentShape(Rectangle())
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(Text("\(title), \(detail)"))
+        .accessibilityHint("Grubun Ödeşme bölümünü açar")
+        .accessibilityAddTraits(.isButton)
     }
 
     private var timeFilterPicker: some View {
@@ -487,18 +634,11 @@ struct DashboardView: View {
 
             if isRecentActivityExpanded {
                 VStack(spacing: 12) {
-                    HStack(spacing: 10) {
-                        Image(systemName: "magnifyingglass")
-                            .font(.system(size: 14, weight: .semibold))
-                            .foregroundStyle(Color.textTertiary)
-                        TextField("Arama", text: $activitySearchText)
-                            .font(.body(14))
-                            .textInputAutocapitalization(.never)
-                            .autocorrectionDisabled()
-                    }
-                    .padding(12)
-                    .background(Color.surfaceTinted)
-                    .clipShape(RoundedRectangle(cornerRadius: ThemeRadius.button))
+                    AppSearchField(
+                        text: $activitySearchText,
+                        placeholder: "Arama",
+                        onClear: { debouncedActivitySearchText = "" }
+                    )
 
                     HStack {
                         ActivityFilterButton(
@@ -651,28 +791,22 @@ struct DashboardView: View {
     }
 
     private func searchedActivities(from activities: [Activity]) -> [Activity] {
-        let query = debouncedActivitySearchText
-            .trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !query.isEmpty else { return activities }
-
-        return activities.filter { activity in
+        ActivitySearch.filter(
+            activities,
+            query: debouncedActivitySearchText,
+            locale: locale
+        ) { activity in
             let presentation = ActivityPresentation(
                 activity: activity,
                 actorName: actorName(activity),
                 locale: locale
             )
-            let haystack = [
+            return [
                 presentation.title,
                 presentation.subtitle ?? "",
                 groupName(activity.groupId)
             ]
             .joined(separator: " ")
-
-            return haystack.range(
-                of: query,
-                options: [.caseInsensitive, .diacriticInsensitive],
-                locale: locale
-            ) != nil
         }
     }
 

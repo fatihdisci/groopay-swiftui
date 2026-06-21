@@ -8,8 +8,22 @@ enum MainTab: Hashable {
     case account
 }
 
+/// Grup detayında açılacak bölüm. Action center kartları doğrudan Ödeşme
+/// bölümünü açmak için kullanır; nil ise grup varsayılan davranışıyla açılır
+/// (borç varsa Ödeşme, yoksa Masraflar).
+enum GroupDetailSection: String, Hashable, CaseIterable, Identifiable, Sendable {
+    case expenses
+    case balances
+
+    var id: String { rawValue }
+
+    var title: LocalizedStringResource {
+        self == .expenses ? "Masraflar" : "Ödeşme"
+    }
+}
+
 enum GroupRoute: Hashable {
-    case detail(UUID)
+    case detail(UUID, section: GroupDetailSection?)
     case members(UUID)
     case edit(UUID)
 }
@@ -20,9 +34,15 @@ final class AppRouter {
     var selectedTab: MainTab = .dashboard
     var groupPath: [GroupRoute] = []
 
+    /// Push bildirimi ve genel grup açma davranışı: bölüm belirtilmez (nil),
+    /// grup kendi varsayılan sekmesinde açılır.
     func openGroup(_ groupID: UUID) {
+        openGroup(groupID, section: nil)
+    }
+
+    func openGroup(_ groupID: UUID, section: GroupDetailSection?) {
         selectedTab = .groups
-        groupPath = [.detail(groupID)]
+        groupPath = [.detail(groupID, section: section)]
     }
 }
 

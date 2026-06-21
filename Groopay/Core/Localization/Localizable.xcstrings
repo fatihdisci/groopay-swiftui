@@ -1,6 +1,198 @@
 {
   "sourceLanguage": "tr",
   "strings": {
+    "Ödeştiniz": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Settled up"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ödeştiniz"
+          }
+        }
+      }
+    },
+    "Borcun": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You owe"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Borcun"
+          }
+        }
+      }
+    },
+    "Alacağın": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You're owed"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alacağın"
+          }
+        }
+      }
+    },
+    "Yapmam Gerekenler": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Things to do"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Yapmam Gerekenler"
+          }
+        }
+      }
+    },
+    "Şu an yapman gereken bir işlem yok": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nothing needs your attention right now"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Şu an yapman gereken bir işlem yok"
+          }
+        }
+      }
+    },
+    "%@ grubunda borcun var": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You owe money in %@"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ grubunda borcun var"
+          }
+        }
+      }
+    },
+    "Borcun %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You owe %@"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Borcun %@"
+          }
+        }
+      }
+    },
+    "%@ ödeme yaptı diyor": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ says they paid"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ ödeme yaptı diyor"
+          }
+        }
+      }
+    },
+    "%1$@ • %2$@ onayını bekliyor": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ • %2$@ awaiting your approval"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ • %2$@ onayını bekliyor"
+          }
+        }
+      }
+    },
+    "Grubun Ödeşme bölümünü açar": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens the group's settle-up section"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Grubun Ödeşme bölümünü açar"
+          }
+        }
+      }
+    },
+    "Toplam %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Total %@"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Toplam %@"
+          }
+        }
+      }
+    },
+    "%1$@ yüzde %2$lld": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ %2$lld percent"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ yüzde %2$lld"
+          }
+        }
+      }
+    },
     "(%lld/%lld)": {
       "localizations": {
         "tr": {

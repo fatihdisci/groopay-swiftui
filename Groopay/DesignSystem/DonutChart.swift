@@ -11,6 +11,7 @@ struct DonutChart: View {
     let segments: [Segment]
     let centerText: String
     @Binding var selectedSegment: Int?
+    @Environment(\.locale) private var locale
 
     private let chartSize: CGFloat = 200
     private let lineWidth: CGFloat = 28
@@ -86,6 +87,29 @@ struct DonutChart: View {
         .animation(.spring(response: 0.35), value: selectedSegment)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(Text("Harcama Dağılımı"))
+        .accessibilityValue(Text(accessibilityValue))
+    }
+
+    /// VoiceOver için toplam + kategori yüzdelerini içeren metinsel değer.
+    private var accessibilityValue: String {
+        let total = max(segments.reduce(0) { $0 + $1.value }, 1)
+        let totalText = String(
+            format: String(localized: "Toplam %@", locale: locale),
+            locale: locale,
+            centerText
+        )
+        guard !segments.isEmpty else { return totalText }
+
+        let parts = segments.map { segment -> String in
+            let percent = Int((Double(segment.value) / Double(total) * 100).rounded())
+            return String(
+                format: String(localized: "%1$@ yüzde %2$lld", locale: locale),
+                locale: locale,
+                segment.label,
+                Int64(percent)
+            )
+        }
+        return totalText + ". " + parts.joined(separator: ", ")
     }
 
     private func selectSegment(at point: CGPoint) {

@@ -12,8 +12,7 @@ struct GroupsListView: View {
 
             SwiftUI.Group {
                 if store.isLoading && store.groups.isEmpty {
-                    ProgressView()
-                        .tint(.primaryTheme)
+                    ScrollView { SkeletonList() }
                 } else if store.groups.isEmpty {
                     emptyState
                 } else {
@@ -30,8 +29,14 @@ struct GroupsListView: View {
         ScrollView {
             LazyVStack(spacing: 14) {
                 ForEach(store.groups) { snapshot in
-                    NavigationLink(value: GroupRoute.detail(snapshot.id)) {
-                        GroupCard(snapshot: snapshot, balance: selfBalance(snapshot))
+                    NavigationLink(value: GroupRoute.detail(snapshot.id, section: nil)) {
+                        GroupCard(
+                            snapshot: snapshot,
+                            status: GroupCardStatus.make(
+                                snapshot: snapshot,
+                                userID: store.currentUserID
+                            )
+                        )
                     }
                     .buttonStyle(.plain)
                 }
@@ -40,13 +45,6 @@ struct GroupsListView: View {
             .padding(.top, 8)
             .padding(.bottom, 108)
         }
-    }
-
-    /// Mevcut kullanıcının bu gruptaki net bakiyesi (sıfır olanlar elenir).
-    /// Negatif = borçlu, pozitif = alacaklı.
-    private func selfBalance(_ snapshot: GroupSnapshot) -> [String: Int] {
-        guard let memberID = store.currentMemberID(in: snapshot.id) else { return [:] }
-        return (snapshot.ledgerBalances()[memberID] ?? [:]).filter { $0.value != 0 }
     }
 
     private var emptyState: some View {
@@ -130,16 +128,8 @@ struct GroupsListView: View {
 
 private struct GroupCard: View {
     let snapshot: GroupSnapshot
-    let balance: [String: Int]
-
-    /// Yalnızca kullanıcının borçlu olduğu (negatif) bakiyeler, para birimine
-    /// göre ayrı ayrı. Borç yoksa boştur.
-    private var debts: [(currency: String, amount: Int)] {
-        balance
-            .filter { $0.value < 0 }
-            .map { (currency: $0.key, amount: $0.value) }
-            .sorted { abs($0.amount) > abs($1.amount) }
-    }
+    let status: GroupCardStatus
+    @Environment(\.locale) private var locale
 
     var body: some View {
         HStack(spacing: 14) {
@@ -153,14 +143,15 @@ private struct GroupCard: View {
                 Text(snapshot.group.name)
                     .font(.display(17))
                     .foregroundStyle(Color.textPrimary)
-                    .lineLimit(1)
+                    .lineLimit(2)
+                    .truncationMode(.tail)
                 Text("\(snapshot.activeMembers.count) aktif üye")
                     .font(.body(13))
                     .foregroundStyle(Color.textSecondary)
-                debtPills
+                statusView
             }
 
-            Spacer()
+            Spacer(minLength: 8)
 
             Image(systemName: "chevron.right")
                 .font(.system(size: 14, weight: .semibold))
@@ -170,30 +161,92 @@ private struct GroupCard: View {
         .background(Color.surface)
         .clipShape(RoundedRectangle(cornerRadius: ThemeRadius.card))
         .purpleTintedShadow()
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(accessibilitySummary)
+        .accessibilityAddTraits(.isButton)
     }
 
-    /// Borç varsa her para birimi için ayrı bir pill; borç yoksa hiçbir şey
-    /// gösterilmez.
+    /// Sıfır bakiye → "Ödeştiniz"; aksi halde her para birimi için ayrı satır.
+    /// Renk + kelime + SF Symbol birlikte; işaret (+/-) yok.
     @ViewBuilder
-    private var debtPills: some View {
-        if !debts.isEmpty {
+    private var statusView: some View {
+        switch status {
+        case .settled:
+            HStack(spacing: 5) {
+                Image(systemName: "checkmark.circle.fill")
+                    .font(.system(size: 11, weight: .bold))
+                Text("Ödeştiniz")
+                    .font(.body(12, weight: .semibold))
+            }
+            .foregroundStyle(Color.credit)
+            .padding(.horizontal, 9)
+            .padding(.vertical, 4)
+            .background(Color.credit.opacity(0.12))
+            .clipShape(Capsule())
+        case let .lines(lines):
+            // Büyük Dynamic Type'ta yatay taşmayı önlemek için akışkan grid.
+            FlowLines(lines: lines)
+        }
+    }
+
+    private struct FlowLines: View {
+        let lines: [GroupBalanceLine]
+
+        var body: some View {
             VStack(alignment: .leading, spacing: 4) {
-                ForEach(debts, id: \.currency) { debt in
-                    HStack(spacing: 5) {
-                        Text(formatAmount(abs(debt.amount), currency: debt.currency))
-                            .font(.body(12, weight: .semibold))
-                        Text("borçlusun")
-                            .font(.body(11, weight: .medium))
-                    }
-                    .lineLimit(1)
-                    .fixedSize(horizontal: true, vertical: false)
-                    .foregroundStyle(Color.debt)
-                    .padding(.horizontal, 9)
-                    .padding(.vertical, 4)
-                    .background(Color.debt.opacity(0.12))
-                    .clipShape(Capsule())
+                ForEach(lines) { line in
+                    pill(for: line)
                 }
             }
+        }
+
+        private func pill(for line: GroupBalanceLine) -> some View {
+            let color = line.kind == .debt ? Color.debt : Color.credit
+            let icon = line.kind == .debt ? "arrow.down.circle.fill" : "arrow.up.circle.fill"
+            return HStack(spacing: 5) {
+                Image(systemName: icon)
+                    .font(.system(size: 10, weight: .bold))
+                if line.kind == .debt {
+                    Text("Borcun")
+                        .font(.body(11, weight: .medium))
+                } else {
+                    Text("Alacağın")
+                        .font(.body(11, weight: .medium))
+                }
+                Text(formatAmount(line.amount, currency: line.currency))
+                    .font(.body(12, weight: .semibold))
+            }
+            .lineLimit(1)
+            .minimumScaleFactor(0.85)
+            .foregroundStyle(color)
+            .padding(.horizontal, 9)
+            .padding(.vertical, 4)
+            .background(color.opacity(0.12))
+            .clipShape(Capsule())
+        }
+    }
+
+    /// VoiceOver tek anlaşılır özet okur: grup adı + üye sayısı + durum.
+    private var accessibilitySummary: Text {
+        let name = snapshot.group.name
+        let memberInfo = String(
+            format: String(localized: "%lld aktif üye", locale: locale),
+            locale: locale,
+            Int64(snapshot.activeMembers.count)
+        )
+        switch status {
+        case .settled:
+            let settled = String(localized: "Ödeştiniz", locale: locale)
+            return Text(verbatim: "\(name), \(memberInfo), \(settled)")
+        case let .lines(lines):
+            let parts = lines.map { line -> String in
+                let amount = formatAmount(line.amount, currency: line.currency)
+                let direction = line.kind == .debt
+                    ? String(localized: "Borcun", locale: locale)
+                    : String(localized: "Alacağın", locale: locale)
+                return "\(direction) \(amount)"
+            }
+            return Text(verbatim: "\(name), \(memberInfo), " + parts.joined(separator: ", "))
         }
     }
 }

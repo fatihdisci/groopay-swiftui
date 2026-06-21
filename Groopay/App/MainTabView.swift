@@ -2,6 +2,7 @@ import SwiftUI
 
 struct MainTabView: View {
     @Environment(AppRouter.self) private var router
+    @Environment(\.appFeedback) private var feedback
     @State private var groupsStore: GroupsStore
     @State private var realtime = RealtimeManager()
 
@@ -24,8 +25,12 @@ struct MainTabView: View {
                 GroupsView(store: groupsStore)
                     .navigationDestination(for: GroupRoute.self) { route in
                         switch route {
-                        case .detail(let groupID):
-                            GroupDetailView(groupID: groupID, store: groupsStore)
+                        case let .detail(groupID, section):
+                            GroupDetailView(
+                                groupID: groupID,
+                                store: groupsStore,
+                                initialSection: section
+                            )
                         case .members(let groupID):
                             MembersView(groupID: groupID, store: groupsStore)
                         case .edit(let groupID):
@@ -57,6 +62,7 @@ struct MainTabView: View {
         .tint(.primaryTheme)
         .toolbarBackground(Color.background, for: .tabBar)
         .toolbarBackground(.visible, for: .tabBar)
+        .feedbackHost(feedback)
         .task {
             guard !groupsStore.isUsingPreviewData else { return }
             realtime.attach(groupsStore)
