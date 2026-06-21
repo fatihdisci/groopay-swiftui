@@ -2,14 +2,26 @@ import SwiftUI
 
 struct AppToastModifier: ViewModifier {
     @Binding var message: String?
+    let actionTitle: String?
+    let action: (() -> Void)?
 
     func body(content: Content) -> some View {
         content
             .overlay(alignment: .bottom) {
                 if let message {
-                    Text(message)
-                        .font(.body(14, weight: .medium))
-                        .foregroundStyle(.white)
+                    HStack(spacing: 14) {
+                        Text(message)
+                            .font(.body(14, weight: .medium))
+                            .foregroundStyle(.white)
+
+                        if let actionTitle, let action {
+                            Button(action: action) {
+                                Text(actionTitle)
+                                    .font(Font.body(14, weight: .semibold))
+                                    .foregroundStyle(Color.warning)
+                            }
+                        }
+                    }
                         .padding(.horizontal, 20)
                         .padding(.vertical, 12)
                         .background(Color.textPrimary.opacity(0.9))
@@ -26,7 +38,17 @@ struct AppToastModifier: ViewModifier {
 }
 
 extension View {
-    func appToast(message: Binding<String?>) -> some View {
-        modifier(AppToastModifier(message: message))
+    func appToast(
+        message: Binding<String?>,
+        actionTitle: String? = nil,
+        action: (() -> Void)? = nil
+    ) -> some View {
+        modifier(
+            AppToastModifier(
+                message: message,
+                actionTitle: actionTitle,
+                action: action
+            )
+        )
     }
 }

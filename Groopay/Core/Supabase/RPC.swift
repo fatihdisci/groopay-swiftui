@@ -232,6 +232,19 @@ struct RPCClient: Sendable {
         )
     }
 
+    func restoreExpense(
+        expenseId: UUID,
+        actorMemberId: UUID
+    ) async -> Result<Void, RPCError> {
+        await void(
+            "restore_expense",
+            params: DeleteExpenseParams(
+                expenseId: expenseId,
+                actorMemberId: actorMemberId
+            )
+        )
+    }
+
     func addSettlement(
         _ input: AddSettlementRPCInput
     ) async -> Result<Void, RPCError> {

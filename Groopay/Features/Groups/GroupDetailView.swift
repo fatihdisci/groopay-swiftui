@@ -7,6 +7,9 @@ struct GroupDetailView: View {
     @State private var selectedTab = GroupDetailTab.expenses
     @State private var presentedExpense: ExpenseSheet?
     @State private var didApplyInitialTab = false
+    @State private var deletedExpenseID: UUID?
+    @State private var toastMessage: String?
+    @State private var toastDismissTask: Task<Void, Never>?
 
     var body: some View {
         SwiftUI.Group {
@@ -44,7 +47,9 @@ struct GroupDetailView: View {
                     AddExpenseView(
                         groupID: groupID,
                         store: store,
-                        expense: sheet.expense
+                        expense: sheet.editingExpense,
+                        template: sheet.template,
+                        onDeleted: presentUndo(for:)
                     )
                 }
             } else {
@@ -53,6 +58,14 @@ struct GroupDetailView: View {
             }
         }
         .navigationBarTitleDisplayMode(.inline)
+        .appToast(
+            message: $toastMessage,
+            actionTitle: deletedExpenseID == nil ? nil : "Geri Al",
+            action: deletedExpenseID == nil ? nil : { restoreDeletedExpense() }
+        )
+        .onDisappear {
+            toastDismissTask?.cancel()
+        }
         .task(id: snapshot != nil) {
             // Veri yüklendikten sonra bir kez çalışır: kullanıcının bu grupta
             // borcu varsa grup doğrudan Ödeşme sekmesinde açılır. Sonradan elle
@@ -188,7 +201,8 @@ struct GroupDetailView: View {
                         expense: expense,
                         payer: snapshot.members.first { $0.id == expense.paidBy },
                         canEdit: canEdit,
-                        onEdit: { presentedExpense = .edit(expense) }
+                        onEdit: { presentedExpense = .edit(expense) },
+                        onCopy: { presentedExpense = .copy(expense) }
                     )
                     .contentShape(Rectangle())
                     .onTapGesture {
@@ -233,23 +247,75 @@ struct GroupDetailView: View {
         .padding(.top, 54)
     }
 
+    private func presentUndo(for expense: Expense) {
+        toastDismissTask?.cancel()
+        deletedExpenseID = expense.id
+        withAnimation {
+            toastMessage = String(localized: "Masraf silindi.", locale: locale)
+        }
+        toastDismissTask = Task {
+            try? await Task.sleep(for: .seconds(6))
+            guard !Task.isCancelled else { return }
+            await MainActor.run {
+                withAnimation { toastMessage = nil }
+                deletedExpenseID = nil
+            }
+        }
+    }
+
+    private func restoreDeletedExpense() {
+        guard let expenseID = deletedExpenseID else { return }
+        toastDismissTask?.cancel()
+        deletedExpenseID = nil
+        Task {
+            if await store.restoreExpense(expenseID: expenseID, groupID: groupID) {
+                withAnimation {
+                    toastMessage = String(
+                        localized: "Masraf geri alındı.",
+                        locale: locale
+                    )
+                }
+                try? await Task.sleep(for: .seconds(2))
+                withAnimation { toastMessage = nil }
+            } else {
+                withAnimation {
+                    toastMessage = store.errorMessage
+                        ?? String(localized: "Masraf geri alınamadı.", locale: locale)
+                }
+                store.clearError()
+                try? await Task.sleep(for: .seconds(3))
+                withAnimation { toastMessage = nil }
+            }
+        }
+    }
+
 }
 
 private enum ExpenseSheet: Identifiable {
     case new
     case edit(Expense)
+    case copy(Expense)
 
     var id: String {
         switch self {
         case .new: "new"
         case .edit(let expense): expense.id.uuidString
+        case .copy(let expense): "copy-\(expense.id.uuidString)"
         }
     }
 
-    var expense: Expense? {
+    var editingExpense: Expense? {
         switch self {
         case .new: nil
         case .edit(let expense): expense
+        case .copy: nil
+        }
+    }
+
+    var template: Expense? {
+        switch self {
+        case .copy(let expense): expense
+        case .new, .edit: nil
         }
     }
 }
@@ -269,6 +335,8 @@ private struct ExpenseCard: View {
     let payer: Member?
     let canEdit: Bool
     let onEdit: () -> Void
+    let onCopy: () -> Void
+    @Environment(\.locale) private var locale
 
     private var category: ExpenseCategory {
         ExpenseCategory.find(expense.category)
@@ -295,6 +363,25 @@ private struct ExpenseCard: View {
                         .font(.body(12))
                         .foregroundStyle(Color.textSecondary)
                 }
+                if expense.expenseDate != nil || expense.note?.isEmpty == false {
+                    HStack(spacing: 8) {
+                        if let date = expense.expenseDate {
+                            Label(
+                                date.formatted(
+                                    Date.FormatStyle(date: .abbreviated)
+                                        .locale(locale)
+                                ),
+                                systemImage: "calendar"
+                            )
+                        }
+                        if expense.note?.isEmpty == false {
+                            Image(systemName: "note.text")
+                                .accessibilityLabel("Not")
+                        }
+                    }
+                    .font(.body(11))
+                    .foregroundStyle(Color.textTertiary)
+                }
             }
 
             Spacer()
@@ -304,19 +391,26 @@ private struct ExpenseCard: View {
                     .font(.display(17, weight: .semibold))
                     .foregroundStyle(Color.textPrimary)
 
-                if canEdit {
-                    Button(action: onEdit) {
-                        Label("Düzenle", systemImage: "pencil")
+                Menu {
+                    Button(action: onCopy) {
+                        Label("Kopyala", systemImage: "doc.on.doc")
+                    }
+                    if canEdit {
+                        Button(action: onEdit) {
+                            Label("Düzenle", systemImage: "pencil")
+                        }
+                    }
+                } label: {
+                    Label("İşlemler", systemImage: "ellipsis")
                             .font(.body(11, weight: .semibold))
                             .foregroundStyle(Color.primaryTheme)
                             .padding(.horizontal, 9)
                             .frame(minHeight: 30)
                             .background(Color.primaryTheme.opacity(0.10))
                             .clipShape(Capsule())
-                    }
-                    .buttonStyle(.plain)
-                    .accessibilityHint("Masrafı düzenleme ekranını açar")
                 }
+                .buttonStyle(.plain)
+                .accessibilityHint("Masraf işlemlerini açar")
             }
         }
         .padding(14)

@@ -4253,6 +4253,51 @@
           }
         }
       }
+    },
+    "Detaylar": {
+      "localizations": { "en": { "stringUnit": { "state": "translated", "value": "Details" } } }
+    },
+    "Geri Al": {
+      "localizations": { "en": { "stringUnit": { "state": "translated", "value": "Undo" } } }
+    },
+    "Gruplara Git": {
+      "localizations": { "en": { "stringUnit": { "state": "translated", "value": "Go to Groups" } } }
+    },
+    "İlk Masrafı Ekle": {
+      "localizations": { "en": { "stringUnit": { "state": "translated", "value": "Add First Expense" } } }
+    },
+    "İsteğe bağlı": {
+      "localizations": { "en": { "stringUnit": { "state": "translated", "value": "Optional" } } }
+    },
+    "İşlemler": {
+      "localizations": { "en": { "stringUnit": { "state": "translated", "value": "Actions" } } }
+    },
+    "Kopyala": {
+      "localizations": { "en": { "stringUnit": { "state": "translated", "value": "Duplicate" } } }
+    },
+    "Masraf geri alındı.": {
+      "localizations": { "en": { "stringUnit": { "state": "translated", "value": "Expense restored." } } }
+    },
+    "Masraf geri alınamadı.": {
+      "localizations": { "en": { "stringUnit": { "state": "translated", "value": "Expense could not be restored." } } }
+    },
+    "Masraf işlemlerini açar": {
+      "localizations": { "en": { "stringUnit": { "state": "translated", "value": "Opens expense actions" } } }
+    },
+    "Masraf silindi.": {
+      "localizations": { "en": { "stringUnit": { "state": "translated", "value": "Expense deleted." } } }
+    },
+    "Masraf tarihi": {
+      "localizations": { "en": { "stringUnit": { "state": "translated", "value": "Expense date" } } }
+    },
+    "Masrafla ilgili bir not ekle": {
+      "localizations": { "en": { "stringUnit": { "state": "translated", "value": "Add a note about this expense" } } }
+    },
+    "Not": {
+      "localizations": { "en": { "stringUnit": { "state": "translated", "value": "Note" } } }
+    },
+    "Tarih": {
+      "localizations": { "en": { "stringUnit": { "state": "translated", "value": "Date" } } }
     }
   },
   "version": "1.0"

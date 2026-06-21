@@ -4,12 +4,16 @@ struct AddExpenseView: View {
     let groupID: UUID
     let store: GroupsStore
     private let editingExpense: Expense?
+    private let onDeleted: ((Expense) -> Void)?
 
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.locale) private var locale
 
     @State private var amountText: String
     @State private var selectedCurrency: String
     @State private var description: String
+    @State private var note: String
+    @State private var expenseDate: Date
     @State private var selectedCategoryID: String
     @State private var paidBy: UUID?
     @State private var splitType: SplitType
@@ -20,32 +24,43 @@ struct AddExpenseView: View {
     @State private var isSaving = false
     @State private var showDeleteConfirm = false
 
-    init(groupID: UUID, store: GroupsStore, expense: Expense? = nil) {
+    init(
+        groupID: UUID,
+        store: GroupsStore,
+        expense: Expense? = nil,
+        template: Expense? = nil,
+        onDeleted: ((Expense) -> Void)? = nil
+    ) {
         self.groupID = groupID
         self.store = store
         editingExpense = expense
+        self.onDeleted = onDeleted
 
         let snapshot = store.snapshot(groupID)
         let activeMembers = snapshot?.activeMembers ?? []
         let defaultCurrency = Currency.normalized(snapshot?.group.baseCurrency ?? "TRY")
         let savedPreference = ExpenseEntryPreferences().preference(for: groupID)
 
-        if let expense {
-            let currency = Currency.normalized(expense.currency)
+        if let sourceExpense = expense ?? template {
+            let currency = Currency.normalized(sourceExpense.currency)
             _amountText = State(
                 initialValue: Self.editableAmountString(
-                    minor: expense.amount,
+                    minor: sourceExpense.amount,
                     currency: currency
                 )
             )
             _selectedCurrency = State(initialValue: currency)
-            _description = State(initialValue: expense.description)
-            _selectedCategoryID = State(initialValue: expense.category)
-            _paidBy = State(initialValue: expense.paidBy)
-            _splitType = State(initialValue: expense.splitType)
+            _description = State(initialValue: sourceExpense.description)
+            _note = State(initialValue: sourceExpense.note ?? "")
+            _expenseDate = State(
+                initialValue: expense?.expenseDate ?? Date()
+            )
+            _selectedCategoryID = State(initialValue: sourceExpense.category)
+            _paidBy = State(initialValue: sourceExpense.paidBy)
+            _splitType = State(initialValue: sourceExpense.splitType)
 
             let existing = (snapshot?.splits ?? []).filter {
-                $0.expenseId == expense.id
+                $0.expenseId == sourceExpense.id
             }
             _subsetSelection = State(
                 initialValue: Set(existing.map(\.memberId))
@@ -71,6 +86,8 @@ struct AddExpenseView: View {
                 } ?? defaultCurrency
             )
             _description = State(initialValue: "")
+            _note = State(initialValue: "")
+            _expenseDate = State(initialValue: Date())
             _selectedCategoryID = State(
                 initialValue: savedPreference.flatMap { preference in
                     ExpenseCategory.all.contains { $0.id == preference.categoryID }
@@ -352,6 +369,7 @@ struct AddExpenseView: View {
     private func detailsSection(members: [Member]) -> some View {
         DisclosureGroup(isExpanded: $detailsExpanded) {
             VStack(spacing: 22) {
+                dateAndNoteSection
                 categorySection
                 payerSection(members: members)
                 splitTypeSelector
@@ -381,9 +399,68 @@ struct AddExpenseView: View {
     }
 
     private func detailsSummary(members: [Member]) -> String {
-        let category = ExpenseCategory.find(selectedCategoryID).title
+        let category = localizedCategoryTitle(selectedCategoryID)
         let payer = members.first { $0.id == paidBy }?.displayName ?? "—"
-        return "\(selectedCurrency) · \(category) · \(payer) · \(splitType.titleText)"
+        let split = localizedSplitTitle(splitType)
+        return "\(selectedCurrency) · \(category) · \(payer) · \(split)"
+    }
+
+    private func localizedCategoryTitle(_ id: String) -> String {
+        switch ExpenseCategory.find(id).id {
+        case "food": String(localized: "Yemek", locale: locale)
+        case "transport": String(localized: "Ulaşım", locale: locale)
+        case "accommodation": String(localized: "Konaklama", locale: locale)
+        case "shopping": String(localized: "Alışveriş", locale: locale)
+        case "entertainment": String(localized: "Eğlence", locale: locale)
+        case "groceries": String(localized: "Market", locale: locale)
+        case "bills": String(localized: "Faturalar", locale: locale)
+        default: String(localized: "Diğer", locale: locale)
+        }
+    }
+
+    private func localizedSplitTitle(_ type: SplitType) -> String {
+        switch type {
+        case .equal: String(localized: "Eşit", locale: locale)
+        case .custom: String(localized: "Özel", locale: locale)
+        case .subset: String(localized: "Alt-Küme", locale: locale)
+        }
+    }
+
+    private var dateAndNoteSection: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            VStack(alignment: .leading, spacing: 8) {
+                Text("Tarih")
+                    .font(.body(13, weight: .semibold))
+                    .foregroundStyle(Color.textSecondary)
+                DatePicker(
+                    "Masraf tarihi",
+                    selection: $expenseDate,
+                    in: ...Date(),
+                    displayedComponents: .date
+                )
+                .datePickerStyle(.compact)
+                .labelsHidden()
+                .tint(Color.primaryTheme)
+            }
+
+            VStack(alignment: .leading, spacing: 8) {
+                HStack {
+                    Text("Not")
+                        .font(.body(13, weight: .semibold))
+                        .foregroundStyle(Color.textSecondary)
+                    Spacer()
+                    Text("İsteğe bağlı")
+                        .font(.body(11))
+                        .foregroundStyle(Color.textTertiary)
+                }
+                TextField("Masrafla ilgili bir not ekle", text: $note, axis: .vertical)
+                    .font(.body(15))
+                    .lineLimit(2...4)
+                    .padding(12)
+                    .background(Color.surfaceTinted)
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
+            }
+        }
     }
 
     private var categorySection: some View {
@@ -683,25 +760,27 @@ struct AddExpenseView: View {
                 expenseID: editingExpense.id,
                 groupID: groupID,
                 description: description,
-                note: nil,
+                note: note.trimmingCharacters(in: .whitespacesAndNewlines),
                 amount: amountMinor,
                 currency: selectedCurrency,
                 category: selectedCategoryID,
                 splitType: splitType,
                 paidBy: paidBy,
-                splits: splits
+                splits: splits,
+                date: expenseDate
             )
         } else {
             success = await store.addExpense(
                 groupID: groupID,
                 description: description,
-                note: nil,
+                note: note.trimmingCharacters(in: .whitespacesAndNewlines),
                 amount: amountMinor,
                 currency: selectedCurrency,
                 category: selectedCategoryID,
                 splitType: splitType,
                 paidBy: paidBy,
-                splits: splits
+                splits: splits,
+                date: expenseDate
             )
         }
 
@@ -724,6 +803,7 @@ struct AddExpenseView: View {
         isSaving = true
         defer { isSaving = false }
         if await store.deleteExpense(expenseID: editingExpense.id, groupID: groupID) {
+            onDeleted?(editingExpense)
             dismiss()
         }
     }
@@ -763,13 +843,6 @@ private extension SplitType {
         }
     }
 
-    var titleText: String {
-        switch self {
-        case .equal: "Eşit"
-        case .custom: "Özel"
-        case .subset: "Alt-Küme"
-        }
-    }
 }
 
 #Preview("Yeni Masraf") {

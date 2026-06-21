@@ -413,6 +413,25 @@ final class GroupsStore {
         }
     }
 
+    func restoreExpense(expenseID: UUID, groupID: UUID) async -> Bool {
+        guard let actor = currentMemberID(in: groupID) else {
+            errorMessage = localized("Üyelik bilgisi bulunamadı.")
+            return false
+        }
+
+        switch await rpc.restoreExpense(
+            expenseId: expenseID,
+            actorMemberId: actor
+        ) {
+        case .success:
+            await load()
+            return true
+        case .failure(let error):
+            errorMessage = error.localizedDescription
+            return false
+        }
+    }
+
     // MARK: - Settlements
 
     /// Borçlu "Ödedim" der → pending settlement oluşturulur; karşı taraf onaylar.
