@@ -1,6 +1,150 @@
 {
   "sourceLanguage": "tr",
   "strings": {
+    "Bu gruba yeni masraf eklemek için açar": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens the form to add a new expense to this group"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bu gruba yeni masraf eklemek için açar"
+          }
+        }
+      }
+    },
+    "İşlem sürüyor": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "In progress"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "İşlem sürüyor"
+          }
+        }
+      }
+    },
+    "Masraf eklendi.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Expense added."
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Masraf eklendi."
+          }
+        }
+      }
+    },
+    "Masraf güncellendi.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Expense updated."
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Masraf güncellendi."
+          }
+        }
+      }
+    },
+    "Masraf silinemedi.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn't delete the expense."
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Masraf silinemedi."
+          }
+        }
+      }
+    },
+    "Ödeme onaya gönderildi.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Payment sent for approval."
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ödeme onaya gönderildi."
+          }
+        }
+      }
+    },
+    "Ödeme reddedildi.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Payment rejected."
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ödeme reddedildi."
+          }
+        }
+      }
+    },
+    "Ödeme onaylandı.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Payment confirmed."
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ödeme onaylandı."
+          }
+        }
+      }
+    },
+    "Ödeme isteği iptal edildi.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Payment request cancelled."
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ödeme isteği iptal edildi."
+          }
+        }
+      }
+    },
     "Ödeştiniz": {
       "localizations": {
         "en": {

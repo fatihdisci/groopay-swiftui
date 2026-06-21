@@ -11,8 +11,8 @@ struct SettleDebtsSheet: View {
 
     @Environment(\.dismiss) private var dismiss
     @Environment(\.locale) private var locale
+    @Environment(\.appFeedback) private var feedback
     @State private var paymentSheet: PaymentSheetConfig?
-    @State private var ibanCopied = false
     @State private var busy = false
 
     private var snapshot: GroupSnapshot? { store.snapshot(groupID) }
@@ -54,31 +54,18 @@ struct SettleDebtsSheet: View {
         }
         .sheet(item: $paymentSheet) { config in
             PaymentSheet(config: config) { amount in
-                busy = true
-                Task {
-                    _ = await store.markPaid(
+                runAction(
+                    successMessage: String(localized: "Ödeme onaya gönderildi.", locale: locale)
+                ) {
+                    await store.markPaid(
                         groupID: config.groupID,
                         fromMember: config.fromMember,
                         toMember: config.toMember,
                         amount: amount,
                         currency: config.currency
                     )
-                    busy = false
                 }
             }
-        }
-        .alert("WhatsApp açılamadı", isPresented: $ibanCopied) {
-            Button("Tamam", role: .cancel) {}
-        } message: {
-            Text("IBAN isteme mesajı panoya kopyalandı; dilediğin uygulamada yapıştırabilirsin.")
-        }
-        .alert("İşlem başarısız", isPresented: Binding(
-            get: { store.errorMessage != nil },
-            set: { if !$0 { store.clearError() } }
-        )) {
-            Button("Tamam", role: .cancel) { store.clearError() }
-        } message: {
-            Text(store.errorMessage ?? "")
         }
     }
 
@@ -122,7 +109,9 @@ struct SettleDebtsSheet: View {
                         .foregroundStyle(Color.warning)
                     Spacer()
                     Button {
-                        runAction {
+                        runAction(
+                            successMessage: String(localized: "Ödeme isteği iptal edildi.", locale: locale)
+                        ) {
                             await store.rejectSettlement(
                                 groupID: groupID,
                                 settlementID: pending.id
@@ -172,7 +161,14 @@ struct SettleDebtsSheet: View {
                             currency: transfer.currency,
                             groupName: snapshot.group.name,
                             locale: locale,
-                            onClipboardFallback: { ibanCopied = true }
+                            onClipboardFallback: {
+                                feedback.info(
+                                    String(
+                                        localized: "IBAN isteme mesajı panoya kopyalandı; dilediğin uygulamada yapıştırabilirsin.",
+                                        locale: locale
+                                    )
+                                )
+                            }
                         )
                     } label: {
                         Label("IBAN İste", systemImage: "creditcard.fill")
@@ -210,11 +206,24 @@ struct SettleDebtsSheet: View {
         .padding(.top, 80)
     }
 
-    private func runAction(_ operation: @escaping () async -> Bool) {
+    private func runAction(
+        successMessage: String? = nil,
+        _ operation: @escaping () async -> Bool
+    ) {
+        guard !busy else { return }
         busy = true
         Task {
-            _ = await operation()
+            let success = await operation()
             busy = false
+            if success {
+                if let successMessage { feedback.success(successMessage) }
+            } else {
+                feedback.error(
+                    store.errorMessage
+                        ?? String(localized: "İşlem başarısız", locale: locale)
+                )
+                store.clearError()
+            }
         }
     }
 }

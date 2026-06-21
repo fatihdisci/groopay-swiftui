@@ -3,13 +3,12 @@ import SwiftUI
 struct GroupDetailView: View {
     let groupID: UUID
     let store: GroupsStore
+    var initialSection: GroupDetailSection? = nil
     @Environment(\.locale) private var locale
-    @State private var selectedTab = GroupDetailTab.expenses
+    @Environment(\.appFeedback) private var feedback
+    @State private var selectedTab = GroupDetailSection.expenses
     @State private var presentedExpense: ExpenseSheet?
     @State private var didApplyInitialTab = false
-    @State private var deletedExpenseID: UUID?
-    @State private var toastMessage: String?
-    @State private var toastDismissTask: Task<Void, Never>?
 
     var body: some View {
         SwiftUI.Group {
@@ -53,26 +52,32 @@ struct GroupDetailView: View {
                     )
                 }
             } else {
-                ProgressView()
-                    .task { await store.load() }
+                ScrollView {
+                    VStack(spacing: 16) {
+                        SkeletonBlock(height: 180, cornerRadius: 0)
+                        SkeletonBlock(height: 46, cornerRadius: 23)
+                            .padding(.horizontal, 20)
+                        SkeletonList(count: 4)
+                    }
+                }
+                .accessibilityHidden(true)
+                .task { await store.load() }
             }
         }
         .navigationBarTitleDisplayMode(.inline)
-        .appToast(
-            message: $toastMessage,
-            actionTitle: deletedExpenseID == nil ? nil : "Geri Al",
-            action: deletedExpenseID == nil ? nil : { restoreDeletedExpense() }
-        )
-        .onDisappear {
-            toastDismissTask?.cancel()
-        }
         .task(id: snapshot != nil) {
-            // Veri yüklendikten sonra bir kez çalışır: kullanıcının bu grupta
-            // borcu varsa grup doğrudan Ödeşme sekmesinde açılır. Sonradan elle
-            // sekme değiştirilirse override edilmez (didApplyInitialTab koruması).
+            // Veri yüklendikten sonra bir kez çalışır. Bir initialSection
+            // verildiyse (ör. action center "Ödeşme"yi açar) o bölüm uygulanır;
+            // verilmediyse kullanıcının bu grupta borcu varsa grup doğrudan
+            // Ödeşme sekmesinde açılır. Sonradan elle sekme değiştirilirse
+            // override edilmez (didApplyInitialTab koruması).
             guard snapshot != nil, !didApplyInitialTab else { return }
             didApplyInitialTab = true
-            if currentUserOwes { selectedTab = .balances }
+            if let initialSection {
+                selectedTab = initialSection
+            } else if currentUserOwes {
+                selectedTab = .balances
+            }
         }
     }
 
@@ -132,26 +137,34 @@ struct GroupDetailView: View {
         Button {
             presentedExpense = .new
         } label: {
-            Image(systemName: "plus")
-                .font(.system(size: 22, weight: .bold))
-                .foregroundStyle(.white)
-                .frame(width: 58, height: 58)
-                .background(
-                    LinearGradient(
-                        colors: [.gradientStart, .gradientEnd],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    )
+            HStack(spacing: 8) {
+                Image(systemName: "plus")
+                    .font(.system(size: 17, weight: .bold))
+                Text("Masraf Ekle")
+                    .font(.body(16, weight: .semibold))
+            }
+            .foregroundStyle(.white)
+            .padding(.horizontal, 22)
+            .frame(minHeight: 52)
+            .background(
+                LinearGradient(
+                    colors: [.gradientStart, .gradientEnd],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
                 )
-                .clipShape(Circle())
-                .purpleTintedShadow(radius: 16, y: 8)
+            )
+            .clipShape(Capsule())
+            .purpleTintedShadow(radius: 16, y: 8)
         }
-        .padding(24)
+        .padding(.horizontal, 20)
+        .padding(.bottom, 24)
+        .accessibilityLabel("Masraf Ekle")
+        .accessibilityHint("Bu gruba yeni masraf eklemek için açar")
     }
 
     private var detailTabs: some View {
         HStack(spacing: 8) {
-            ForEach(GroupDetailTab.allCases) { tab in
+            ForEach(GroupDetailSection.allCases) { tab in
                 Button {
                     selectedTab = tab
                 } label: {
@@ -247,44 +260,30 @@ struct GroupDetailView: View {
         .padding(.top, 54)
     }
 
+    /// Silme sonrası aksiyonlu "Geri Al" feedback'i. Gerçek restore RPC akışı
+    /// korunur.
     private func presentUndo(for expense: Expense) {
-        toastDismissTask?.cancel()
-        deletedExpenseID = expense.id
-        withAnimation {
-            toastMessage = String(localized: "Masraf silindi.", locale: locale)
-        }
-        toastDismissTask = Task {
-            try? await Task.sleep(for: .seconds(6))
-            guard !Task.isCancelled else { return }
-            await MainActor.run {
-                withAnimation { toastMessage = nil }
-                deletedExpenseID = nil
-            }
-        }
+        feedback.show(
+            String(localized: "Masraf silindi.", locale: locale),
+            style: .info,
+            actionTitle: String(localized: "Geri Al", locale: locale),
+            action: { restoreDeletedExpense(expenseID: expense.id) },
+            duration: .seconds(6)
+        )
     }
 
-    private func restoreDeletedExpense() {
-        guard let expenseID = deletedExpenseID else { return }
-        toastDismissTask?.cancel()
-        deletedExpenseID = nil
+    private func restoreDeletedExpense(expenseID: UUID) {
         Task {
             if await store.restoreExpense(expenseID: expenseID, groupID: groupID) {
-                withAnimation {
-                    toastMessage = String(
-                        localized: "Masraf geri alındı.",
-                        locale: locale
-                    )
-                }
-                try? await Task.sleep(for: .seconds(2))
-                withAnimation { toastMessage = nil }
+                feedback.success(
+                    String(localized: "Masraf geri alındı.", locale: locale)
+                )
             } else {
-                withAnimation {
-                    toastMessage = store.errorMessage
+                feedback.error(
+                    store.errorMessage
                         ?? String(localized: "Masraf geri alınamadı.", locale: locale)
-                }
+                )
                 store.clearError()
-                try? await Task.sleep(for: .seconds(3))
-                withAnimation { toastMessage = nil }
             }
         }
     }
@@ -317,16 +316,6 @@ private enum ExpenseSheet: Identifiable {
         case .copy(let expense): expense
         case .new, .edit: nil
         }
-    }
-}
-
-private enum GroupDetailTab: String, CaseIterable, Identifiable {
-    case expenses
-    case balances
-
-    var id: String { rawValue }
-    var title: LocalizedStringResource {
-        self == .expenses ? "Masraflar" : "Ödeşme"
     }
 }
 

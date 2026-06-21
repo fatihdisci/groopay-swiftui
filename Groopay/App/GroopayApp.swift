@@ -8,6 +8,7 @@ struct GroopayApp: App {
     @State private var localizationStore: LocalizationStore
     @State private var screenshotGroupsStore: GroupsStore?
     @State private var router = AppRouter()
+    @State private var feedback = AppFeedbackCenter()
 
     init() {
         let screenshotMode = Self.hasArgument("-groopayScreenshots")
@@ -41,6 +42,7 @@ struct GroopayApp: App {
                 .environment(authStore)
                 .environment(localizationStore)
                 .environment(router)
+                .environment(\.appFeedback, feedback)
                 .environment(\.locale, localizationStore.locale)
                 .preferredColorScheme(.light)
         }

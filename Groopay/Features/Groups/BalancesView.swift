@@ -6,12 +6,12 @@ struct BalancesTabView: View {
     let groupID: UUID
 
     @State private var mode: BalanceMode = .simplified
-    @State private var ibanCopied = false
     @State private var busy = false
     @State private var paymentSheet: PaymentSheetConfig?
     @State private var showSettleSheet = false
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.locale) private var locale
+    @Environment(\.appFeedback) private var feedback
 
     private var snapshot: GroupSnapshot? { store.snapshot(groupID) }
     private var currentMemberID: UUID? { store.currentMemberID(in: groupID) }
@@ -33,7 +33,9 @@ struct BalancesTabView: View {
             .animation(reduceMotion ? nil : .default, value: mode)
             .sheet(item: $paymentSheet) { config in
                 PaymentSheet(config: config) { amount in
-                    runSettlementAction {
+                    runSettlementAction(
+                        successMessage: String(localized: "Ödeme onaya gönderildi.", locale: locale)
+                    ) {
                         await store.markPaid(
                             groupID: config.groupID,
                             fromMember: config.fromMember,
@@ -43,19 +45,6 @@ struct BalancesTabView: View {
                         )
                     }
                 }
-            }
-            .alert("WhatsApp açılamadı", isPresented: $ibanCopied) {
-                Button("Tamam", role: .cancel) {}
-            } message: {
-                Text("IBAN isteme mesajı panoya kopyalandı; dilediğin uygulamada yapıştırabilirsin.")
-            }
-            .alert("İşlem başarısız", isPresented: Binding(
-                get: { store.errorMessage != nil },
-                set: { if !$0 { store.clearError() } }
-            )) {
-                Button("Tamam", role: .cancel) { store.clearError() }
-            } message: {
-                Text(store.errorMessage ?? "")
             }
         }
     }
@@ -186,7 +175,11 @@ struct BalancesTabView: View {
             }
             Spacer()
             Button {
-                runSettlementAction { await store.rejectSettlement(groupID: groupID, settlementID: settlement.id) }
+                runSettlementAction(
+                    successMessage: String(localized: "Ödeme reddedildi.", locale: locale)
+                ) {
+                    await store.rejectSettlement(groupID: groupID, settlementID: settlement.id)
+                }
             } label: {
                 Text("Reddet")
                     .font(.body(13, weight: .semibold))
@@ -197,7 +190,11 @@ struct BalancesTabView: View {
                     .clipShape(Capsule())
             }
             Button {
-                runSettlementAction { await store.confirmSettlement(groupID: groupID, settlementID: settlement.id) }
+                runSettlementAction(
+                    successMessage: String(localized: "Ödeme onaylandı.", locale: locale)
+                ) {
+                    await store.confirmSettlement(groupID: groupID, settlementID: settlement.id)
+                }
             } label: {
                 Text("Onayla")
                     .font(.body(13, weight: .semibold))
@@ -409,11 +406,24 @@ struct BalancesTabView: View {
 
     // MARK: - Actions
 
-    private func runSettlementAction(_ operation: @escaping () async -> Bool) {
+    private func runSettlementAction(
+        successMessage: String? = nil,
+        _ operation: @escaping () async -> Bool
+    ) {
+        guard !busy else { return }
         busy = true
         Task {
-            _ = await operation()
+            let success = await operation()
             busy = false
+            if success {
+                if let successMessage { feedback.success(successMessage) }
+            } else {
+                feedback.error(
+                    store.errorMessage
+                        ?? String(localized: "İşlem başarısız", locale: locale)
+                )
+                store.clearError()
+            }
         }
     }
 
@@ -432,7 +442,14 @@ struct BalancesTabView: View {
             currency: currency,
             groupName: groupName,
             locale: locale,
-            onClipboardFallback: { ibanCopied = true }
+            onClipboardFallback: {
+                feedback.info(
+                    String(
+                        localized: "IBAN isteme mesajı panoya kopyalandı; dilediğin uygulamada yapıştırabilirsin.",
+                        locale: locale
+                    )
+                )
+            }
         )
     }
 }

@@ -8,6 +8,7 @@ struct AddExpenseView: View {
 
     @Environment(\.dismiss) private var dismiss
     @Environment(\.locale) private var locale
+    @Environment(\.appFeedback) private var feedback
 
     @State private var amountText: String
     @State private var selectedCurrency: String
@@ -129,6 +130,9 @@ struct AddExpenseView: View {
                 VStack(spacing: 22) {
                     amountSection
                     numpad
+                    if editingExpense == nil {
+                        recentSuggestions(snapshot: snapshot)
+                    }
                     descriptionField
                     detailsSection(members: members)
                     if editingExpense != nil {
@@ -142,6 +146,9 @@ struct AddExpenseView: View {
             saveBar(members: members)
         }
         .background(Color.background.ignoresSafeArea())
+        // İşlem sürerken sheet yanlışlıkla kapatılamasın.
+        .interactiveDismissDisabled(isSaving)
+        // Masraf silme onayı destructive olduğundan alert/dialog olarak kalır.
         .confirmationDialog(
             "Masraf silinsin mi?",
             isPresented: $showDeleteConfirm,
@@ -151,17 +158,6 @@ struct AddExpenseView: View {
                 Task { await handleDelete() }
             }
             Button("Vazgeç", role: .cancel) {}
-        }
-        .alert(
-            "Masraf kaydedilemedi",
-            isPresented: Binding(
-                get: { store.errorMessage != nil },
-                set: { if !$0 { store.clearError() } }
-            )
-        ) {
-            Button("Tamam", role: .cancel) { store.clearError() }
-        } message: {
-            Text(store.errorMessage ?? "")
         }
     }
 
@@ -315,6 +311,65 @@ struct AddExpenseView: View {
                 amountText += key
             }
         }
+    }
+
+    // MARK: - Son kullanılanlar
+
+    /// İlgili grubun geçmişinden en fazla 3 benzersiz açıklama. Geçmiş yoksa
+    /// alan hiç gösterilmez. Chip açıklama+kategori+para birimini doldurur;
+    /// tutar bilerek doldurulmaz (eski tutarın yanlışlıkla kaydını önler).
+    @ViewBuilder
+    private func recentSuggestions(snapshot: GroupSnapshot) -> some View {
+        let suggestions = RecentExpenseSuggestions.suggestions(from: snapshot.expenses)
+        if !suggestions.isEmpty {
+            VStack(alignment: .leading, spacing: 8) {
+                Text("Son kullandıkların")
+                    .font(.body(13, weight: .semibold))
+                    .foregroundStyle(Color.textSecondary)
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 8) {
+                        ForEach(suggestions) { suggestion in
+                            Button {
+                                applySuggestion(suggestion)
+                            } label: {
+                                HStack(spacing: 6) {
+                                    Image(systemName: ExpenseCategory.find(suggestion.category).icon)
+                                        .font(.system(size: 12, weight: .semibold))
+                                    Text(suggestion.description)
+                                        .font(.body(13, weight: .medium))
+                                        .lineLimit(1)
+                                }
+                                .foregroundStyle(Color.primaryTheme)
+                                .padding(.horizontal, 12)
+                                .frame(minHeight: 36)
+                                .background(Color.primaryTheme.opacity(0.1))
+                                .clipShape(Capsule())
+                            }
+                            .buttonStyle(.plain)
+                            .accessibilityLabel(
+                                Text(
+                                    String(
+                                        format: String(localized: "%@ önerisini uygula", locale: locale),
+                                        locale: locale,
+                                        suggestion.description
+                                    )
+                                )
+                            )
+                        }
+                    }
+                    .padding(.horizontal, 2)
+                }
+            }
+        }
+    }
+
+    private func applySuggestion(_ suggestion: ExpenseSuggestion) {
+        description = suggestion.description
+        selectedCategoryID = suggestion.category
+        if Currency.supported.contains(suggestion.currency) {
+            selectedCurrency = suggestion.currency
+        }
+        // Tutar otomatik DOLDURULMAZ.
     }
 
     // MARK: - Description
@@ -721,6 +776,7 @@ struct AddExpenseView: View {
         let valid = isValid(splits: splits)
         return VStack(spacing: 0) {
             Button {
+                guard !isSaving else { return }
                 Task { await handleSave(members: members) }
             } label: {
                 GradientButtonLabel(
@@ -728,8 +784,20 @@ struct AddExpenseView: View {
                     systemImage: "checkmark",
                     disabled: !valid || isSaving
                 )
+                .overlay {
+                    if isSaving {
+                        ProgressView()
+                            .progressViewStyle(.circular)
+                            .tint(.white)
+                    }
+                }
             }
             .disabled(!valid || isSaving)
+            .accessibilityValue(
+                isSaving
+                    ? Text(String(localized: "İşlem sürüyor", locale: locale))
+                    : Text("")
+            )
         }
         .padding(.horizontal, 20)
         .padding(.top, 10)
@@ -794,7 +862,17 @@ struct AddExpenseView: View {
                 ),
                 for: groupID
             )
+            let message = editingExpense == nil
+                ? String(localized: "Masraf eklendi.", locale: locale)
+                : String(localized: "Masraf güncellendi.", locale: locale)
             dismiss()
+            feedback.success(message)
+        } else {
+            feedback.error(
+                store.errorMessage
+                    ?? String(localized: "Masraf kaydedilemedi", locale: locale)
+            )
+            store.clearError()
         }
     }
 
@@ -803,8 +881,16 @@ struct AddExpenseView: View {
         isSaving = true
         defer { isSaving = false }
         if await store.deleteExpense(expenseID: editingExpense.id, groupID: groupID) {
+            // Silme başarılı: GroupDetail "Masraf silindi — Geri Al" feedback'ini
+            // onDeleted üzerinden gösterir.
             onDeleted?(editingExpense)
             dismiss()
+        } else {
+            feedback.error(
+                store.errorMessage
+                    ?? String(localized: "Masraf silinemedi.", locale: locale)
+            )
+            store.clearError()
         }
     }
 
