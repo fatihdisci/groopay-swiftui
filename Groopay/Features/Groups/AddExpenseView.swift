@@ -16,6 +16,7 @@ struct AddExpenseView: View {
     @State private var subsetSelection: Set<UUID>
     @State private var customShares: [UUID: Int]
     @State private var customText: [UUID: String]
+    @State private var detailsExpanded: Bool
     @State private var isSaving = false
     @State private var showDeleteConfirm = false
 
@@ -27,6 +28,7 @@ struct AddExpenseView: View {
         let snapshot = store.snapshot(groupID)
         let activeMembers = snapshot?.activeMembers ?? []
         let defaultCurrency = Currency.normalized(snapshot?.group.baseCurrency ?? "TRY")
+        let savedPreference = ExpenseEntryPreferences().preference(for: groupID)
 
         if let expense {
             let currency = Currency.normalized(expense.currency)
@@ -57,19 +59,37 @@ struct AddExpenseView: View {
                     Self.editableAmountString(minor: $0, currency: currency)
                 }
             )
+            _detailsExpanded = State(initialValue: true)
         } else {
             _amountText = State(initialValue: "")
-            _selectedCurrency = State(initialValue: defaultCurrency)
+            let preferredCurrency = savedPreference.map {
+                Currency.normalized($0.currency)
+            }
+            _selectedCurrency = State(
+                initialValue: preferredCurrency.flatMap {
+                    Currency.supported.contains($0) ? $0 : nil
+                } ?? defaultCurrency
+            )
             _description = State(initialValue: "")
-            _selectedCategoryID = State(initialValue: ExpenseCategory.all[0].id)
+            _selectedCategoryID = State(
+                initialValue: savedPreference.flatMap { preference in
+                    ExpenseCategory.all.contains { $0.id == preference.categoryID }
+                        ? preference.categoryID
+                        : nil
+                } ?? ExpenseCategory.all[0].id
+            )
+            let preferredPayer = savedPreference?.paidBy
             _paidBy = State(
-                initialValue: store.currentMemberID(in: groupID)
+                initialValue: activeMembers.contains { $0.id == preferredPayer }
+                    ? preferredPayer
+                    : store.currentMemberID(in: groupID)
                     ?? activeMembers.first?.id
             )
-            _splitType = State(initialValue: .equal)
+            _splitType = State(initialValue: savedPreference?.splitType ?? .equal)
             _subsetSelection = State(initialValue: Set(activeMembers.map(\.id)))
             _customShares = State(initialValue: [:])
             _customText = State(initialValue: [:])
+            _detailsExpanded = State(initialValue: false)
         }
     }
 
@@ -93,10 +113,7 @@ struct AddExpenseView: View {
                     amountSection
                     numpad
                     descriptionField
-                    categorySection
-                    payerSection(members: members)
-                    splitTypeSelector
-                    previewSection(members: members)
+                    detailsSection(members: members)
                     if editingExpense != nil {
                         deleteButton
                     }
@@ -331,6 +348,43 @@ struct AddExpenseView: View {
     }
 
     // MARK: - Category
+
+    private func detailsSection(members: [Member]) -> some View {
+        DisclosureGroup(isExpanded: $detailsExpanded) {
+            VStack(spacing: 22) {
+                categorySection
+                payerSection(members: members)
+                splitTypeSelector
+                previewSection(members: members)
+            }
+            .padding(.top, 18)
+        } label: {
+            HStack(spacing: 10) {
+                Image(systemName: "slider.horizontal.3")
+                    .foregroundStyle(Color.primaryTheme)
+                VStack(alignment: .leading, spacing: 3) {
+                    Text("Detaylar")
+                        .font(.body(15, weight: .semibold))
+                        .foregroundStyle(Color.textPrimary)
+                    Text(detailsSummary(members: members))
+                        .font(.body(12))
+                        .foregroundStyle(Color.textSecondary)
+                        .lineLimit(1)
+                }
+            }
+        }
+        .tint(Color.primaryTheme)
+        .padding(16)
+        .background(Color.surface)
+        .clipShape(RoundedRectangle(cornerRadius: ThemeRadius.card))
+        .purpleTintedShadow(radius: 8, y: 3)
+    }
+
+    private func detailsSummary(members: [Member]) -> String {
+        let category = ExpenseCategory.find(selectedCategoryID).title
+        let payer = members.first { $0.id == paidBy }?.displayName ?? "—"
+        return "\(selectedCurrency) · \(category) · \(payer) · \(splitType.titleText)"
+    }
 
     private var categorySection: some View {
         VStack(alignment: .leading, spacing: 10) {
@@ -652,6 +706,15 @@ struct AddExpenseView: View {
         }
 
         if success {
+            ExpenseEntryPreferences().save(
+                ExpenseEntryPreference(
+                    currency: selectedCurrency,
+                    categoryID: selectedCategoryID,
+                    paidBy: paidBy,
+                    splitType: splitType
+                ),
+                for: groupID
+            )
             dismiss()
         }
     }
@@ -693,6 +756,14 @@ private extension SplitType {
     static var allCasesOrdered: [SplitType] { [.equal, .custom, .subset] }
 
     var title: LocalizedStringResource {
+        switch self {
+        case .equal: "Eşit"
+        case .custom: "Özel"
+        case .subset: "Alt-Küme"
+        }
+    }
+
+    var titleText: String {
         switch self {
         case .equal: "Eşit"
         case .custom: "Özel"
