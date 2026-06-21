@@ -71,29 +71,9 @@ struct ActivityFilterButton: View {
     @State private var presented = false
 
     var body: some View {
-        Button {
+        AppFilterButton(activeCount: filter.activeCount) {
             presented = true
-        } label: {
-            HStack(spacing: 7) {
-                Image(systemName: "line.3.horizontal.decrease.circle")
-                Text("Filtrele")
-                if filter.activeCount > 0 {
-                    Text("\(filter.activeCount)")
-                        .font(.system(size: 10, weight: .bold))
-                        .foregroundStyle(.white)
-                        .frame(minWidth: 20, minHeight: 20)
-                        .background(Color.primaryTheme)
-                        .clipShape(Circle())
-                }
-            }
-            .font(.body(13, weight: .semibold))
-            .foregroundStyle(Color.primaryTheme)
-            .padding(.horizontal, 12)
-            .frame(minHeight: 42)
-            .background(Color.surfaceTinted)
-            .clipShape(Capsule())
         }
-        .buttonStyle(.plain)
         .sheet(isPresented: $presented) {
             NavigationStack {
                 ActivityFilterSheet(filter: $filter, groups: groups)

@@ -1,6 +1,70 @@
 {
   "sourceLanguage": "tr",
   "strings": {
+    "Aramayı temizle": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clear search"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aramayı temizle"
+          }
+        }
+      }
+    },
+    "%lld etkin filtre": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld active filters"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld etkin filtre"
+          }
+        }
+      }
+    },
+    "Etkin filtre yok": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No active filters"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Etkin filtre yok"
+          }
+        }
+      }
+    },
+    "Filtrele": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filter"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filtrele"
+          }
+        }
+      }
+    },
     "Bu gruba yeni masraf eklemek için açar": {
       "localizations": {
         "en": {
@@ -799,22 +863,6 @@
         }
       }
     },
-    "Aktivite Arama": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Activity Search"
-          }
-        },
-        "tr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Aktivite Arama"
-          }
-        }
-      }
-    },
     "Aktivitede ara": {
       "localizations": {
         "en": {
@@ -923,22 +971,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Arama"
-          }
-        }
-      }
-    },
-    "Aramak için Pro'ya geç": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Go Pro to search"
-          }
-        },
-        "tr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Aramak için Pro'ya geç"
           }
         }
       }
@@ -4009,22 +4041,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Toplamın %lld%%'i"
-          }
-        }
-      }
-    },
-    "Tüm gruplarındaki aktivitelerde arama yap, geçmiş masrafları kolayca bul.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Search activity across all your groups and easily find past expenses."
-          }
-        },
-        "tr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tüm gruplarındaki aktivitelerde arama yap, geçmiş masrafları kolayca bul."
           }
         }
       }

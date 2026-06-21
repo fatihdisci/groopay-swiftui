@@ -3,31 +3,31 @@ import SwiftUI
 struct ActivityView: View {
     let store: GroupsStore
 
-    @Environment(AuthStore.self) private var authStore
     @Environment(AppRouter.self) private var router
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.locale) private var locale
 
     @State private var searchText = ""
     @State private var debouncedQuery = ""
-    @State private var showPaywall = false
     @State private var activityFilter = ActivityFilter()
-
-    private var isPro: Bool {
-        authStore.currentProfile?.userPro ?? false
-    }
 
     var body: some View {
         ZStack {
             Color.background.ignoresSafeArea()
 
-            if store.activities.isEmpty {
+            if store.isLoading && store.activities.isEmpty {
+                ScrollView { SkeletonList(count: 6) }
+            } else if store.activities.isEmpty {
                 emptyState
             } else {
                 ScrollView {
                     LazyVStack(alignment: .leading, spacing: 16, pinnedViews: []) {
                         HStack(spacing: 10) {
-                            searchBar
+                            AppSearchField(
+                                text: $searchText,
+                                placeholder: "Aktivitede ara",
+                                onClear: { debouncedQuery = "" }
+                            )
                             ActivityFilterButton(
                                 filter: $activityFilter,
                                 groups: store.groups
@@ -52,81 +52,17 @@ struct ActivityView: View {
         .tipsButton()
         .task { await store.load() }
         .refreshable { await store.load() }
-        .sheet(isPresented: $showPaywall) {
-            PaywallView()
-        }
-        // 300ms debounce; yalnızca Pro kullanıcılar arar.
+        // 300ms debounce; arama tüm kullanıcılara açık.
         .task(id: searchText) {
-            guard isPro else { return }
             try? await Task.sleep(for: .milliseconds(300))
             guard !Task.isCancelled else { return }
             debouncedQuery = searchText
         }
     }
 
-    // MARK: - Search
-
-    private var searchBar: some View {
-        ZStack {
-            HStack(spacing: 10) {
-                Image(systemName: "magnifyingglass")
-                    .foregroundStyle(Color.textTertiary)
-                TextField("Aktivitede ara", text: $searchText)
-                    .font(.body(15))
-                    .foregroundStyle(Color.textPrimary)
-                    .disabled(!isPro)
-                if !searchText.isEmpty {
-                    Button {
-                        searchText = ""
-                        debouncedQuery = ""
-                    } label: {
-                        Image(systemName: "xmark.circle.fill")
-                            .foregroundStyle(Color.textTertiary)
-                    }
-                }
-            }
-            .padding(12)
-            .background(Color.surface)
-            .clipShape(RoundedRectangle(cornerRadius: 14))
-            .blur(radius: isPro ? 0 : 5)
-
-            if !isPro {
-                proSearchCTA
-            }
-        }
-        .frame(maxWidth: .infinity)
-    }
-
-    private var proSearchCTA: some View {
-        Button {
-            showPaywall = true
-        } label: {
-            HStack(spacing: 8) {
-                Image(systemName: "diamond.fill")
-                    .font(.system(size: 13, weight: .bold))
-                Text("Aramak için Pro'ya geç")
-                    .font(.body(13, weight: .semibold))
-            }
-            .foregroundStyle(.white)
-            .padding(.horizontal, 16)
-            .padding(.vertical, 10)
-            .background(
-                LinearGradient(
-                    colors: [.gradientStart, .gradientEnd],
-                    startPoint: .leading,
-                    endPoint: .trailing
-                )
-            )
-            .clipShape(Capsule())
-        }
-    }
-
     // MARK: - Sections (date headers)
 
     private var filtered: [Activity] {
-        let query = debouncedQuery
-            .trimmingCharacters(in: .whitespacesAndNewlines)
-            .lowercased(with: locale)
         let filterMatches = store.activities.filter {
             activityFilter.matches(
                 $0,
@@ -134,18 +70,19 @@ struct ActivityView: View {
                 userID: store.currentUserID
             )
         }
-        guard isPro, !query.isEmpty else { return filterMatches }
-
-        return filterMatches.filter { activity in
+        // Boş query no-op; karşılaştırma locale-aware lowercase (saf yardımcı).
+        return ActivitySearch.filter(
+            filterMatches,
+            query: debouncedQuery,
+            locale: locale
+        ) { activity in
             let presentation = presentation(for: activity)
-            let haystack = [
+            return [
                 presentation.title,
                 presentation.subtitle ?? "",
                 groupName(activity.groupId)
             ]
             .joined(separator: " ")
-            .lowercased(with: locale)
-            return haystack.contains(query)
         }
     }
 

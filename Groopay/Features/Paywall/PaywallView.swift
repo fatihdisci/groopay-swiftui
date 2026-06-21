@@ -29,12 +29,6 @@ private let proFeatures: [ProFeature] = [
         title: "Kategori Analizi",
         subtitle: "Harcamalarını kategorilere göre analiz et, nereye ne kadar gittiğini görselleştir."
     ),
-    ProFeature(
-        id: "activity",
-        icon: "clock.fill",
-        title: "Aktivite Arama",
-        subtitle: "Tüm gruplarındaki aktivitelerde arama yap, geçmiş masrafları kolayca bul."
-    ),
 ]
 
 // MARK: - PaywallView
@@ -43,12 +37,12 @@ struct PaywallView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.locale) private var locale
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.appFeedback) private var feedback
     @Environment(AuthStore.self) private var authStore
     @State private var purchases = PurchasesManager.shared
     @State private var isPurchasing = false
     @State private var isRestoring = false
     @State private var purchaseSuccess = false
-    @State private var successMessage: String?
     @State private var animateHero = false
 
     var body: some View {
@@ -74,7 +68,6 @@ struct PaywallView: View {
             closeButton
 
         }
-        .appToast(message: $successMessage)
         .task {
             await purchases.loadOfferings()
             guard !reduceMotion else { return }
@@ -87,16 +80,11 @@ struct PaywallView: View {
                 dismiss()
             }
         }
-        .alert(
-            "Bir hata oluştu",
-            isPresented: Binding(
-                get: { purchases.errorMessage != nil },
-                set: { if !$0 { purchases.clearError() } }
-            )
-        ) {
-            Button("Tamam", role: .cancel) { purchases.clearError() }
-        } message: {
-            Text(purchases.errorMessage ?? "")
+        .onChange(of: purchases.errorMessage) { _, message in
+            if let message {
+                feedback.error(message)
+                purchases.clearError()
+            }
         }
     }
 
@@ -407,21 +395,11 @@ struct PaywallView: View {
         let success = await purchases.restorePurchases()
         if success {
             await authStore.setProActive()
-            showSuccess("Satın almaların geri yüklendi.")
+            feedback.success(
+                String(localized: "Satın almaların geri yüklendi.", locale: locale)
+            )
         }
         isRestoring = false
-    }
-
-    private func showSuccess(_ message: String.LocalizationValue) {
-        withAnimation(reduceMotion ? nil : .spring(response: 0.35, dampingFraction: 0.86)) {
-            successMessage = String(localized: message, locale: locale)
-        }
-        Task {
-            try? await Task.sleep(for: .seconds(2))
-            withAnimation(reduceMotion ? nil : .easeOut(duration: 0.2)) {
-                successMessage = nil
-            }
-        }
     }
 
     private func openURL(_ urlString: String) {
