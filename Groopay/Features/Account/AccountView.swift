@@ -6,13 +6,16 @@ struct AccountView: View {
 
     @Environment(AuthStore.self) private var authStore
     @Environment(LocalizationStore.self) private var localizationStore
+    @Environment(\.appFeedback) private var feedback
     @State private var showPaywall = false
     @State private var showProfileEditor = false
     @State private var showDeleteConfirm = false
     @State private var showSignOutConfirm = false
     @State private var isDeleting = false
     @State private var isExporting = false
-    @State private var toastMessage: String?
+    @State private var exportDocument: UserDataExportDocument?
+    @State private var exportFileName = UserDataExport.fileName()
+    @State private var showExporter = false
 
     private var legalPathPrefix: String {
         localizationStore.languageCode == "en" ? "/en" : ""
@@ -74,15 +77,27 @@ struct AccountView: View {
                 ProfileEditView(profile: profile) { name, color in
                     try await authStore.updateProfile(name: name, color: color)
                     await store.load()
-                    withAnimation {
-                        toastMessage = String(
-                            localized: "Profil güncellendi.",
-                            locale: localizationStore.locale
-                        )
-                    }
-                    try? await Task.sleep(for: .seconds(2))
-                    withAnimation { toastMessage = nil }
+                    feedback.success(
+                        String(localized: "Profil güncellendi.", locale: localizationStore.locale)
+                    )
                 }
+            }
+        }
+        .fileExporter(
+            isPresented: $showExporter,
+            document: exportDocument,
+            contentType: .json,
+            defaultFilename: exportFileName
+        ) { result in
+            switch result {
+            case .success:
+                feedback.success(
+                    String(localized: "Verilerin dışa aktarıldı.", locale: localizationStore.locale)
+                )
+            case .failure:
+                feedback.error(
+                    String(localized: "Dışa aktarma başarısız.", locale: localizationStore.locale)
+                )
             }
         }
         .confirmationDialog(
@@ -109,7 +124,6 @@ struct AccountView: View {
         } message: {
             Text("Verilerin korunur. Apple ile tekrar giriş yaparak geri dönebilirsin.")
         }
-        .appToast(message: $toastMessage)
     }
 
     // MARK: - Profil
@@ -286,7 +300,6 @@ struct AccountView: View {
                     featureRow(icon: "chart.bar.fill", text: "Gelişmiş Panel")
                     featureRow(icon: "person.2.fill", text: "Sınırsız Grup")
                     featureRow(icon: "chart.pie.fill", text: "Kategori Analizi")
-                    featureRow(icon: "magnifyingglass", text: "Aktivite Arama")
                 }
 
                 Button {
@@ -553,74 +566,37 @@ struct AccountView: View {
         do {
             try await authStore.updateLocale(language)
         } catch {
-            withAnimation {
-                toastMessage = String(
-                    localized: "Dil tercihi kaydedilemedi.",
-                    locale: localizationStore.locale
-                )
-            }
-            try? await Task.sleep(for: .seconds(3))
-            withAnimation { toastMessage = nil }
+            feedback.error(
+                String(localized: "Dil tercihi kaydedilemedi.", locale: localizationStore.locale)
+            )
         }
     }
 
+    /// Kullanıcının erişebildiği tüm yüklü grup snapshot'larını minor-unit Int
+    /// koruyarak JSON'a aktarır. Önce store.load() ile veri yenilenir; sunum
+    /// SwiftUI fileExporter ile yapılır (UIKit manuel presentation yok).
     private func handleExport() async {
         isExporting = true
-        // TODO: Supabase'ten kullanıcı verilerini JSON olarak çek, paylaş
+        defer { isExporting = false }
+
+        await store.load()
+
+        let export = UserDataExport.make(
+            snapshots: store.groups,
+            profile: authStore.currentProfile,
+            activities: store.activities
+        )
+
         do {
-            let supabase = SupabaseService.shared
-            guard let userID = supabase.auth.currentUser?.id else { return }
-
-            let groups: [Group] = try await supabase
-                .from("group_members")
-                .select("group:groups!inner(*)")
-                .eq("user_id", value: userID)
-                .execute()
-                .value
-
-            let encoder = JSONEncoder()
-            encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
-            let data = try encoder.encode(groups)
-
-            // Kaydet + Share Sheet
-            let tempURL = FileManager.default.temporaryDirectory
-                .appendingPathComponent("groopay-export.json")
-            try data.write(to: tempURL)
-
-            let activityVC = UIActivityViewController(
-                activityItems: [tempURL],
-                applicationActivities: nil
-            )
-            
-            if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-               let rootVC = scene.windows.first?.rootViewController {
-                activityVC.popoverPresentationController?.sourceView = rootVC.view
-                rootVC.present(activityVC, animated: true)
-            }
-
-            withAnimation {
-                toastMessage = String(
-                    localized: "Veriler hazır, paylaşım ekranı açılıyor.",
-                    locale: localizationStore.locale
-                )
-            }
-            try? await Task.sleep(for: .seconds(2))
-            withAnimation { toastMessage = nil }
+            let data = try export.jsonData()
+            exportDocument = UserDataExportDocument(data: data)
+            exportFileName = UserDataExport.fileName(for: export.exportedAt)
+            showExporter = true
         } catch {
-            withAnimation {
-                toastMessage = String(
-                    format: String(
-                        localized: "Dışa aktarma başarısız: %@",
-                        locale: localizationStore.locale
-                    ),
-                    locale: localizationStore.locale,
-                    error.localizedDescription
-                )
-            }
-            try? await Task.sleep(for: .seconds(3))
-            withAnimation { toastMessage = nil }
+            feedback.error(
+                String(localized: "Dışa aktarma başarısız.", locale: localizationStore.locale)
+            )
         }
-        isExporting = false
     }
 
     private func handleDelete() async {
@@ -633,14 +609,9 @@ struct AccountView: View {
             // "Cannot coerce the result to a single JSON object" hatası verirdi.)
             await authStore.signOut()
         } catch {
-            withAnimation {
-                toastMessage = String(
-                    localized: "Hesap silme başarısız.",
-                    locale: localizationStore.locale
-                )
-            }
-            try? await Task.sleep(for: .seconds(3))
-            withAnimation { toastMessage = nil }
+            feedback.error(
+                String(localized: "Hesap silme başarısız.", locale: localizationStore.locale)
+            )
         }
         isDeleting = false
     }

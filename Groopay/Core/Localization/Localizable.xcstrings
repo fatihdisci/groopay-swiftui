@@ -1,6 +1,38 @@
 {
   "sourceLanguage": "tr",
   "strings": {
+    "Verilerin dışa aktarıldı.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your data was exported."
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verilerin dışa aktarıldı."
+          }
+        }
+      }
+    },
+    "Dışa aktarma başarısız.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Export failed."
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dışa aktarma başarısız."
+          }
+        }
+      }
+    },
     "Aramayı temizle": {
       "localizations": {
         "en": {
