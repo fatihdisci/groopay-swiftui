@@ -273,7 +273,7 @@ struct GroupDetailView: View {
     }
 
     private func restoreDeletedExpense(expenseID: UUID) {
-        Task {
+        Task { @MainActor in
             if await store.restoreExpense(expenseID: expenseID, groupID: groupID) {
                 feedback.success(
                     String(localized: "Masraf geri alındı.", locale: locale)

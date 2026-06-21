@@ -412,7 +412,7 @@ struct BalancesTabView: View {
     ) {
         guard !busy else { return }
         busy = true
-        Task {
+        Task { @MainActor in
             let success = await operation()
             busy = false
             if success {

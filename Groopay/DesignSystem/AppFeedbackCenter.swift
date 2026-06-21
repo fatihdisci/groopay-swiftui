@@ -56,13 +56,20 @@ struct FeedbackMessage: Identifiable, Equatable {
 /// Uygulama genelinde başarı/hata/uyarı/bilgi geri bildirimlerini tek noktadan
 /// yönetir. Yeni mesaj geldiğinde bir önceki iptal edilir (üst üste binme yok),
 /// otomatik kapanır. `GroopayApp` seviyesinde environment'a enjekte edilir.
-/// Tüm çağrılar SwiftUI ana iş parçacığından gelir; otomatik kapanma Task'i
-/// güncellemeyi `MainActor.run` ile yapar.
+///
+/// Tip ana aktöre izole edilir (Swift 6 uyumu). `init()` ise `nonisolated`'tır;
+/// böylece `EnvironmentKey.defaultValue` (nonisolated bağlam) güvenle bir
+/// örnek oluşturabilir. Tüm değişken erişimleri ana aktörden yapılır.
+@MainActor
 @Observable
 final class AppFeedbackCenter {
     private(set) var current: FeedbackMessage?
 
     private var dismissTask: Task<Void, Never>?
+
+    /// Yalnız boş başlatma (opsiyonel alanlar nil); ana aktör state'ine
+    /// dokunmadığından nonisolated güvenlidir.
+    nonisolated init() {}
 
     func show(
         _ text: String,
@@ -73,20 +80,19 @@ final class AppFeedbackCenter {
     ) {
         // Önceki mesajı iptal et (replace) → aynı anda tek banner.
         dismissTask?.cancel()
-        current = FeedbackMessage(
+        let message = FeedbackMessage(
             text: text,
             style: style,
             actionTitle: actionTitle,
             action: action
         )
-        let id = current?.id
-        dismissTask = Task { [weak self] in
+        current = message
+        let id = message.id
+        dismissTask = Task { @MainActor [weak self] in
             try? await Task.sleep(for: duration)
             guard !Task.isCancelled else { return }
-            await MainActor.run {
-                guard self?.current?.id == id else { return }
-                self?.current = nil
-            }
+            guard self?.current?.id == id else { return }
+            self?.current = nil
         }
     }
 
