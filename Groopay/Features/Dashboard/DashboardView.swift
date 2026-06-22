@@ -15,7 +15,7 @@ struct DashboardView: View {
     let store: GroupsStore
 
     private var isPro: Bool {
-        authStore.currentProfile?.userPro == true
+        authStore.hasProAccess
     }
 
     var body: some View {
@@ -51,7 +51,7 @@ struct DashboardView: View {
                 }
             }
         }
-        .navigationTitle("tab.dashboard")
+        .navigationTitle(String(localized: "tab.dashboard", locale: locale))
         .navigationBarTitleDisplayMode(.inline)
         .tipsButton()
         .refreshable { await store.load() }
@@ -624,7 +624,11 @@ struct DashboardView: View {
                     Text("Son Aktiviteler")
                         .font(.display(17, weight: .bold))
                         .foregroundStyle(Color.textPrimary)
-                    Text("(\(searched.count)/\(filtered.count))")
+                    Text(
+                        verbatim: debouncedActivitySearchText.isEmpty
+                            ? "\(filtered.count)"
+                            : "\(searched.count)/\(filtered.count)"
+                    )
                         .font(.body(13, weight: .semibold))
                         .foregroundStyle(Color.textTertiary)
                     Spacer()

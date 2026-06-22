@@ -1,6 +1,10 @@
 import SwiftUI
 import Supabase
 
+#if TESTFLIGHT_DEV
+import LocalAuthentication
+#endif
+
 struct AccountView: View {
     let store: GroupsStore
 
@@ -16,6 +20,11 @@ struct AccountView: View {
     @State private var exportDocument: UserDataExportDocument?
     @State private var exportFileName = UserDataExport.fileName()
     @State private var showExporter = false
+
+    #if TESTFLIGHT_DEV
+    @State private var isPreparingTestData = false
+    @State private var isRemovingTestData = false
+    #endif
 
     private var legalPathPrefix: String {
         localizationStore.languageCode == "en" ? "/en" : ""
@@ -44,6 +53,10 @@ struct AccountView: View {
 
                     // Pro Kartı
                     proCard
+
+                    #if TESTFLIGHT_DEV
+                    developerSection
+                    #endif
 
                     // İşlemler
                     actionsSection
@@ -212,7 +225,7 @@ struct AccountView: View {
                             .fixedSize(horizontal: false, vertical: true)
 
                         HStack(spacing: 6) {
-                            if authStore.currentProfile?.userPro == true {
+                            if authStore.hasProAccess {
                                 Image(systemName: "diamond.fill")
                                     .font(.system(size: 11))
                                 Text("Pro")
@@ -226,7 +239,7 @@ struct AccountView: View {
                         .padding(.horizontal, 10)
                         .padding(.vertical, 4)
                         .background(
-                            authStore.currentProfile?.userPro == true
+                            authStore.hasProAccess
                                 ? LinearGradient(colors: [.gradientStart, .gradientEnd], startPoint: .leading, endPoint: .trailing)
                                 : LinearGradient(colors: [Color.textTertiary, Color.textTertiary], startPoint: .leading, endPoint: .trailing)
                         )
@@ -286,7 +299,7 @@ struct AccountView: View {
                 Spacer()
             }
 
-            if authStore.currentProfile?.userPro == true {
+            if authStore.hasProAccess {
                 HStack {
                     Image(systemName: "checkmark.seal.fill")
                         .foregroundStyle(Color.credit)
@@ -517,40 +530,156 @@ struct AccountView: View {
         )
     }
 
-    // MARK: - DEV
+    // MARK: - TestFlight Developer Mode
 
-    #if DEBUG
-    private var devToggle: some View {
-        Button {
-            Task { await togglePro() }
-        } label: {
-            HStack {
-                Image(systemName: "wrench.fill")
-                    .font(.system(size: 14))
-                Text("Pro Aç/Kapat (Geliştirici)")
-                    .font(.body(14, weight: .medium))
+    #if TESTFLIGHT_DEV
+    private var developerSection: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            HStack(spacing: 10) {
+                Image(systemName: authStore.isDeveloperModeUnlocked ? "lock.open.fill" : "lock.fill")
+                    .foregroundStyle(Color.warning)
+                Text("TestFlight Geliştirici Modu")
+                    .font(.display(16, weight: .semibold))
+                    .foregroundStyle(Color.textPrimary)
+                Spacer()
+                Text(authStore.isDeveloperModeUnlocked ? "Açık" : "Kilitli")
+                    .font(.body(12, weight: .semibold))
+                    .foregroundStyle(authStore.isDeveloperModeUnlocked ? Color.credit : Color.textTertiary)
             }
-            .foregroundStyle(Color.warning)
+
+            if authStore.isDeveloperModeUnlocked {
+                Text("Pro erişimi bu cihazda geçici olarak açık. Test verileri gerçek test hesabına eklenir.")
+                    .font(.body(12))
+                    .foregroundStyle(Color.textSecondary)
+
+                developerActionButton(
+                    title: "Test Verilerini Kur / Tamamla",
+                    icon: "wand.and.stars",
+                    isLoading: isPreparingTestData
+                ) {
+                    Task { await prepareTestData() }
+                }
+
+                developerActionButton(
+                    title: "Test Verilerini Sil",
+                    icon: "trash",
+                    color: .red,
+                    isLoading: isRemovingTestData
+                ) {
+                    Task { await removeTestData() }
+                }
+
+                Button("Geliştirici Modunu Kilitle") {
+                    authStore.setDeveloperModeUnlocked(false)
+                }
+                .font(.body(13, weight: .semibold))
+                .foregroundStyle(Color.textSecondary)
+                .frame(maxWidth: .infinity, minHeight: 40)
+            } else {
+                Text("Cihaz kimliğini doğrulayarak Pro araçlarını aç ve diline uygun örnek grup ve masrafları oluştur.")
+                    .font(.body(12))
+                    .foregroundStyle(Color.textSecondary)
+
+                developerActionButton(
+                    title: "Kilidi Aç ve Test Verilerini Kur",
+                    icon: "lock.open.fill",
+                    isLoading: isPreparingTestData
+                ) {
+                    Task { await unlockAndPrepareTestData() }
+                }
+            }
+        }
+        .padding(18)
+        .background(Color.warning.opacity(0.08))
+        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .overlay(
+            RoundedRectangle(cornerRadius: 16)
+                .stroke(Color.warning.opacity(0.3), lineWidth: 1)
+        )
+    }
+
+    private func developerActionButton(
+        title: LocalizedStringResource,
+        icon: String,
+        color: Color = .warning,
+        isLoading: Bool,
+        action: @escaping () -> Void
+    ) -> some View {
+        Button(action: action) {
+            HStack(spacing: 10) {
+                if isLoading {
+                    ProgressView().tint(color)
+                } else {
+                    Image(systemName: icon)
+                }
+                Text(title)
+                    .font(.body(14, weight: .semibold))
+                Spacer()
+            }
+            .foregroundStyle(color)
+            .padding(.horizontal, 14)
             .frame(maxWidth: .infinity, minHeight: 44)
-            .background(Color.warning.opacity(0.1))
+            .background(color.opacity(0.1))
             .clipShape(RoundedRectangle(cornerRadius: 12))
+        }
+        .disabled(isLoading || isPreparingTestData || isRemovingTestData)
+    }
+
+    private func unlockAndPrepareTestData() async {
+        isPreparingTestData = true
+        defer { isPreparingTestData = false }
+
+        do {
+            let context = LAContext()
+            let authenticated = try await context.evaluatePolicy(
+                .deviceOwnerAuthentication,
+                localizedReason: String(
+                    localized: "TestFlight geliştirici araçlarını aç",
+                    locale: localizationStore.locale
+                )
+            )
+            guard authenticated else { return }
+            authStore.setDeveloperModeUnlocked(true)
+            try await DeveloperTestData.seed(
+                store: store,
+                profile: authStore.currentProfile,
+                languageCode: localizationStore.languageCode
+            )
+            feedback.success(
+                String(localized: "Pro ve test verileri hazır.", locale: localizationStore.locale)
+            )
+        } catch {
+            feedback.error(error.localizedDescription)
         }
     }
 
-    private func togglePro() async {
-        let supabase = SupabaseService.shared
-        guard let userID = supabase.auth.currentUser?.id else { return }
-        let currentValue = authStore.currentProfile?.userPro ?? false
-
+    private func prepareTestData() async {
+        isPreparingTestData = true
+        defer { isPreparingTestData = false }
         do {
-            try await supabase
-                .from("profiles")
-                .update(["user_pro": !currentValue])
-                .eq("id", value: userID)
-                .execute()
-            await authStore.loadProfile()
+            try await DeveloperTestData.seed(
+                store: store,
+                profile: authStore.currentProfile,
+                languageCode: localizationStore.languageCode
+            )
+            feedback.success(
+                String(localized: "Test verileri hazır.", locale: localizationStore.locale)
+            )
         } catch {
-            print("DEV toggle error: \(error.localizedDescription)")
+            feedback.error(error.localizedDescription)
+        }
+    }
+
+    private func removeTestData() async {
+        isRemovingTestData = true
+        defer { isRemovingTestData = false }
+        do {
+            try await DeveloperTestData.remove(from: store)
+            feedback.success(
+                String(localized: "Test verileri silindi.", locale: localizationStore.locale)
+            )
+        } catch {
+            feedback.error(error.localizedDescription)
         }
     }
     #endif

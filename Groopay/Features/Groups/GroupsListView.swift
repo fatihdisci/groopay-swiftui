@@ -120,7 +120,7 @@ struct GroupsListView: View {
     }
 
     private var reachedLimit: Bool {
-        !(authStore.currentProfile?.userPro ?? false)
+        !authStore.hasProAccess
             && store.createdNonDemoGroupCount >= 5
     }
 }

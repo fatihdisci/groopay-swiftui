@@ -20,9 +20,33 @@ final class AuthStore {
     private(set) var isLoading = false
     private(set) var errorMessage: String?
 
+    #if TESTFLIGHT_DEV
+    private(set) var isDeveloperModeUnlocked = UserDefaults.standard.bool(
+        forKey: "testflightDeveloperModeUnlocked"
+    )
+    #endif
+
     var canPurchase: Bool {
         sessionState == .identified
     }
+
+    var hasProAccess: Bool {
+        #if TESTFLIGHT_DEV
+        currentProfile?.userPro == true || isDeveloperModeUnlocked
+        #else
+        currentProfile?.userPro == true
+        #endif
+    }
+
+    #if TESTFLIGHT_DEV
+    func setDeveloperModeUnlocked(_ isUnlocked: Bool) {
+        isDeveloperModeUnlocked = isUnlocked
+        UserDefaults.standard.set(
+            isUnlocked,
+            forKey: "testflightDeveloperModeUnlocked"
+        )
+    }
+    #endif
 
     private let supabase: SupabaseClient
     private var authListenerTask: Task<Void, Never>?
