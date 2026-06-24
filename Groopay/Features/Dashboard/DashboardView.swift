@@ -195,12 +195,20 @@ struct DashboardView: View {
         color: Color
     ) -> some View {
         VStack(alignment: .leading, spacing: 4) {
-            Label(title, systemImage: icon)
-                .font(.body(9, weight: .semibold))
-                .foregroundStyle(.white.opacity(0.72))
+            HStack(spacing: 6) {
+                Image(systemName: icon)
+                    .font(.system(size: 17, weight: .semibold))
+                Text(title)
+                    .font(.system(size: 14, weight: .semibold))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.78)
+            }
+            .foregroundStyle(.white.opacity(0.72))
             Text(formatAmount(amount, currency: currency))
-                .font(.display(17, weight: .extraBold))
+                .font(.system(size: 31, weight: .heavy))
                 .foregroundStyle(.white)
+                .lineLimit(1)
+                .minimumScaleFactor(0.68)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(10)
@@ -702,14 +710,18 @@ struct DashboardView: View {
 
             VStack(alignment: .leading, spacing: 3) {
                 Text(presentation.title)
-                    .font(.body(13, weight: .semibold))
+                    .font(.system(size: 15, weight: .semibold))
                     .foregroundStyle(Color.textPrimary)
                     .lineLimit(1)
+                    .minimumScaleFactor(0.76)
+                    .layoutPriority(1)
 
                 HStack(spacing: 6) {
                     Text(groupName(activity.groupId))
-                        .font(.body(10, weight: .medium))
+                        .font(.system(size: 12, weight: .medium))
                         .foregroundStyle(Color.primaryTheme)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.82)
                         .padding(.horizontal, 6)
                         .padding(.vertical, 2)
                         .background(Color.surfaceTinted)
@@ -717,7 +729,7 @@ struct DashboardView: View {
 
                     if let time = activity.createdAt {
                         Text(timeAgo(time))
-                            .font(.body(11))
+                            .font(.system(size: 12))
                             .foregroundStyle(Color.textTertiary)
                     }
                 }
@@ -727,8 +739,10 @@ struct DashboardView: View {
 
             if let amountStr = activityAmount(activity) {
                 Text(amountStr)
-                    .font(.body(13, weight: .semibold))
+                    .font(.system(size: 15, weight: .semibold))
                     .foregroundStyle(Color.textSecondary)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.78)
             }
         }
         .padding(.vertical, 10)

@@ -29,7 +29,9 @@ struct ActivityView: View {
                         HStack(spacing: 10) {
                             AppSearchField(
                                 text: $searchText,
-                                placeholder: "Aktivitede ara",
+                                placeholder: LocalizedStringResource(
+                                    stringLiteral: AppLocalization.string("Aktivitede ara", locale: locale)
+                                ),
                                 onClear: { debouncedQuery = "" }
                             )
                             ActivityFilterButton(
@@ -51,7 +53,7 @@ struct ActivityView: View {
                 }
             }
         }
-        .navigationTitle("Aktivite")
+        .navigationTitle(AppLocalization.string("Aktivite", locale: locale))
         .navigationBarTitleDisplayMode(.inline)
         .tipsButton()
         .task { await store.load() }
@@ -265,13 +267,13 @@ struct ActivityPresentation {
         locale: Locale = LocalizationStore.currentLocale()
     ) {
         let type = activity.actionType.lowercased()
-        let who = actorName ?? String(localized: "Birisi", locale: locale)
+        let who = actorName ?? AppLocalization.string("Birisi", locale: locale)
         let description = activity.metadata["description"]?.stringValue
 
         if type.contains("expense") {
             icon = "receipt"
             color = .primaryTheme
-            let key: String.LocalizationValue
+            let key: String
             if type.contains("delete") {
                 key = "%@ masraf sildi"
             } else if type.contains("update") {
@@ -280,7 +282,7 @@ struct ActivityPresentation {
                 key = "%@ masraf ekledi"
             }
             title = String(
-                format: String(localized: key, locale: locale),
+                format: AppLocalization.string(key, locale: locale),
                 locale: locale,
                 who
             )
@@ -289,7 +291,7 @@ struct ActivityPresentation {
             icon = "checkmark.circle.fill"
             color = .credit
             title = String(
-                format: String(localized: "%@ ödeme yaptı", locale: locale),
+                format: AppLocalization.string("%@ ödeme yaptı", locale: locale),
                 locale: locale,
                 who
             )
@@ -298,7 +300,7 @@ struct ActivityPresentation {
             icon = "person.badge.plus"
             color = Color(cssHex: "#8B5CF6") ?? .brand
             title = String(
-                format: String(localized: "%@ gruba katıldı", locale: locale),
+                format: AppLocalization.string("%@ gruba katıldı", locale: locale),
                 locale: locale,
                 who
             )
@@ -330,22 +332,27 @@ private struct ActivityRow: View {
 
             VStack(alignment: .leading, spacing: 4) {
                 Text(presentation.title)
-                    .font(.body(13, weight: .semibold))
+                    .font(.system(size: 15, weight: .semibold))
                     .foregroundStyle(Color.textPrimary)
                     .lineLimit(1)
+                    .minimumScaleFactor(0.76)
+                    .layoutPriority(1)
                 HStack(spacing: 6) {
                     Text(groupName)
-                        .font(.body(10, weight: .medium))
+                        .font(.system(size: 12, weight: .medium))
                         .foregroundStyle(Color.primaryTheme)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.82)
                         .padding(.horizontal, 8)
                         .padding(.vertical, 3)
                         .background(Color.surfaceTinted)
                         .clipShape(Capsule())
                     if let subtitle = presentation.subtitle, !subtitle.isEmpty {
                         Text(subtitle)
-                            .font(.body(12))
+                            .font(.system(size: 12))
                             .foregroundStyle(Color.textSecondary)
                             .lineLimit(1)
+                            .minimumScaleFactor(0.82)
                     }
                 }
             }
@@ -353,7 +360,7 @@ private struct ActivityRow: View {
             Spacer()
 
             Text(time)
-                .font(.body(11))
+                .font(.system(size: 12))
                 .foregroundStyle(Color.textTertiary)
         }
         .padding(.horizontal, 14)
