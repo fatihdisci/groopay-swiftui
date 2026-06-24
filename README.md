@@ -6,7 +6,7 @@ Bu depo, Expo/React Native istemcisinin yerine geliştirilen SwiftUI uygulaması
 
 ## Güncel durum
 
-- Uygulama sürümü: **1.2.1 (build 35)**
+- Uygulama sürümü: **1.3.0 (build 38)**
 - Dağıtım durumu: **App Store gönderimine hazırlanıyor**
 - Platform: **iPhone, iOS 17.0+**
 - Arayüz: **SwiftUI**
@@ -20,12 +20,14 @@ Bu depo, Expo/React Native istemcisinin yerine geliştirilen SwiftUI uygulaması
 
 1.2.1 sürümünde Türkçe ve İngilizce arayüz tutarlılığı iyileştirildi, Dashboard metinleri düzeltildi ve son aktivite sayacı sadeleştirildi.
 
+1.3.0 sürümünde uygulamanın görsel kimliği yeni tema renkleriyle yenilendi, Dashboard ve aktivite satırlarında metin/tutar sığması iyileştirildi, Türkçe/İngilizce aktivite metinleri tutarlı hale getirildi ve yeni app ikonu eklendi.
+
 ### TestFlight geliştirici derlemesi
 
-- App Store için standart `Groopay` scheme ve `Release` yapılandırması kullanılır. Build 35'te geliştirici kodu derlenmez.
-- İç TestFlight testi için `Groopay TestFlight Dev` scheme kullanılır. Bu scheme `TestFlight Dev` yapılandırmasıyla build 37 üretir.
+- App Store için standart `Groopay` scheme ve `Release` yapılandırması kullanılır. Build 38'de geliştirici kodu derlenmez.
+- İç TestFlight testi için `Groopay TestFlight Dev` scheme kullanılır. Bu scheme `TestFlight Dev` yapılandırmasıyla build 38 üretir.
 - Dev archive dağıtılırken Xcode'da **TestFlight Internal Only** seçilmelidir; bu binary App Store sürümüne bağlanmamalıdır.
-- Bir sonraki temiz App Store yüklemesinde build numarası 37'den büyük olmalıdır.
+- Bir sonraki temiz App Store yüklemesinde build numarası 38'den büyük olmalıdır.
 
 ## Özellikler
 

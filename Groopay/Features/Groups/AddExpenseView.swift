@@ -344,7 +344,7 @@ struct AddExpenseView: View {
                 .foregroundStyle(fxRateError ? Color.warning : Color.themeAccent)
                 .padding(.top, 2)
 
-            if let rate = fxRate, let asOf = fxRateAsOf, !fxRateError {
+            if let rate = fxRate, fxRateAsOf != nil, !fxRateError {
                 Text(String(
                     format: String(localized: "1 %@ ≈ %@ %@ · %@ tarihinde kilitlendi · Bu kur yaklaşıktır, kesinleşmiş borç değildir", locale: locale),
                     locale: locale,
