@@ -370,7 +370,7 @@ private struct ExpenseCard: View {
 
             VStack(alignment: .trailing, spacing: 8) {
                 Text(formatAmount(expense.amount, currency: expense.currency))
-                    .font(.display(17, weight: .semibold))
+                    .font(.display(16, weight: .semibold))
                     .foregroundStyle(Color.textPrimary)
 
                 Menu {

@@ -330,12 +330,12 @@ private struct ActivityRow: View {
 
             VStack(alignment: .leading, spacing: 4) {
                 Text(presentation.title)
-                    .font(.body(14, weight: .semibold))
+                    .font(.body(13, weight: .semibold))
                     .foregroundStyle(Color.textPrimary)
                     .lineLimit(1)
                 HStack(spacing: 6) {
                     Text(groupName)
-                        .font(.body(11, weight: .medium))
+                        .font(.body(10, weight: .medium))
                         .foregroundStyle(Color.primaryTheme)
                         .padding(.horizontal, 8)
                         .padding(.vertical, 3)

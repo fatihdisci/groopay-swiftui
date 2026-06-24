@@ -196,10 +196,10 @@ struct DashboardView: View {
     ) -> some View {
         VStack(alignment: .leading, spacing: 4) {
             Label(title, systemImage: icon)
-                .font(.body(10, weight: .semibold))
+                .font(.body(9, weight: .semibold))
                 .foregroundStyle(.white.opacity(0.72))
             Text(formatAmount(amount, currency: currency))
-                .font(.display(18, weight: .extraBold))
+                .font(.display(17, weight: .extraBold))
                 .foregroundStyle(.white)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -702,13 +702,13 @@ struct DashboardView: View {
 
             VStack(alignment: .leading, spacing: 3) {
                 Text(presentation.title)
-                    .font(.body(14, weight: .semibold))
+                    .font(.body(13, weight: .semibold))
                     .foregroundStyle(Color.textPrimary)
                     .lineLimit(1)
 
                 HStack(spacing: 6) {
                     Text(groupName(activity.groupId))
-                        .font(.body(11, weight: .medium))
+                        .font(.body(10, weight: .medium))
                         .foregroundStyle(Color.primaryTheme)
                         .padding(.horizontal, 6)
                         .padding(.vertical, 2)
