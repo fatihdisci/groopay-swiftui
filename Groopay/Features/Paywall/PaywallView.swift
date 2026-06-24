@@ -21,7 +21,7 @@ private let proFeatures: [ProFeature] = [
         id: "groups",
         icon: "person.2.fill",
         title: "Sınırsız Grup",
-        subtitle: "Ücretsizde 5 grup sınırı var. Pro ile istediğin kadar grup oluştur, hiçbir arkadaşını dışarıda bırakma."
+        subtitle: "Ücretsizde 3 grup sınırı var. Pro ile istediğin kadar grup oluştur, hiçbir arkadaşını dışarıda bırakma."
     ),
     ProFeature(
         id: "analytics",
@@ -382,7 +382,10 @@ struct PaywallView: View {
         guard authStore.canPurchase else { return }
         isPurchasing = true
         let success = await purchases.purchase()
-        if success { await authStore.setProActive() }
+        if success {
+            await authStore.setProActive()
+            EndowmentNotificationScheduler.cancelIfScheduled()
+        }
         purchaseSuccess = success
         isPurchasing = false
     }
@@ -392,6 +395,7 @@ struct PaywallView: View {
         let success = await purchases.restorePurchases()
         if success {
             await authStore.setProActive()
+            EndowmentNotificationScheduler.cancelIfScheduled()
             feedback.success(
                 String(localized: "Satın almaların geri yüklendi.", locale: locale)
             )

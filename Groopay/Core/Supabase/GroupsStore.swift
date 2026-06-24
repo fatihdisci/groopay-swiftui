@@ -671,7 +671,7 @@ final class GroupsStore {
 
     private static func isLimitError(_ error: RPCError) -> Bool {
         let text = error.localizedDescription.lowercased()
-        return text.contains("5 grup")
+        return text.contains("3 grup")
             || text.contains("ücretsiz plan")
             || text.contains("free plan")
     }

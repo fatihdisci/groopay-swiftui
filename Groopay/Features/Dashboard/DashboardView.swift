@@ -376,6 +376,25 @@ struct DashboardView: View {
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 16)
 
+            // Mini feature grid — PaywallView proFeatures ile tutarlı
+            HStack(spacing: ThemeSpacing.xl) {
+                ForEach([
+                    ("chart.bar.fill", String(localized: "Gelişmiş Panel")),
+                    ("person.2.fill", String(localized: "Sınırsız Grup")),
+                    ("chart.pie.fill", String(localized: "Kategori Analizi")),
+                ], id: \.0) { icon, title in
+                    VStack(spacing: ThemeSpacing.xs) {
+                        Image(systemName: icon)
+                            .font(.system(size: 18))
+                            .foregroundStyle(Color.themeAccent)
+                        Text(title)
+                            .font(.captionFont)
+                            .foregroundStyle(Color.themeTextSecondary)
+                    }
+                }
+            }
+            .padding(.top, ThemeSpacing.sm)
+
             Button {
                 showPaywall = true
             } label: {

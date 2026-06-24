@@ -48,4 +48,5 @@ final class AppRouter {
 
 extension Notification.Name {
     static let groopayOpenGroup = Notification.Name("groopay.open-group")
+    static let groopayOpenPaywall = Notification.Name("groopay.open-paywall")
 }

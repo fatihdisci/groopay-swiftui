@@ -5,6 +5,7 @@ struct MainTabView: View {
     @Environment(\.appFeedback) private var feedback
     @State private var groupsStore: GroupsStore
     @State private var realtime = RealtimeManager()
+    @State private var showEndowmentPaywall = false
 
     init(store: GroupsStore = GroupsStore()) {
         _groupsStore = State(initialValue: store)
@@ -79,6 +80,12 @@ struct MainTabView: View {
             guard let groupID = notification.object as? UUID else { return }
             _ = PushNotificationService.consumePendingGroup()
             router.openGroup(groupID)
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .groopayOpenPaywall)) { _ in
+            showEndowmentPaywall = true
+        }
+        .sheet(isPresented: $showEndowmentPaywall) {
+            PaywallView()
         }
         .task {
             if let groupID = PushNotificationService.consumePendingGroup() {

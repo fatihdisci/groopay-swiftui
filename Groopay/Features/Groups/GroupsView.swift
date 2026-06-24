@@ -61,7 +61,7 @@ struct GroupsView: View {
 
     private func handleCreateTap() {
         let reachedLimit = !authStore.hasProAccess
-            && store.createdNonDemoGroupCount >= 5
+            && store.createdNonDemoGroupCount >= 3
         if reachedLimit {
             store.presentedPaywall = true
         } else {

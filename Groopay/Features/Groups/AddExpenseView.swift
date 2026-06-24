@@ -24,6 +24,10 @@ struct AddExpenseView: View {
     @State private var detailsExpanded: Bool
     @State private var isSaving = false
     @State private var showDeleteConfirm = false
+    @State private var fxRate: Double?
+    @State private var fxRateAsOf: Date?
+    @State private var fxRateError = false
+    @State private var fxTask: Task<Void, Never>?
 
     init(
         groupID: UUID,
@@ -129,6 +133,9 @@ struct AddExpenseView: View {
             ScrollView {
                 VStack(spacing: 22) {
                     amountSection
+                    if showFXInfo(snapshot: snapshot) {
+                        fxInfoBar(snapshot: snapshot)
+                    }
                     numpad
                     if editingExpense == nil {
                         recentSuggestions(snapshot: snapshot)
@@ -310,6 +317,81 @@ struct AddExpenseView: View {
             } else {
                 amountText += key
             }
+        }
+    }
+
+    // MARK: - FX Rate (DESIGN.md §6.4)
+
+    /// Grubun baz para birimi seçili para biriminden farklıysa info bar göster.
+    private func showFXInfo(snapshot: GroupSnapshot) -> Bool {
+        selectedCurrency.uppercased() != snapshot.group.baseCurrency.uppercased()
+    }
+
+    /// Kur bilgisi info bar'ı. Yükleme/hata/başarı durumlarını kapsar.
+    @ViewBuilder
+    private func fxInfoBar(snapshot: GroupSnapshot) -> some View {
+        let baseCurrency = snapshot.group.baseCurrency.uppercased()
+        let formattedDate: String = {
+            let f = DateFormatter()
+            f.locale = locale
+            f.setLocalizedDateFormatFromTemplate("d MMM yyyy HH:mm")
+            return fxRateAsOf.map { f.string(from: $0) } ?? ""
+        }()
+
+        HStack(alignment: .top, spacing: ThemeSpacing.xs) {
+            Image(systemName: fxRateError ? "exclamationmark.triangle.fill" : "info.circle.fill")
+                .font(.system(size: 12))
+                .foregroundStyle(fxRateError ? Color.warning : Color.themeAccent)
+                .padding(.top, 2)
+
+            if let rate = fxRate, let asOf = fxRateAsOf, !fxRateError {
+                Text(String(
+                    format: String(localized: "1 %@ ≈ %@ %@ · %@ tarihinde kilitlendi · Bu kur yaklaşıktır, kesinleşmiş borç değildir", locale: locale),
+                    locale: locale,
+                    selectedCurrency.uppercased(),
+                    String(format: "%.2f", rate),
+                    baseCurrency,
+                    formattedDate
+                ))
+                .font(.body(11, weight: .medium))
+                .foregroundStyle(Color.themeTextSecondary)
+            } else if fxRateError {
+                Text(String(localized: "Kur bilgisi alınamadı · Şu an varsayılan kur kullanılıyor · Daha sonra tekrar dene", locale: locale))
+                    .font(.body(11, weight: .medium))
+                    .foregroundStyle(Color.warning)
+            } else {
+                Text(String(localized: "Kur bilgisi yükleniyor…", locale: locale))
+                    .font(.body(11, weight: .medium))
+                    .foregroundStyle(Color.themeTextTertiary)
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.horizontal, ThemeSpacing.md)
+        .padding(.vertical, ThemeSpacing.sm)
+        .background(Color.themeSurfaceMuted)
+        .clipShape(RoundedRectangle(cornerRadius: ThemeRadius.soft))
+        .task(id: selectedCurrency) {
+            guard showFXInfo(snapshot: snapshot) else { return }
+            fxTask?.cancel()
+            await fetchFXRate(from: selectedCurrency.uppercased(), to: baseCurrency)
+        }
+    }
+
+    /// Frankfurter API'den kur çek (debounce 300ms, cache 1 saat).
+    private func fetchFXRate(from: String, to: String) async {
+        fxRateError = false
+        do {
+            try await Task.sleep(for: .milliseconds(300))
+            guard !Task.isCancelled else { return }
+            let result = try await FXRateService.shared.fetchRate(from: from, to: to)
+            guard !Task.isCancelled else { return }
+            fxRate = result.rate
+            fxRateAsOf = result.asOf
+        } catch {
+            guard !Task.isCancelled else { return }
+            fxRateError = true
+            fxRate = nil
+            fxRateAsOf = nil
         }
     }
 
@@ -853,6 +935,19 @@ struct AddExpenseView: View {
         }
 
         if success {
+            // Endowment bildirimi: bu kullanıcının ilk masrafıysa ve yeni ekleniyorsa
+            if editingExpense == nil {
+                let isFirstExpense = store.groups.allSatisfy { $0.expenses.count <= 1 }
+                    && store.groups.reduce(0) { $0 + $1.expenses.count } <= 1
+                if isFirstExpense {
+                    Task {
+                        await EndowmentNotificationScheduler.scheduleIfNeeded(
+                            afterFirstExpense: Date()
+                        )
+                    }
+                }
+            }
+
             ExpenseEntryPreferences().save(
                 ExpenseEntryPreference(
                     currency: selectedCurrency,

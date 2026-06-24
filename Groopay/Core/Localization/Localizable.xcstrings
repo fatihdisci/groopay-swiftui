@@ -5242,7 +5242,7 @@
         }
       }
     },
-    "Ücretsizde 5 grup sınırı var. Pro ile istediğin kadar grup oluştur, hiçbir arkadaşını dışarıda bırakma." : {
+    "Ücretsizde 3 grup sınırı var. Pro ile istediğin kadar grup oluştur, hiçbir arkadaşını dışarıda bırakma." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -5253,7 +5253,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ücretsizde 5 grup sınırı var. Pro ile istediğin kadar grup oluştur, hiçbir arkadaşını dışarıda bırakma."
+            "value" : "Ücretsizde 3 grup sınırı var. Pro ile istediğin kadar grup oluştur, hiçbir arkadaşını dışarıda bırakma."
           }
         }
       }

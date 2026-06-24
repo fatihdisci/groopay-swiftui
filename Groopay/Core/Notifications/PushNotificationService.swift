@@ -153,6 +153,18 @@ final class GroopayAppDelegate: NSObject, UIApplicationDelegate, UNUserNotificat
         _ center: UNUserNotificationCenter,
         didReceive response: UNNotificationResponse
     ) async {
+        // Endowment bildirimi → paywall aç
+        if EndowmentNotificationScheduler.isEndowmentNotification(response) {
+            await MainActor.run {
+                NotificationCenter.default.post(
+                    name: .groopayOpenPaywall,
+                    object: nil
+                )
+            }
+            return
+        }
+
+        // Normal push → grup detayına yönlendir
         guard let raw = response.notification.request.content.userInfo["group_id"] as? String,
               let groupID = UUID(uuidString: raw) else { return }
         await MainActor.run {
