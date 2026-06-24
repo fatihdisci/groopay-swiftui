@@ -25,7 +25,7 @@ struct MembersView: View {
         .navigationTitle("Üyeler")
         .navigationBarTitleDisplayMode(.inline)
         .alert(
-            "İşlem başarısız",
+            "İşlem tamamlanamadı",
             isPresented: Binding(
                 get: { store.errorMessage != nil },
                 set: { if !$0 { store.clearError() } }

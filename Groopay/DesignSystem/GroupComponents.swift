@@ -10,13 +10,7 @@ struct GradientAvatar: View {
     var body: some View {
         ZStack {
             Circle()
-                .fill(
-                    LinearGradient(
-                        colors: gradientColors,
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    )
-                )
+                .fill(fillColor)
 
             Text(emoji ?? initials)
                 .font(
@@ -36,11 +30,11 @@ struct GradientAvatar: View {
         return String(letters).uppercased(with: locale)
     }
 
-    private var gradientColors: [Color] {
-        guard let color, let parsed = Color(cssHex: color) else {
-            return [.gradientStart, .gradientEnd]
+    private var fillColor: Color {
+        if let color, let parsed = Color(cssHex: color) {
+            return parsed
         }
-        return [parsed, parsed.opacity(0.7)]
+        return .brand
     }
 }
 
@@ -54,35 +48,8 @@ struct GradientButtonLabel: View {
             .font(.body(15, weight: .semibold))
             .foregroundStyle(.white)
             .frame(maxWidth: .infinity, minHeight: 50)
-            .background(
-                LinearGradient(
-                    colors: disabled
-                        ? [.textTertiary, .textTertiary]
-                        : [.gradientStart, .gradientEnd],
-                    startPoint: .leading,
-                    endPoint: .trailing
-                )
-            )
+            .background(disabled ? Color.textTertiary : Color.brand)
             .clipShape(RoundedRectangle(cornerRadius: ThemeRadius.button))
-    }
-}
-
-extension Color {
-    init?(cssHex: String) {
-        let cleaned = cssHex.trimmingCharacters(
-            in: CharacterSet.alphanumerics.inverted
-        )
-        guard cleaned.count == 6, let value = UInt(cleaned, radix: 16) else {
-            return nil
-        }
-
-        self.init(
-            .sRGB,
-            red: Double((value >> 16) & 0xFF) / 255,
-            green: Double((value >> 8) & 0xFF) / 255,
-            blue: Double(value & 0xFF) / 255,
-            opacity: 1
-        )
     }
 }
 

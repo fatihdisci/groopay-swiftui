@@ -45,28 +45,14 @@ struct NewGroupSheet: View {
                     ProgressView()
                         .tint(.white)
                         .frame(maxWidth: .infinity, minHeight: 50)
-                        .background(
-                            LinearGradient(
-                                colors: [.gradientStart, .gradientEnd],
-                                startPoint: .leading,
-                                endPoint: .trailing
-                            )
-                        )
+                        .background(Color.brand)
                         .clipShape(RoundedRectangle(cornerRadius: ThemeRadius.button))
                 } else {
                     Label("Grubu Oluştur", systemImage: "plus")
                         .font(.body(15, weight: .semibold))
                         .foregroundStyle(.white)
                         .frame(maxWidth: .infinity, minHeight: 50)
-                        .background(
-                            LinearGradient(
-                                colors: trimmedName.isEmpty
-                                    ? [.textTertiary, .textTertiary]
-                                    : [.gradientStart, .gradientEnd],
-                                startPoint: .leading,
-                                endPoint: .trailing
-                            )
-                        )
+                        .background(trimmedName.isEmpty ? Color.textTertiary : Color.brand)
                         .clipShape(RoundedRectangle(cornerRadius: ThemeRadius.button))
                 }
             }
@@ -99,13 +85,7 @@ struct NewGroupSheet: View {
         .foregroundStyle(.white)
         .frame(maxWidth: .infinity)
         .padding(.vertical, 30)
-        .background(
-            LinearGradient(
-                colors: [.gradientStart, .gradientEnd],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-        )
+        .background(Color.brand)
         .clipShape(RoundedRectangle(cornerRadius: 20))
         .padding(.horizontal, 24)
         .padding(.top, 24)

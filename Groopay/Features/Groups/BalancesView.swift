@@ -33,8 +33,15 @@ struct BalancesTabView: View {
             .animation(reduceMotion ? nil : .default, value: mode)
             .sheet(item: $paymentSheet) { config in
                 PaymentSheet(config: config) { amount in
+                    let groupName = snapshot.group.name
+                    let msg = String(
+                        format: String(localized: "%@ kişisine ödendi bildirimi gönderildi · %@", locale: locale),
+                        locale: locale,
+                        config.debtorName,
+                        groupName
+                    )
                     runSettlementAction(
-                        successMessage: String(localized: "Ödeme onaya gönderildi.", locale: locale)
+                        successMessage: msg
                     ) {
                         await store.markPaid(
                             groupID: config.groupID,
@@ -114,13 +121,7 @@ struct BalancesTabView: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(20)
-        .background(
-            LinearGradient(
-                colors: [.gradientStart, .gradientEnd],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-        )
+        .background(Color.brand)
         .clipShape(RoundedRectangle(cornerRadius: 20))
         .purpleTintedShadow(radius: 18, y: 9)
         .sheet(isPresented: $showSettleSheet) {
@@ -175,8 +176,18 @@ struct BalancesTabView: View {
             }
             Spacer()
             Button {
+                let payer = snapshot.member(id: settlement.fromMember)?.displayName ?? "?"
+                let groupName = snapshot.group.name
+                let amount = formatAmount(settlement.amount, currency: settlement.currency)
+                let msg = String(
+                    format: String(localized: "%@ kişisinin %@ ödeme bildirimi reddedildi · %@", locale: locale),
+                    locale: locale,
+                    payer,
+                    amount,
+                    groupName
+                )
                 runSettlementAction(
-                    successMessage: String(localized: "Ödeme reddedildi.", locale: locale)
+                    successMessage: msg
                 ) {
                     await store.rejectSettlement(groupID: groupID, settlementID: settlement.id)
                 }
@@ -190,8 +201,18 @@ struct BalancesTabView: View {
                     .clipShape(Capsule())
             }
             Button {
+                let payer = snapshot.member(id: settlement.fromMember)?.displayName ?? "?"
+                let groupName = snapshot.group.name
+                let amount = formatAmount(settlement.amount, currency: settlement.currency)
+                let msg = String(
+                    format: String(localized: "%@ kişisinden %@ ödemesi onaylandı · %@", locale: locale),
+                    locale: locale,
+                    payer,
+                    amount,
+                    groupName
+                )
                 runSettlementAction(
-                    successMessage: String(localized: "Ödeme onaylandı.", locale: locale)
+                    successMessage: msg
                 ) {
                     await store.confirmSettlement(groupID: groupID, settlementID: settlement.id)
                 }
@@ -420,7 +441,7 @@ struct BalancesTabView: View {
             } else {
                 feedback.error(
                     store.errorMessage
-                        ?? String(localized: "İşlem başarısız", locale: locale)
+                        ?? String(localized: "İşlem tamamlanamadı · İnternet bağlantını kontrol et · Tekrar dene", locale: locale)
                 )
                 store.clearError()
             }

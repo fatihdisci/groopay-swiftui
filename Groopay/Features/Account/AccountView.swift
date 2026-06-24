@@ -109,7 +109,7 @@ struct AccountView: View {
                 )
             case .failure:
                 feedback.error(
-                    String(localized: "Dışa aktarma başarısız.", locale: localizationStore.locale)
+                    String(localized: "Veriler dışa aktarılamadı · Dosya oluşturulamadı · Depolama izinlerini kontrol et ve tekrar dene", locale: localizationStore.locale)
                 )
             }
         }
@@ -238,11 +238,7 @@ struct AccountView: View {
                         .foregroundStyle(.white)
                         .padding(.horizontal, 10)
                         .padding(.vertical, 4)
-                        .background(
-                            authStore.hasProAccess
-                                ? LinearGradient(colors: [.gradientStart, .gradientEnd], startPoint: .leading, endPoint: .trailing)
-                                : LinearGradient(colors: [Color.textTertiary, Color.textTertiary], startPoint: .leading, endPoint: .trailing)
-                        )
+                        .background(authStore.hasProAccess ? Color.brand : Color.textTertiary)
                         .clipShape(Capsule())
                     }
                 }
@@ -322,13 +318,7 @@ struct AccountView: View {
                         .font(.body(15, weight: .semibold))
                         .foregroundStyle(.white)
                         .frame(maxWidth: .infinity, minHeight: 44)
-                        .background(
-                            LinearGradient(
-                                colors: [.gradientStart, .gradientEnd],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            )
-                        )
+                        .background(Color.brand)
                         .clipShape(RoundedRectangle(cornerRadius: 12))
                 }
             }
@@ -723,7 +713,7 @@ struct AccountView: View {
             showExporter = true
         } catch {
             feedback.error(
-                String(localized: "Dışa aktarma başarısız.", locale: localizationStore.locale)
+                String(localized: "Veriler dışa aktarılamadı · Dosya oluşturulamadı · Depolama izinlerini kontrol et ve tekrar dene", locale: localizationStore.locale)
             )
         }
     }
@@ -739,7 +729,7 @@ struct AccountView: View {
             await authStore.signOut()
         } catch {
             feedback.error(
-                String(localized: "Hesap silme başarısız.", locale: localizationStore.locale)
+                String(localized: "Hesap silinemedi · İnternet bağlantını kontrol et · Tekrar dene veya destekle iletişime geç", locale: localizationStore.locale)
             )
         }
         isDeleting = false

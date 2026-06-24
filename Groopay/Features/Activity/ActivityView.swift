@@ -18,7 +18,11 @@ struct ActivityView: View {
             if store.isLoading && store.activities.isEmpty {
                 ScrollView { SkeletonList(count: 6) }
             } else if store.activities.isEmpty {
-                emptyState
+                if store.groups.isEmpty {
+                    emptyStateNoGroups
+                } else {
+                    emptyStateNoActivity
+                }
             } else {
                 ScrollView {
                     LazyVStack(alignment: .leading, spacing: 16, pinnedViews: []) {
@@ -124,7 +128,7 @@ struct ActivityView: View {
         }
     }
 
-    private var emptyState: some View {
+    private var emptyStateNoGroups: some View {
         VStack(spacing: 12) {
             Image(systemName: "clock.fill")
                 .font(.system(size: 48))
@@ -132,7 +136,7 @@ struct ActivityView: View {
             Text("Henüz aktivite yok")
                 .font(.display(20))
                 .foregroundStyle(Color.textPrimary)
-            Text("Gruplarındaki masraf ve ödemeler burada görünecek.")
+            Text("Gruplar sekmesinden bir grup oluştur veya davet koduyla katıl.")
                 .font(.body(14))
                 .foregroundStyle(Color.textSecondary)
                 .multilineTextAlignment(.center)
@@ -143,16 +147,26 @@ struct ActivityView: View {
                     .font(.body(15, weight: .semibold))
                     .foregroundStyle(.white)
                     .frame(maxWidth: 220, minHeight: 48)
-                    .background(
-                        LinearGradient(
-                            colors: [.gradientStart, .gradientEnd],
-                            startPoint: .leading,
-                            endPoint: .trailing
-                        )
-                    )
+                    .background(Color.brand)
                     .clipShape(RoundedRectangle(cornerRadius: ThemeRadius.button))
             }
             .padding(.top, 8)
+        }
+        .padding(.horizontal, 40)
+    }
+
+    private var emptyStateNoActivity: some View {
+        VStack(spacing: 12) {
+            Image(systemName: "clock.fill")
+                .font(.system(size: 48))
+                .foregroundStyle(Color.textTertiary)
+            Text("Henüz aktivite yok")
+                .font(.display(20))
+                .foregroundStyle(Color.textPrimary)
+            Text("Grubuna masraf eklediğinde veya bir ödeme yapıldığında burada görünecek.")
+                .font(.body(14))
+                .foregroundStyle(Color.textSecondary)
+                .multilineTextAlignment(.center)
         }
         .padding(.horizontal, 40)
     }
@@ -282,7 +296,7 @@ struct ActivityPresentation {
             subtitle = description
         } else if type.contains("join") || type.contains("member") {
             icon = "person.badge.plus"
-            color = Color(cssHex: "#8B5CF6") ?? .gradientEnd
+            color = Color(cssHex: "#8B5CF6") ?? .brand
             title = String(
                 format: String(localized: "%@ gruba katıldı", locale: locale),
                 locale: locale,

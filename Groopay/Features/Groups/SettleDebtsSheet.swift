@@ -54,8 +54,15 @@ struct SettleDebtsSheet: View {
         }
         .sheet(item: $paymentSheet) { config in
             PaymentSheet(config: config) { amount in
+                let groupName = snapshot?.group.name ?? ""
+                let msg = String(
+                    format: String(localized: "%@ kişisine ödenen tutar onaya gönderildi · %@", locale: locale),
+                    locale: locale,
+                    config.debtorName,
+                    groupName
+                )
                 runAction(
-                    successMessage: String(localized: "Ödeme onaya gönderildi.", locale: locale)
+                    successMessage: msg
                 ) {
                     await store.markPaid(
                         groupID: config.groupID,
@@ -135,6 +142,7 @@ struct SettleDebtsSheet: View {
                             debtAmount: transfer.amount,
                             currency: transfer.currency,
                             debtorName: creditorName,
+                            groupName: snapshot.group.name,
                             groupID: groupID,
                             fromMember: transfer.fromMemberId,
                             toMember: transfer.toMemberId
@@ -144,13 +152,7 @@ struct SettleDebtsSheet: View {
                             .font(.body(14, weight: .semibold))
                             .foregroundStyle(.white)
                             .frame(maxWidth: .infinity, minHeight: 46)
-                            .background(
-                                LinearGradient(
-                                    colors: [.gradientStart, .gradientEnd],
-                                    startPoint: .topLeading,
-                                    endPoint: .bottomTrailing
-                                )
-                            )
+                            .background(Color.brand)
                             .clipShape(RoundedRectangle(cornerRadius: 12))
                     }
 
@@ -220,7 +222,7 @@ struct SettleDebtsSheet: View {
             } else {
                 feedback.error(
                     store.errorMessage
-                        ?? String(localized: "İşlem başarısız", locale: locale)
+                        ?? String(localized: "İşlem tamamlanamadı · İnternet bağlantını kontrol et · Tekrar dene", locale: locale)
                 )
                 store.clearError()
             }

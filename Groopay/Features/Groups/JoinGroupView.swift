@@ -49,13 +49,7 @@ struct JoinGroupView: View {
         .foregroundStyle(.white)
         .frame(maxWidth: .infinity)
         .padding(.vertical, 30)
-        .background(
-            LinearGradient(
-                colors: [.gradientStart, .gradientEnd],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-        )
+        .background(Color.brand)
         .clipShape(RoundedRectangle(cornerRadius: 20))
     }
 

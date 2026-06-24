@@ -5,6 +5,7 @@ struct PaymentSheetConfig: Identifiable {
     let debtAmount: Int
     let currency: String
     let debtorName: String
+    let groupName: String
     let groupID: UUID
     let fromMember: UUID
     let toMember: UUID
@@ -18,6 +19,7 @@ struct PaymentSheet: View {
     @Environment(\.locale) private var locale
     @State private var amountText: String
     @State private var showError = false
+    @State private var didSubmit = false
     @FocusState private var isFocused: Bool
 
     /// Kullanıcının girdiği tutar minor birime çevrilir. config.debtAmount da
@@ -59,7 +61,7 @@ struct PaymentSheet: View {
                     .foregroundStyle(Color.textPrimary)
                     .padding(.bottom, 6)
 
-                Text("\(config.debtorName) kişisine")
+                Text("\(config.debtorName) kişisine · \(config.groupName)")
                     .font(.body(14))
                     .foregroundStyle(Color.textSecondary)
                     .padding(.bottom, 28)
@@ -132,7 +134,10 @@ struct PaymentSheet: View {
                 Button {
                     if isValid {
                         onPay(parsedAmount)
-                        dismiss()
+                        didSubmit = true
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                            dismiss()
+                        }
                     } else {
                         withAnimation { showError = true }
                     }
@@ -141,18 +146,11 @@ struct PaymentSheet: View {
                         .font(.body(16, weight: .semibold))
                         .foregroundStyle(.white)
                         .frame(maxWidth: .infinity, minHeight: 52)
-                        .background(
-                            LinearGradient(
-                                colors: isValid
-                                    ? [.gradientStart, .gradientEnd]
-                                    : [Color.textTertiary, Color.textTertiary],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            )
-                        )
+                        .background(isValid ? Color.brand : Color.textTertiary)
                         .clipShape(RoundedRectangle(cornerRadius: 14))
                 }
                 .disabled(!isValid && showError)
+                .sensoryFeedback(.success, trigger: didSubmit)
                 .padding(.horizontal, 20)
                 .padding(.bottom, 20)
             }
@@ -232,6 +230,7 @@ private extension String {
             debtAmount: 50000,
             currency: "TRY",
             debtorName: "Ahmet",
+            groupName: "Hafta Sonu",
             groupID: UUID(),
             fromMember: UUID(),
             toMember: UUID()

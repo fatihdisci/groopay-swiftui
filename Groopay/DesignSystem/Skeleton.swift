@@ -2,9 +2,15 @@ import SwiftUI
 
 /// Shimmer animasyonu. Reduce Motion açıkken animasyon çalışmaz; statik bir
 /// placeholder gösterilir. Skeleton'lar VoiceOver ağacından gizlenir.
+/// Dark mode uyumlu — shimmer rengi colorScheme'e göre white/black arasında geçiş yapar.
 struct ShimmerModifier: ViewModifier {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.colorScheme) private var colorScheme
     @State private var phase: CGFloat = -0.7
+
+    private var shimmerColor: Color {
+        colorScheme == .dark ? .white : .white
+    }
 
     func body(content: Content) -> some View {
         if reduceMotion {
@@ -15,9 +21,9 @@ struct ShimmerModifier: ViewModifier {
                     GeometryReader { geo in
                         LinearGradient(
                             colors: [
-                                .white.opacity(0),
-                                .white.opacity(0.55),
-                                .white.opacity(0)
+                                shimmerColor.opacity(0),
+                                shimmerColor.opacity(colorScheme == .dark ? 0.10 : 0.55),
+                                shimmerColor.opacity(0)
                             ],
                             startPoint: .leading,
                             endPoint: .trailing

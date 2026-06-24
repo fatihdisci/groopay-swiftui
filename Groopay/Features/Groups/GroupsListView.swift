@@ -48,21 +48,47 @@ struct GroupsListView: View {
     }
 
     private var emptyState: some View {
-        VStack(spacing: 12) {
-            Image(systemName: "person.2")
-                .font(.system(size: 54))
-                .foregroundStyle(Color.textTertiary)
-            Text("Henüz grubun yok")
-                .font(.display(21))
-                .foregroundStyle(Color.textPrimary)
-            Text("Yeni bir grup oluştur veya davet koduyla katıl.")
-                .font(.body(14))
-                .foregroundStyle(Color.textSecondary)
-                .multilineTextAlignment(.center)
+        VStack(spacing: 20) {
+            ZStack {
+                Circle()
+                    .fill(Color.brand.opacity(0.08))
+                    .frame(width: 88, height: 88)
+                Image(systemName: "person.2.fill")
+                    .font(.system(size: 40))
+                    .foregroundStyle(Color.brand)
+            }
+
+            VStack(spacing: 6) {
+                Text("Henüz grubun yok")
+                    .font(.display(21))
+                    .foregroundStyle(Color.textPrimary)
+                Text("Arkadaşlarınla ortak harcamaları bölüşmek için bir grup oluştur.")
+                    .font(.body(14))
+                    .foregroundStyle(Color.textSecondary)
+                    .multilineTextAlignment(.center)
+            }
+
+            // Ghost üye bilgi kartı
+            HStack(alignment: .top, spacing: 10) {
+                Image(systemName: "person.badge.plus")
+                    .font(.system(size: 18))
+                    .foregroundStyle(Color.themeAccent)
+                VStack(alignment: .leading, spacing: 3) {
+                    Text("Uygulamada olmayan arkadaşlarını da ekleyebilirsin")
+                        .font(.body(13, weight: .semibold))
+                        .foregroundStyle(Color.textPrimary)
+                    Text("Hayalet üye olarak ekle, borç/alacak takibi yap. Uygulamaya katıldıklarında hesapları otomatik eşleşir.")
+                        .font(.body(11))
+                        .foregroundStyle(Color.textSecondary)
+                }
+            }
+            .padding(14)
+            .background(Color.surface)
+            .clipShape(RoundedRectangle(cornerRadius: ThemeRadius.soft))
         }
-        .padding(.horizontal, 40)
+        .padding(.horizontal, 32)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-        .padding(.top, 110)
+        .padding(.top, 80)
         .padding(.bottom, 120)
     }
 

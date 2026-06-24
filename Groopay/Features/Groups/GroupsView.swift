@@ -45,7 +45,7 @@ struct GroupsView: View {
             PaywallView()
         }
         .alert(
-            "Bir sorun oluştu",
+            "İşlem tamamlanamadı",
             isPresented: Binding(
                 get: { store.errorMessage != nil },
                 set: { if !$0 { store.clearError() } }

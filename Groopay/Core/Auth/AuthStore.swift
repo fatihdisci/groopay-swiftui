@@ -149,7 +149,7 @@ final class AuthStore {
             where error.code == .canceled {
             return
         } catch {
-            errorMessage = error.localizedDescription
+            errorMessage = userErrorMessage(error)
         }
     }
 
@@ -174,7 +174,7 @@ final class AuthStore {
                 .value
         } catch {
             currentProfile = nil
-            errorMessage = error.localizedDescription
+            errorMessage = userErrorMessage(error)
         }
     }
 
@@ -230,6 +230,15 @@ final class AuthStore {
         await PushNotificationService.shared.removeCurrentToken()
         try? await supabase.auth.signOut()
         await apply(session: nil)
+    }
+
+    /// Kullanıcıya gösterilecek [ne oldu]·[neden]·[ne yapmalı] formatlı hata mesajı.
+    private func userErrorMessage(_ error: Error) -> String {
+        let nsError = error as NSError
+        if nsError.domain == NSURLErrorDomain || nsError.domain == "NSURLErrorDomain" {
+            return String(localized: "Giriş yapılamadı · İnternet bağlantını kontrol et · Tekrar dene")
+        }
+        return String(localized: "Giriş yapılamadı · Beklenmeyen bir hata oluştu · Tekrar dene")
     }
 
     func clearError() {
@@ -289,7 +298,7 @@ final class AuthStore {
                 .execute()
             await loadProfile()
         } catch {
-            errorMessage = error.localizedDescription
+            errorMessage = userErrorMessage(error)
         }
     }
 
@@ -307,7 +316,7 @@ final class AuthStore {
             let session = try await action()
             await apply(session: session)
         } catch {
-            errorMessage = error.localizedDescription
+            errorMessage = userErrorMessage(error)
         }
     }
 

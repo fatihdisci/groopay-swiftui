@@ -56,7 +56,7 @@ final class PurchasesManager {
         do {
             _ = try await Purchases.shared.logIn(userID)
         } catch {
-            errorMessage = error.localizedDescription
+            errorMessage = userErrorMessage(error)
         }
     }
 
@@ -104,7 +104,7 @@ final class PurchasesManager {
                 }
             }
         } catch {
-            errorMessage = error.localizedDescription
+            errorMessage = userErrorMessage(error)
         }
     }
 
@@ -115,7 +115,7 @@ final class PurchasesManager {
 
         guard let product = monthlyProduct else {
             errorMessage = String(
-                localized: "Ürün bilgisi yüklenemedi.",
+                localized: "Fiyat bilgisi alınamadı · App Store bağlantısı kurulamadı · İnternetini kontrol edip tekrar dene",
                 locale: LocalizationStore.currentLocale()
             )
             return false
@@ -125,7 +125,7 @@ final class PurchasesManager {
             let result = try await Purchases.shared.purchase(product: product)
             return result.customerInfo.entitlements[Self.entitlementID]?.isActive == true
         } catch {
-            errorMessage = error.localizedDescription
+            errorMessage = userErrorMessage(error)
             return false
         }
     }
@@ -139,9 +139,18 @@ final class PurchasesManager {
             let customerInfo = try await Purchases.shared.restorePurchases()
             return customerInfo.entitlements[Self.entitlementID]?.isActive == true
         } catch {
-            errorMessage = error.localizedDescription
+            errorMessage = userErrorMessage(error)
             return false
         }
+    }
+
+    /// Kullanıcıya gösterilecek [ne oldu]·[neden]·[ne yapmalı] formatlı hata mesajı.
+    private func userErrorMessage(_ error: Error) -> String {
+        let nsError = error as NSError
+        if nsError.domain == NSURLErrorDomain || nsError.domain == "NSURLErrorDomain" {
+            return String(localized: "App Store'a bağlanılamadı · İnternet bağlantını kontrol et · Tekrar dene")
+        }
+        return String(localized: "Satın alma tamamlanamadı · Beklenmeyen bir hata oluştu · Tekrar dene")
     }
 
     func clearError() {

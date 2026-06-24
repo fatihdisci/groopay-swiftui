@@ -93,17 +93,9 @@ struct PaywallView: View {
             Color.background
                 .ignoresSafeArea()
 
-            LinearGradient(
-                colors: [
-                    Color(cssHex: "#312E81") ?? .gradientStart,
-                    Color(cssHex: "#6D28D9") ?? .gradientEnd,
-                    Color(cssHex: "#A855F7") ?? .gradientEnd
-                ],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-            .frame(height: 330)
-            .ignoresSafeArea(edges: .top)
+            Color.brand
+                .frame(height: 330)
+                .ignoresSafeArea(edges: .top)
         }
     }
 
@@ -237,6 +229,17 @@ struct PaywallView: View {
                     .clipShape(Circle())
             }
 
+            // Cancel anytime güven pill'i — yasal metinden ÖNCE gösterilir.
+            HStack(spacing: 6) {
+                Image(systemName: "checkmark.circle.fill")
+                    .font(.system(size: 11))
+                    .foregroundStyle(Color.credit)
+                Text("İstediğin zaman iptal et")
+                    .font(.body(11, weight: .medium))
+                    .foregroundStyle(Color.credit)
+            }
+            .padding(.top, 2)
+
             Text("Abonelik dönem sonunda otomatik yenilenir. İptal edilmezse ücret tahsil edilir. Hesap ayarlarından yönetebilirsiniz.")
                 .font(.body(11))
                 .foregroundStyle(Color.textTertiary)
@@ -281,7 +284,7 @@ struct PaywallView: View {
             AppleSignInButton()
                 .frame(maxWidth: .infinity, minHeight: 52)
 
-            Text("account.appleRequired")
+            Text("Satın almanı Apple hesabına bağlamak için giriş yap. Böylece yeni telefonunda da Pro'nu geri yükleyebilirsin.")
                 .font(.body(11, weight: .medium))
                 .foregroundStyle(Color.textSecondary)
                 .multilineTextAlignment(.center)
@@ -303,13 +306,7 @@ struct PaywallView: View {
             }
             .frame(maxWidth: .infinity, minHeight: 54)
             .foregroundStyle(.white)
-            .background(
-                LinearGradient(
-                    colors: [.gradientStart, .gradientEnd],
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing
-                )
-            )
+            .background(Color.brand)
             .clipShape(RoundedRectangle(cornerRadius: ThemeRadius.button))
         }
         .disabled(isPurchasing || isRestoring || purchases.monthlyProduct == nil)

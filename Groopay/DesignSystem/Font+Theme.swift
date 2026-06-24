@@ -1,5 +1,47 @@
 import SwiftUI
 
+// MARK: - Typography Scale (DESIGN.md §3)
+//
+// SF Pro (system font) — Inter ve Plus Jakarta Sans KALDIRILDI.
+// Tüm font'lar Dynamic Type otomatik destekli (built-in text style).
+// Para tutarları için .fontDesign(.monospaced) kullan (DESIGN.md §3.4).
+
+extension Font {
+    // MARK: - Display
+    /// 34pt bold — hero tutarı, boş durum başlığı.
+    static var displayLarge: Font { .system(.largeTitle, weight: .bold) }
+
+    /// 28pt bold — sayfa başlığı, onboarding başlık.
+    static var display: Font { .system(.title, weight: .bold) }
+
+    // MARK: - Headings
+    /// 22pt semibold — section başlığı.
+    static var h1: Font { .system(.title2, weight: .semibold) }
+
+    /// 17pt semibold — kart başlığı.
+    static var h2: Font { .system(.headline, weight: .semibold) }
+
+    // MARK: - Body
+    /// 15pt regular — ana metin.
+    static var bodyFont: Font { .system(.body, weight: .regular) }
+
+    /// 13pt regular — ikincil bilgi.
+    static var bodySmall: Font { .system(.subheadline, weight: .regular) }
+
+    // MARK: - Captions
+    /// 11pt medium — etiket, overline.
+    static var captionFont: Font { .system(.caption, weight: .medium) }
+
+    /// 10pt semibold — legal, fine print.
+    static var captionSmall: Font { .system(.caption2, weight: .semibold) }
+}
+
+// MARK: - Backward-Compatible API (Adım 2 geçiş katmanı)
+//
+// Eski .display(_:weight:relativeTo:) ve .body(_:weight:relativeTo:) çağrıları
+// derlenmeye devam eder. Size parametresi yok sayılır — Dynamic Type kendi
+// ölçeklendirmesini yapar. Bu sayede mevcut view'lar kırılmaz.
+
 extension Font {
     enum PlusJakartaSansWeight {
         case semibold
@@ -8,9 +50,9 @@ extension Font {
 
         fileprivate var swiftUIWeight: Font.Weight {
             switch self {
-            case .semibold: .semibold   // wght ~600
-            case .bold: .bold           // wght ~700
-            case .extraBold: .heavy     // wght ~800
+            case .semibold: .semibold
+            case .bold: .bold
+            case .extraBold: .heavy
             }
         }
     }
@@ -22,34 +64,37 @@ extension Font {
 
         fileprivate var swiftUIWeight: Font.Weight {
             switch self {
-            case .regular: .regular     // wght 400
-            case .medium: .medium       // wght ~500
-            case .semibold: .semibold   // wght ~600
+            case .regular: .regular
+            case .medium: .medium
+            case .semibold: .semibold
             }
         }
     }
 
-    // Variable font'lar tek bir PostScript adıyla yüklenir
-    // (PlusJakartaSans-Regular / Inter-Regular); ağırlık `wght` ekseni
-    // üzerinden `.weight()` ile sürülür. iOS 17+ bunu native destekler.
-    private static let displayFontName = "PlusJakartaSans-Regular"
-    private static let bodyFontName = "Inter-Regular"
-
+    /// @available(*, deprecated, message: "Use .display instead (Dynamic Type auto-sizes)")
     static func display(
         _ size: CGFloat,
         weight: PlusJakartaSansWeight = .bold,
         relativeTo textStyle: TextStyle = .title
     ) -> Font {
-        .custom(displayFontName, size: size, relativeTo: textStyle)
-            .weight(weight.swiftUIWeight)
+        .system(textStyle, weight: weight.swiftUIWeight)
     }
 
+    /// @available(*, deprecated, message: "Use .bodyFont instead (Dynamic Type auto-sizes)")
     static func body(
         _ size: CGFloat,
         weight: InterWeight = .regular,
         relativeTo textStyle: TextStyle = .body
     ) -> Font {
-        .custom(bodyFontName, size: size, relativeTo: textStyle)
-            .weight(weight.swiftUIWeight)
+        .system(textStyle, weight: weight.swiftUIWeight)
+    }
+}
+
+// MARK: - Monospaced Digits (DESIGN.md §3.4)
+
+extension View {
+    /// Para tutarlarında alt alta hizalama için monospaced digit uygular.
+    func monospacedAmount() -> some View {
+        fontDesign(.monospaced)
     }
 }

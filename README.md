@@ -23,9 +23,9 @@ Bu depo, Expo/React Native istemcisinin yerine geliştirilen SwiftUI uygulaması
 ### TestFlight geliştirici derlemesi
 
 - App Store için standart `Groopay` scheme ve `Release` yapılandırması kullanılır. Build 35'te geliştirici kodu derlenmez.
-- İç TestFlight testi için `Groopay TestFlight Dev` scheme kullanılır. Bu scheme `TestFlight Dev` yapılandırmasıyla build 36 üretir.
+- İç TestFlight testi için `Groopay TestFlight Dev` scheme kullanılır. Bu scheme `TestFlight Dev` yapılandırmasıyla build 37 üretir.
 - Dev archive dağıtılırken Xcode'da **TestFlight Internal Only** seçilmelidir; bu binary App Store sürümüne bağlanmamalıdır.
-- Bir sonraki temiz App Store yüklemesinde build numarası 36'dan büyük olmalıdır.
+- Bir sonraki temiz App Store yüklemesinde build numarası 37'den büyük olmalıdır.
 
 ## Özellikler
 

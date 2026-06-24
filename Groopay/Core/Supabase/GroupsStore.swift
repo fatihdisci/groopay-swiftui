@@ -193,7 +193,7 @@ final class GroupsStore {
             // Cancellation is lifecycle/control flow, not a user-facing failure.
             // A later realtime event or view refresh will request another load.
         } catch {
-            errorMessage = error.localizedDescription
+            errorMessage = userErrorMessage(error)
         }
 
         isLoading = false
@@ -257,7 +257,7 @@ final class GroupsStore {
             if Self.isLimitError(error) {
                 presentedPaywall = true
             } else {
-                errorMessage = error.localizedDescription
+                errorMessage = userErrorMessage(error)
             }
             return false
         }
@@ -286,7 +286,7 @@ final class GroupsStore {
             await load()
             return true
         } catch {
-            errorMessage = error.localizedDescription
+            errorMessage = userErrorMessage(error)
             return false
         }
     }
@@ -320,7 +320,7 @@ final class GroupsStore {
         date: Date = Date()
     ) async -> Bool {
         guard let actor = currentMemberID(in: groupID) else {
-            errorMessage = localized("Üyelik bilgisi bulunamadı.")
+            errorMessage = localized("Bu gruba erişimin yok · Grup sana ait değil veya çıkarıldın · Grup sahibiyle iletişime geç")
             return false
         }
         let input = AddExpenseRPCInput(
@@ -342,7 +342,7 @@ final class GroupsStore {
             await load()
             return true
         case .failure(let error):
-            errorMessage = error.localizedDescription
+            errorMessage = userErrorMessage(error)
             return false
         }
     }
@@ -361,11 +361,11 @@ final class GroupsStore {
         date: Date = Date()
     ) async -> Bool {
         guard let actor = currentMemberID(in: groupID) else {
-            errorMessage = localized("Üyelik bilgisi bulunamadı.")
+            errorMessage = localized("Bu gruba erişimin yok · Grup sana ait değil veya çıkarıldın · Grup sahibiyle iletişime geç")
             return false
         }
         guard snapshot(groupID)?.expenses.first(where: { $0.id == expenseID })?.createdBy == actor else {
-            errorMessage = localized("Yalnızca masrafı ekleyen kişi düzenleyebilir.")
+            errorMessage = localized("Bu masrafı düzenleyemezsin · Masrafı sen eklemedin · Masrafı ekleyen kişiden düzenlemesini iste")
             return false
         }
 
@@ -388,18 +388,18 @@ final class GroupsStore {
             await load()
             return true
         case .failure(let error):
-            errorMessage = error.localizedDescription
+            errorMessage = userErrorMessage(error)
             return false
         }
     }
 
     func deleteExpense(expenseID: UUID, groupID: UUID) async -> Bool {
         guard let actor = currentMemberID(in: groupID) else {
-            errorMessage = localized("Üyelik bilgisi bulunamadı.")
+            errorMessage = localized("Bu gruba erişimin yok · Grup sana ait değil veya çıkarıldın · Grup sahibiyle iletişime geç")
             return false
         }
         guard snapshot(groupID)?.expenses.first(where: { $0.id == expenseID })?.createdBy == actor else {
-            errorMessage = localized("Yalnızca masrafı ekleyen kişi silebilir.")
+            errorMessage = localized("Bu masrafı silemezsin · Masrafı sen eklemedin · Masrafı ekleyen kişiden silmesini iste")
             return false
         }
 
@@ -408,14 +408,14 @@ final class GroupsStore {
             await load()
             return true
         case .failure(let error):
-            errorMessage = error.localizedDescription
+            errorMessage = userErrorMessage(error)
             return false
         }
     }
 
     func restoreExpense(expenseID: UUID, groupID: UUID) async -> Bool {
         guard let actor = currentMemberID(in: groupID) else {
-            errorMessage = localized("Üyelik bilgisi bulunamadı.")
+            errorMessage = localized("Bu gruba erişimin yok · Grup sana ait değil veya çıkarıldın · Grup sahibiyle iletişime geç")
             return false
         }
 
@@ -427,7 +427,7 @@ final class GroupsStore {
             await load()
             return true
         case .failure(let error):
-            errorMessage = error.localizedDescription
+            errorMessage = userErrorMessage(error)
             return false
         }
     }
@@ -443,7 +443,7 @@ final class GroupsStore {
         currency: String
     ) async -> Bool {
         guard let actor = currentMemberID(in: groupID) else {
-            errorMessage = localized("Üyelik bilgisi bulunamadı.")
+            errorMessage = localized("Bu gruba erişimin yok · Grup sana ait değil veya çıkarıldın · Grup sahibiyle iletişime geç")
             return false
         }
 
@@ -462,14 +462,14 @@ final class GroupsStore {
             await load()
             return true
         case .failure(let error):
-            errorMessage = error.localizedDescription
+            errorMessage = userErrorMessage(error)
             return false
         }
     }
 
     func confirmSettlement(groupID: UUID, settlementID: UUID) async -> Bool {
         guard let actor = currentMemberID(in: groupID) else {
-            errorMessage = localized("Üyelik bilgisi bulunamadı.")
+            errorMessage = localized("Bu gruba erişimin yok · Grup sana ait değil veya çıkarıldın · Grup sahibiyle iletişime geç")
             return false
         }
         switch await rpc.confirmSettlement(settlementId: settlementID, confirmedBy: actor) {
@@ -477,14 +477,14 @@ final class GroupsStore {
             await load()
             return true
         case .failure(let error):
-            errorMessage = error.localizedDescription
+            errorMessage = userErrorMessage(error)
             return false
         }
     }
 
     func rejectSettlement(groupID: UUID, settlementID: UUID) async -> Bool {
         guard let actor = currentMemberID(in: groupID) else {
-            errorMessage = localized("Üyelik bilgisi bulunamadı.")
+            errorMessage = localized("Bu gruba erişimin yok · Grup sana ait değil veya çıkarıldın · Grup sahibiyle iletişime geç")
             return false
         }
         switch await rpc.rejectSettlement(settlementId: settlementID, confirmedBy: actor) {
@@ -492,7 +492,7 @@ final class GroupsStore {
             await load()
             return true
         case .failure(let error):
-            errorMessage = error.localizedDescription
+            errorMessage = userErrorMessage(error)
             return false
         }
     }
@@ -530,7 +530,7 @@ final class GroupsStore {
             await load()
             return true
         case .failure(let error):
-            errorMessage = error.localizedDescription
+            errorMessage = userErrorMessage(error)
             return false
         }
     }
@@ -540,7 +540,7 @@ final class GroupsStore {
         case .success(let token):
             return token
         case .failure(let error):
-            errorMessage = error.localizedDescription
+            errorMessage = userErrorMessage(error)
             return nil
         }
     }
@@ -551,7 +551,7 @@ final class GroupsStore {
             await load()
             return true
         case .failure(let error):
-            errorMessage = error.localizedDescription
+            errorMessage = userErrorMessage(error)
             return false
         }
     }
@@ -562,7 +562,7 @@ final class GroupsStore {
             await load()
             return true
         case .failure(let error):
-            errorMessage = error.localizedDescription
+            errorMessage = userErrorMessage(error)
             return false
         }
     }
@@ -579,7 +579,7 @@ final class GroupsStore {
             await load()
             return true
         case .failure(let error):
-            errorMessage = error.localizedDescription
+            errorMessage = userErrorMessage(error)
             return false
         }
     }
@@ -589,10 +589,10 @@ final class GroupsStore {
         case .success(let preview) where preview.error == nil:
             return preview
         case .success:
-            errorMessage = localized("Davet kodu geçersiz veya süresi dolmuş.")
+            errorMessage = localized("Bu davet kodu çalışmıyor · Kod geçersiz veya süresi dolmuş olabilir · Yeni bir davet kodu iste veya kodu tekrar kontrol et")
             return nil
         case .failure(let error):
-            errorMessage = error.localizedDescription
+            errorMessage = userErrorMessage(error)
             return nil
         }
     }
@@ -602,7 +602,7 @@ final class GroupsStore {
         case .success(let members):
             return members
         case .failure(let error):
-            errorMessage = error.localizedDescription
+            errorMessage = userErrorMessage(error)
             return []
         }
     }
@@ -649,8 +649,18 @@ final class GroupsStore {
         )
     }
 
+    /// Kullanıcıya gösterilecek [ne oldu]·[neden]·[ne yapmalı] formatlı hata mesajı.
+    /// Ham `error.localizedDescription` ASLA doğrudan gösterilmez.
+    private func userErrorMessage(_ error: Error) -> String {
+        let nsError = error as NSError
+        if nsError.domain == NSURLErrorDomain || nsError.domain == "NSURLErrorDomain" {
+            return localized("İşlem tamamlanamadı · İnternet bağlantını kontrol et · Tekrar dene")
+        }
+        return localized("İşlem tamamlanamadı · Beklenmeyen bir hata oluştu · Tekrar dene")
+    }
+
     private func joinErrorMessage(_ message: String?) -> String {
-        let fallback = localized("Gruba katılınamadı.")
+        let fallback = localized("Gruba katılamadın · Beklenmeyen bir hata oluştu · Tekrar dene veya yeni davet kodu iste")
         guard let message else { return fallback }
         if message.localizedCaseInsensitiveContains("removed")
             || message.localizedCaseInsensitiveContains("cannot rejoin") {

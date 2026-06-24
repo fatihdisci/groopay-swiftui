@@ -53,6 +53,7 @@
       }
     },
     "%@ grubunda borcun var" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -181,6 +182,7 @@
       }
     },
     "%@ ödeme yaptı diyor" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -239,6 +241,7 @@
       }
     },
     "%1$@ • %2$@ onayını bekliyor" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -290,6 +293,7 @@
       }
     },
     "%lld dk önce" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -322,6 +326,7 @@
       }
     },
     "%lld g önce" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -338,6 +343,7 @@
       }
     },
     "%lld sa önce" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -996,6 +1002,7 @@
       }
     },
     "az önce" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1204,6 +1211,7 @@
       }
     },
     "Borcun %@" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -5107,6 +5115,7 @@
       }
     },
     "Toplamın %lld%%'i" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {

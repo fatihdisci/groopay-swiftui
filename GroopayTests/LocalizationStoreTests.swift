@@ -73,6 +73,31 @@ final class LocalizationStoreTests: XCTestCase {
             XCTAssertEqual(english.stringUnit.value, translation.expected)
         }
     }
+
+    func testDashboardStringsUseExplicitLanguageBundle() {
+        let english = Locale(identifier: "en_US")
+        let turkish = Locale(identifier: "tr_TR")
+
+        XCTAssertEqual(
+            AppLocalization.string("tab.dashboard", locale: english),
+            "Dashboard"
+        )
+        XCTAssertEqual(
+            AppLocalization.string("tab.dashboard", locale: turkish),
+            "Panel"
+        )
+        XCTAssertEqual(
+            String(
+                format: AppLocalization.string(
+                    "%@ grubunda borcun var",
+                    locale: english
+                ),
+                locale: english,
+                "Weekend Trip"
+            ),
+            "You owe money in Weekend Trip"
+        )
+    }
 }
 
 private struct LocalizationCatalog: Decodable {

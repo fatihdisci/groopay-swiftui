@@ -862,15 +862,31 @@ struct AddExpenseView: View {
                 ),
                 for: groupID
             )
+            let payerName = members.first { $0.id == paidBy }?.displayName ?? "?"
+            let groupName = store.snapshot(groupID)?.group.name ?? "?"
+            let formattedAmount = formatAmount(amountMinor, currency: selectedCurrency)
             let message = editingExpense == nil
-                ? String(localized: "Masraf eklendi.", locale: locale)
-                : String(localized: "Masraf güncellendi.", locale: locale)
+                ? String(
+                    format: String(localized: "%@ — %@, %@ kişisine kaydedildi · %@", locale: locale),
+                    locale: locale,
+                    description,
+                    formattedAmount,
+                    payerName,
+                    groupName
+                )
+                : String(
+                    format: String(localized: "%@ — %@ güncellendi · %@", locale: locale),
+                    locale: locale,
+                    description,
+                    formattedAmount,
+                    groupName
+                )
             dismiss()
             feedback.success(message)
         } else {
             feedback.error(
                 store.errorMessage
-                    ?? String(localized: "Masraf kaydedilemedi", locale: locale)
+                    ?? String(localized: "Masraf kaydedilemedi · Bilgileri kontrol et · Eksik alanları doldurup tekrar dene", locale: locale)
             )
             store.clearError()
         }
@@ -888,7 +904,7 @@ struct AddExpenseView: View {
         } else {
             feedback.error(
                 store.errorMessage
-                    ?? String(localized: "Masraf silinemedi.", locale: locale)
+                    ?? String(localized: "Masraf silinemedi · İnternet bağlantını kontrol et · Tekrar dene", locale: locale)
             )
             store.clearError()
         }

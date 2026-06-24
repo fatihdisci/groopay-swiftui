@@ -44,12 +44,8 @@ struct OnboardingFlow: View {
 
     var body: some View {
         ZStack {
-            LinearGradient(
-                colors: [.gradientStart, .gradientEnd],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-            .ignoresSafeArea()
+            Color.brand
+                .ignoresSafeArea()
 
             VStack(spacing: 16) {
                 topBar

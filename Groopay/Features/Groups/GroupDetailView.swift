@@ -146,13 +146,7 @@ struct GroupDetailView: View {
             .foregroundStyle(.white)
             .padding(.horizontal, 22)
             .frame(minHeight: 52)
-            .background(
-                LinearGradient(
-                    colors: [.gradientStart, .gradientEnd],
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing
-                )
-            )
+            .background(Color.brand)
             .clipShape(Capsule())
             .purpleTintedShadow(radius: 16, y: 8)
         }
@@ -245,13 +239,7 @@ struct GroupDetailView: View {
                     .font(.body(15, weight: .semibold))
                     .foregroundStyle(.white)
                     .frame(maxWidth: 220, minHeight: 48)
-                    .background(
-                        LinearGradient(
-                            colors: [.gradientStart, .gradientEnd],
-                            startPoint: .leading,
-                            endPoint: .trailing
-                        )
-                    )
+                    .background(Color.brand)
                     .clipShape(RoundedRectangle(cornerRadius: ThemeRadius.button))
             }
             .padding(.top, 8)
@@ -263,8 +251,13 @@ struct GroupDetailView: View {
     /// Silme sonrası aksiyonlu "Geri Al" feedback'i. Gerçek restore RPC akışı
     /// korunur.
     private func presentUndo(for expense: Expense) {
+        let label = String(
+            format: String(localized: "%@ silindi", locale: locale),
+            locale: locale,
+            expense.description
+        )
         feedback.show(
-            String(localized: "Masraf silindi.", locale: locale),
+            label,
             style: .info,
             actionTitle: String(localized: "Geri Al", locale: locale),
             action: { restoreDeletedExpense(expenseID: expense.id) },
@@ -276,7 +269,7 @@ struct GroupDetailView: View {
         Task { @MainActor in
             if await store.restoreExpense(expenseID: expenseID, groupID: groupID) {
                 feedback.success(
-                    String(localized: "Masraf geri alındı.", locale: locale)
+                    String(localized: "Masraf geri alındı. Grup bakiyeleri güncellendi.", locale: locale)
                 )
             } else {
                 feedback.error(
@@ -444,17 +437,7 @@ struct GroupHeader: View {
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 28)
-        .background(
-            LinearGradient(
-                colors: [
-                    Color(cssHex: "#4338CA") ?? .gradientStart,
-                    Color(cssHex: "#7C3AED") ?? .gradientEnd,
-                    Color(cssHex: "#A855F7") ?? .gradientEnd
-                ],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-        )
+        .background(Color.brand)
     }
 }
 

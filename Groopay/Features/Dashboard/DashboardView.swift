@@ -4,6 +4,7 @@ struct DashboardView: View {
     @Environment(AuthStore.self) private var authStore
     @Environment(AppRouter.self) private var router
     @Environment(\.locale) private var locale
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var showPaywall = false
     @State private var selectedTimeFilter: TimeFilter = .month
     @State private var selectedDonutCurrency: String?
@@ -16,6 +17,11 @@ struct DashboardView: View {
 
     private var isPro: Bool {
         authStore.hasProAccess
+    }
+
+    /// Kullanıcı en az bir masraf eklemiş mi? Endowment etkisi için teaser metnini değiştirir.
+    private var hasAnyExpense: Bool {
+        store.groups.contains { !$0.expenses.isEmpty }
     }
 
     var body: some View {
@@ -51,7 +57,7 @@ struct DashboardView: View {
                 }
             }
         }
-        .navigationTitle(String(localized: "tab.dashboard", locale: locale))
+        .navigationTitle(AppLocalization.string("tab.dashboard", locale: locale))
         .navigationBarTitleDisplayMode(.inline)
         .tipsButton()
         .refreshable { await store.load() }
@@ -59,7 +65,7 @@ struct DashboardView: View {
             PaywallView()
         }
         .onChange(of: selectedTimeFilter) { _, _ in
-            withAnimation(.spring(response: 0.35)) {
+            withAnimation(reduceMotion ? nil : .easeInOut(duration: 0.2)) {
                 selectedDonutSegment = nil
                 selectedDonutCurrency = defaultDonutCurrency
                 activitySearchText = ""
@@ -123,13 +129,7 @@ struct DashboardView: View {
             .font(.body(15, weight: .semibold))
             .foregroundStyle(.white)
             .frame(maxWidth: 220, minHeight: 48)
-            .background(
-                LinearGradient(
-                    colors: [.gradientStart, .gradientEnd],
-                    startPoint: .leading,
-                    endPoint: .trailing
-                )
-            )
+            .background(Color.brand)
             .clipShape(RoundedRectangle(cornerRadius: ThemeRadius.button))
     }
 
@@ -182,16 +182,7 @@ struct DashboardView: View {
             }
         }
         .padding(20)
-        .background(
-            LinearGradient(
-                colors: [
-                    Color(cssHex: "#4F46E5") ?? .gradientStart,
-                    Color(cssHex: "#5B54E8") ?? .gradientEnd
-                ],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-        )
+        .background(Color.brand)
         .clipShape(RoundedRectangle(cornerRadius: 20))
         .purpleTintedShadow(radius: 18, y: 9)
     }
@@ -280,12 +271,12 @@ struct DashboardView: View {
                     icon: "arrow.down.circle.fill",
                     tint: .debt,
                     title: String(
-                        format: String(localized: "%@ grubunda borcun var", locale: locale),
+                        format: AppLocalization.string("%@ grubunda borcun var", locale: locale),
                         locale: locale,
                         groupName
                     ),
                     detail: String(
-                        format: String(localized: "Borcun %@", locale: locale),
+                        format: AppLocalization.string("Borcun %@", locale: locale),
                         locale: locale,
                         formatAmount(amount, currency: currency)
                     )
@@ -295,12 +286,12 @@ struct DashboardView: View {
                     icon: "checkmark.seal.fill",
                     tint: .warning,
                     title: String(
-                        format: String(localized: "%@ ödeme yaptı diyor", locale: locale),
+                        format: AppLocalization.string("%@ ödeme yaptı diyor", locale: locale),
                         locale: locale,
                         fromName
                     ),
                     detail: String(
-                        format: String(localized: "%1$@ • %2$@ onayını bekliyor", locale: locale),
+                        format: AppLocalization.string("%1$@ • %2$@ onayını bekliyor", locale: locale),
                         locale: locale,
                         groupName,
                         formatAmount(amount, currency: currency)
@@ -375,7 +366,7 @@ struct DashboardView: View {
                     .foregroundStyle(Color.primaryTheme)
             }
 
-            Text("Panel Pro'ya Özel")
+            Text(hasAnyExpense ? "Groopay'i kullanmaya başladın. Pro ile devam et." : "Panel Pro'ya Özel")
                 .font(.display(19, weight: .semibold))
                 .foregroundStyle(Color.textPrimary)
 
@@ -392,13 +383,7 @@ struct DashboardView: View {
                     .font(.body(15, weight: .semibold))
                     .foregroundStyle(.white)
                     .frame(maxWidth: 220, minHeight: 44)
-                    .background(
-                        LinearGradient(
-                            colors: [.gradientStart, .gradientEnd],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        )
-                    )
+                    .background(Color.brand)
                     .clipShape(RoundedRectangle(cornerRadius: 12))
             }
             .padding(.top, 4)
@@ -428,7 +413,7 @@ struct DashboardView: View {
                     Menu {
                         ForEach(currencies, id: \.self) { item in
                             Button(item) {
-                                withAnimation(.spring(response: 0.35)) {
+                                withAnimation(reduceMotion ? nil : .easeInOut(duration: 0.2)) {
                                     selectedDonutCurrency = item
                                     selectedDonutSegment = nil
                                 }
@@ -482,7 +467,7 @@ struct DashboardView: View {
                             .foregroundStyle(Color.textSecondary)
                         Text(
                             String(
-                                format: String(localized: "Toplamın %lld%%'i", locale: locale),
+                                format: AppLocalization.string("Toplamın %lld%%'i", locale: locale),
                                 locale: locale,
                                 Int64(percent)
                             )
@@ -612,7 +597,7 @@ struct DashboardView: View {
 
         return VStack(alignment: .leading, spacing: 14) {
             Button {
-                withAnimation(.spring(response: 0.35)) {
+                withAnimation(reduceMotion ? nil : .easeInOut(duration: 0.2)) {
                     isRecentActivityExpanded.toggle()
                 }
             } label: {
@@ -816,27 +801,27 @@ struct DashboardView: View {
 
     private func groupName(_ groupID: UUID) -> String {
         store.groups.first { $0.id == groupID }?.group.name
-            ?? String(localized: "Grup", locale: locale)
+            ?? AppLocalization.string("Grup", locale: locale)
     }
 
     private func categoryTitle(_ category: ExpenseCategory) -> String {
         switch category.id {
         case "food":
-            return String(localized: "Yemek", locale: locale)
+            return AppLocalization.string("Yemek", locale: locale)
         case "transport":
-            return String(localized: "Ulaşım", locale: locale)
+            return AppLocalization.string("Ulaşım", locale: locale)
         case "accommodation":
-            return String(localized: "Konaklama", locale: locale)
+            return AppLocalization.string("Konaklama", locale: locale)
         case "shopping":
-            return String(localized: "Alışveriş", locale: locale)
+            return AppLocalization.string("Alışveriş", locale: locale)
         case "entertainment":
-            return String(localized: "Eğlence", locale: locale)
+            return AppLocalization.string("Eğlence", locale: locale)
         case "groceries":
-            return String(localized: "Market", locale: locale)
+            return AppLocalization.string("Market", locale: locale)
         case "bills":
-            return String(localized: "Faturalar", locale: locale)
+            return AppLocalization.string("Faturalar", locale: locale)
         default:
-            return String(localized: "Diğer", locale: locale)
+            return AppLocalization.string("Diğer", locale: locale)
         }
     }
 
@@ -877,22 +862,22 @@ struct DashboardView: View {
         let interval = -date.timeIntervalSinceNow
         switch interval {
         case ..<60:
-            return String(localized: "az önce", locale: locale)
+            return AppLocalization.string("az önce", locale: locale)
         case ..<3600:
             return String(
-                format: String(localized: "%lld dk önce", locale: locale),
+                format: AppLocalization.string("%lld dk önce", locale: locale),
                 locale: locale,
                 Int64(interval / 60)
             )
         case ..<86400:
             return String(
-                format: String(localized: "%lld sa önce", locale: locale),
+                format: AppLocalization.string("%lld sa önce", locale: locale),
                 locale: locale,
                 Int64(interval / 3600)
             )
         case ..<604800:
             return String(
-                format: String(localized: "%lld g önce", locale: locale),
+                format: AppLocalization.string("%lld g önce", locale: locale),
                 locale: locale,
                 Int64(interval / 86400)
             )
