@@ -4,16 +4,6 @@
     "" : {
 
     },
-    "(%lld/%lld)" : {
-      "localizations" : {
-        "tr" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "(%1$lld/%2$lld)"
-          }
-        }
-      }
-    },
     "/ay" : {
       "localizations" : {
         "en" : {
@@ -26,6 +16,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "/ay"
+          }
+        }
+      }
+    },
+    "%@ — %@ güncellendi · %@" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ — %2$@ güncellendi · %3$@"
+          }
+        }
+      }
+    },
+    "%@ — %@, %@ kişisine kaydedildi · %@" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ — %2$@, %3$@ kişisine kaydedildi · %4$@"
           }
         }
       }
@@ -47,6 +57,7 @@
       }
     },
     "%@ gruba katıldı" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -63,6 +74,7 @@
       }
     },
     "%@ grubunda borcun var" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -78,7 +90,18 @@
         }
       }
     },
+    "%@ kişisinden %@ ödemesi onaylandı · %@" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ kişisinden %2$@ ödemesi onaylandı · %3$@"
+          }
+        }
+      }
+    },
     "%@ kişisine" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -94,7 +117,48 @@
         }
       }
     },
+    "%@ kişisine · %@" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ kişisine · %2$@"
+          }
+        }
+      }
+    },
+    "%@ kişisine ödendi bildirimi gönderildi · %@" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ kişisine ödendi bildirimi gönderildi · %2$@"
+          }
+        }
+      }
+    },
+    "%@ kişisine ödenen tutar onaya gönderildi · %@" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ kişisine ödenen tutar onaya gönderildi · %2$@"
+          }
+        }
+      }
+    },
+    "%@ kişisinin %@ ödeme bildirimi reddedildi · %@" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ kişisinin %2$@ ödeme bildirimi reddedildi · %3$@"
+          }
+        }
+      }
+    },
     "%@ masraf ekledi" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -111,6 +175,7 @@
       }
     },
     "%@ masraf sildi" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -127,6 +192,7 @@
       }
     },
     "%@ masrafı güncelledi" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -175,6 +241,7 @@
       }
     },
     "%@ ödeme yaptı" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -191,6 +258,7 @@
       }
     },
     "%@ ödeme yaptı diyor" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -238,6 +306,9 @@
         }
       }
     },
+    "%@ silindi" : {
+
+    },
     "%@, %@" : {
       "localizations" : {
         "tr" : {
@@ -249,6 +320,7 @@
       }
     },
     "%1$@ • %2$@ onayını bekliyor" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -280,6 +352,9 @@
         }
       }
     },
+    "%d kalem başarıyla aktarıldı." : {
+      "comment" : "OCR success notification"
+    },
     "%lld" : {
 
     },
@@ -300,6 +375,7 @@
       }
     },
     "%lld dk önce" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -332,6 +408,7 @@
       }
     },
     "%lld g önce" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -348,6 +425,7 @@
       }
     },
     "%lld sa önce" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -430,6 +508,19 @@
         }
       }
     },
+    "0.00" : {
+
+    },
+    "1 %@ ≈ %@ %@ · %@ tarihinde kilitlendi · Bu kur yaklaşıktır, kesinleşmiş borç değildir" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "1 %1$@ ≈ %2$@ %3$@ · %4$@ tarihinde kilitlendi · Bu kur yaklaşıktır, kesinleşmiş borç değildir"
+          }
+        }
+      }
+    },
     "3 üye" : {
       "localizations" : {
         "en" : {
@@ -478,7 +569,11 @@
         }
       }
     },
+    "Abonelik, Kira vb." : {
+
+    },
     "account.appleRequired" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -546,6 +641,7 @@
       }
     },
     "Açıklama" : {
+      "comment" : "Label for description field",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -613,6 +709,7 @@
       }
     },
     "Aktivite" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -632,6 +729,7 @@
 
     },
     "Aktivitede ara" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -712,6 +810,7 @@
       }
     },
     "Alt-Küme" : {
+      "comment" : "Subset split",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -726,6 +825,9 @@
           }
         }
       }
+    },
+    "App Store'a bağlanılamadı · İnternet bağlantını kontrol et · Tekrar dene" : {
+
     },
     "Apple kimliği bağlanamadı; misafir verileriniz korundu." : {
       "localizations" : {
@@ -790,6 +892,9 @@
           }
         }
       }
+    },
+    "Arkadaşlarınla ortak harcamaları bölüşmek için bir grup oluştur." : {
+
     },
     "auth.apple" : {
       "localizations" : {
@@ -920,6 +1025,9 @@
         }
       }
     },
+    "Aylık" : {
+      "comment" : "Monthly option"
+    },
     "Aylık Pro" : {
       "localizations" : {
         "en" : {
@@ -986,6 +1094,7 @@
       }
     },
     "az önce" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1021,6 +1130,9 @@
     "Başlangıç" : {
 
     },
+    "Başlangıç Tarihi" : {
+      "comment" : "Start date picker label"
+    },
     "Bir hata oluştu" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -1055,6 +1167,7 @@
       }
     },
     "Bir sorun oluştu" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1071,6 +1184,7 @@
       }
     },
     "Birisi" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1092,6 +1206,9 @@
     "Bitti" : {
 
     },
+    "Bölüşecek Üyeler" : {
+      "comment" : "Assignment section title"
+    },
     "Bölüşme" : {
       "localizations" : {
         "en" : {
@@ -1107,6 +1224,9 @@
           }
         }
       }
+    },
+    "Bölüşüm Şekli" : {
+      "comment" : "Split selection label"
     },
     "Borçların" : {
       "localizations" : {
@@ -1173,6 +1293,7 @@
       }
     },
     "Borcun %@" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1219,6 +1340,12 @@
           }
         }
       }
+    },
+    "Bu davet kodu çalışmıyor · Kod geçersiz veya süresi dolmuş olabilir · Yeni bir davet kodu iste veya kodu tekrar kontrol et" : {
+
+    },
+    "Bu gruba erişimin yok · Grup sana ait değil veya çıkarıldın · Grup sahibiyle iletişime geç" : {
+
     },
     "Bu gruba yeni masraf eklemek için açar" : {
       "localizations" : {
@@ -1347,6 +1474,12 @@
           }
         }
       }
+    },
+    "Bu masrafı düzenleyemezsin · Masrafı sen eklemedin · Masrafı ekleyen kişiden düzenlemesini iste" : {
+
+    },
+    "Bu masrafı silemezsin · Masrafı sen eklemedin · Masrafı ekleyen kişiden silmesini iste" : {
+
     },
     "Bu üye tekrar davet koduyla katılamaz. Geçmiş masrafları ve bakiyesi grupta korunur." : {
       "localizations" : {
@@ -1480,6 +1613,7 @@
       }
     },
     "Davet kodu geçersiz veya süresi dolmuş." : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1652,6 +1786,7 @@
       }
     },
     "Dışa aktarma başarısız." : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1734,6 +1869,9 @@
         }
       }
     },
+    "En az bir üye seçilmelidir." : {
+      "comment" : "Unassigned warning text"
+    },
     "English" : {
       "localizations" : {
         "en" : {
@@ -1751,6 +1889,7 @@
       }
     },
     "Eşit" : {
+      "comment" : "Equal split",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1903,6 +2042,27 @@
     "Filtreleri Temizle" : {
 
     },
+    "Fiş Harcaması" : {
+      "comment" : "Fallback default receipt description"
+    },
+    "Fiş işleniyor..." : {
+      "comment" : "OCR scanning loader text"
+    },
+    "Fiş Okuma" : {
+      "comment" : "OCR empty state title"
+    },
+    "Fiş: %@" : {
+      "comment" : "Default description from first parsed receipt item"
+    },
+    "Fişin fotoğrafını çekin veya galeriden seçin. Kalemler otomatik ayrıştırılacaktır." : {
+      "comment" : "OCR empty state description"
+    },
+    "Fişten Ekle" : {
+      "comment" : "OCR receipt scanner view title"
+    },
+    "Fiyat bilgisi alınamadı · App Store bağlantısı kurulamadı · İnternetini kontrol edip tekrar dene" : {
+
+    },
     "Fiyat bilgisi yükleniyor…" : {
       "localizations" : {
         "en" : {
@@ -1918,6 +2078,12 @@
           }
         }
       }
+    },
+    "Fotoğraf Çek" : {
+      "comment" : "Take photo button"
+    },
+    "Galeriden Seç" : {
+      "comment" : "Choose from library button"
     },
     "Geçersiz avatar rengi." : {
       "localizations" : {
@@ -2036,6 +2202,12 @@
         }
       }
     },
+    "Giriş yapılamadı · Beklenmeyen bir hata oluştu · Tekrar dene" : {
+
+    },
+    "Giriş yapılamadı · İnternet bağlantını kontrol et · Tekrar dene" : {
+
+    },
     "Gizlilik" : {
       "localizations" : {
         "en" : {
@@ -2067,6 +2239,9 @@
           }
         }
       }
+    },
+    "Görsel formatı desteklenmiyor." : {
+      "comment" : "Error when cgImage conversion fails"
     },
     "Görünen ad" : {
       "localizations" : {
@@ -2197,6 +2372,12 @@
         }
       }
     },
+    "Groopay'i kullanmaya başladın 👋" : {
+
+    },
+    "Groopay'i kullanmaya başladın. Pro ile devam et." : {
+
+    },
     "Gruba Katıl" : {
       "localizations" : {
         "en" : {
@@ -2213,7 +2394,11 @@
         }
       }
     },
+    "Gruba katılamadın · Beklenmeyen bir hata oluştu · Tekrar dene veya yeni davet kodu iste" : {
+
+    },
     "Gruba katılınamadı." : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -2309,6 +2494,9 @@
         }
       }
     },
+    "Grubuna masraf eklediğinde veya bir ödeme yapıldığında burada görünecek." : {
+
+    },
     "Grup" : {
       "localizations" : {
         "en" : {
@@ -2373,6 +2561,9 @@
         }
       }
     },
+    "Gruplar sekmesinden bir grup oluştur veya davet koduyla katıl." : {
+
+    },
     "Gruplara Git" : {
       "localizations" : {
         "en" : {
@@ -2387,6 +2578,7 @@
 
     },
     "Gruplarındaki masraf ve ödemeler burada görünecek." : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -2481,6 +2673,9 @@
           }
         }
       }
+    },
+    "Haftalık" : {
+      "comment" : "Weekly option"
     },
     "Ham liste" : {
       "localizations" : {
@@ -2580,6 +2775,9 @@
           }
         }
       }
+    },
+    "Hayalet üye olarak ekle, borç/alacak takibi yap. Uygulamaya katıldıklarında hesapları otomatik eşleşir." : {
+
     },
     "Hemen dene; Pro satın alırken Apple ile giriş yap." : {
 
@@ -2776,7 +2974,11 @@
         }
       }
     },
+    "Hesap silinemedi · İnternet bağlantını kontrol et · Tekrar dene veya destekle iletişime geç" : {
+
+    },
     "Hesap silme başarısız." : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -2854,6 +3056,7 @@
 
     },
     "İşlem başarısız" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -2868,6 +3071,9 @@
           }
         }
       }
+    },
+    "İşlem başarısız." : {
+      "comment" : "Action failed error message"
     },
     "İşlem sürüyor" : {
       "localizations" : {
@@ -2885,6 +3091,15 @@
         }
       }
     },
+    "İşlem tamamlanamadı" : {
+
+    },
+    "İşlem tamamlanamadı · Beklenmeyen bir hata oluştu · Tekrar dene" : {
+
+    },
+    "İşlem tamamlanamadı · İnternet bağlantını kontrol et · Tekrar dene" : {
+
+    },
     "İşlemler" : {
       "localizations" : {
         "en" : {
@@ -2894,6 +3109,9 @@
           }
         }
       }
+    },
+    "İstediğin zaman iptal et" : {
+
     },
     "İsteğe bağlı" : {
       "localizations" : {
@@ -2921,6 +3139,15 @@
         }
       }
     },
+    "Kalem %lld" : {
+      "comment" : "Default item name when parser cannot extract it"
+    },
+    "Kalem adı (örn: Hamburger)" : {
+
+    },
+    "Kalem Ekle" : {
+
+    },
     "Kapat" : {
       "localizations" : {
         "en" : {
@@ -2938,6 +3165,7 @@
       }
     },
     "Kategori" : {
+      "comment" : "Category picker label",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -2986,6 +3214,7 @@
       }
     },
     "Kaydet" : {
+      "comment" : "Save recurring rule button",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -3016,6 +3245,9 @@
           }
         }
       }
+    },
+    "Kira, abonelik veya aidat gibi periyodik masraflarınız için otomatik harcamalar oluşturun." : {
+      "comment" : "Empty state description"
     },
     "Kısa açıklama" : {
       "localizations" : {
@@ -3139,6 +3371,33 @@
         }
       }
     },
+    "Kur bilgisi alınamadı · Şu an varsayılan kur kullanılıyor · Daha sonra tekrar dene" : {
+
+    },
+    "Kur bilgisi yükleniyor…" : {
+
+    },
+    "Kural Ekle" : {
+      "comment" : "Create first recurring rule button"
+    },
+    "Kural güncellendi." : {
+      "comment" : "Rule updated successfully"
+    },
+    "Kural kaydedilemedi." : {
+      "comment" : "Failed to save rule error"
+    },
+    "Kural oluşturuldu." : {
+      "comment" : "Rule created successfully"
+    },
+    "Kural silindi." : {
+      "comment" : "Rule deleted success feedback"
+    },
+    "Kural silinemedi." : {
+      "comment" : "Rule delete failed error"
+    },
+    "Kuralı Düzenle" : {
+
+    },
     "KURUCU" : {
       "localizations" : {
         "en" : {
@@ -3219,6 +3478,9 @@
         }
       }
     },
+    "Manuel Kalem Ekle" : {
+      "comment" : "Add manual line item button"
+    },
     "Market" : {
       "localizations" : {
         "en" : {
@@ -3252,6 +3514,7 @@
       }
     },
     "Masraf eklendi." : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -3278,6 +3541,7 @@
       }
     },
     "Masraf geri alındı." : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -3287,7 +3551,11 @@
         }
       }
     },
+    "Masraf geri alındı. Grup bakiyeleri güncellendi." : {
+
+    },
     "Masraf güncellendi." : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -3314,6 +3582,7 @@
       }
     },
     "Masraf kaydedilemedi" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -3329,7 +3598,11 @@
         }
       }
     },
+    "Masraf kaydedilemedi · Bilgileri kontrol et · Eksik alanları doldurup tekrar dene" : {
+
+    },
     "Masraf silindi." : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -3339,7 +3612,11 @@
         }
       }
     },
+    "Masraf silinemedi · İnternet bağlantını kontrol et · Tekrar dene" : {
+
+    },
     "Masraf silinemedi." : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -3380,6 +3657,9 @@
           }
         }
       }
+    },
+    "Masrafa Aktar" : {
+      "comment" : "Apply splits to parent expense button"
     },
     "Masrafı Düzenle" : {
       "localizations" : {
@@ -3474,6 +3754,9 @@
           }
         }
       }
+    },
+    "Metin okunamadı, boş bir kalem listesi açılıyor." : {
+      "comment" : "Notification when OCR fails to find lines"
     },
     "Misafir başla" : {
 
@@ -3580,6 +3863,7 @@
       }
     },
     "Ödeme onaya gönderildi." : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -3596,6 +3880,7 @@
       }
     },
     "Ödeme onaylandı." : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -3612,6 +3897,7 @@
       }
     },
     "Ödeme reddedildi." : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -3724,6 +4010,7 @@
       }
     },
     "Ödeyen" : {
+      "comment" : "Payer selector label",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -4030,6 +4317,7 @@
       }
     },
     "Özel" : {
+      "comment" : "Custom split",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -4062,7 +4350,7 @@
       }
     },
     "Para Birimi" : {
-
+      "comment" : "Label for currency selector"
     },
     "placeholder.comingSoon" : {
       "localizations" : {
@@ -4160,6 +4448,9 @@
           }
         }
       }
+    },
+    "Pro ile sınırsız grup, kategori analizi ve harcama trendlerine erişebilirsin. Gözat ister misin?" : {
+
     },
     "Pro'ya Geç" : {
       "localizations" : {
@@ -4308,6 +4599,9 @@
         }
       }
     },
+    "Satın alma tamamlanamadı · Beklenmeyen bir hata oluştu · Tekrar dene" : {
+
+    },
     "Satın Almaları Geri Yükle" : {
       "localizations" : {
         "en" : {
@@ -4340,6 +4634,9 @@
         }
       }
     },
+    "Satın almanı Apple hesabına bağlamak için giriş yap. Böylece yeni telefonunda da Pro'nu geri yükleyebilirsin." : {
+
+    },
     "Seç" : {
       "localizations" : {
         "en" : {
@@ -4371,6 +4668,9 @@
           }
         }
       }
+    },
+    "Seçiniz" : {
+      "comment" : "Payer empty placeholder"
     },
     "Sen" : {
       "extractionState" : "stale",
@@ -4468,6 +4768,9 @@
           }
         }
       }
+    },
+    "Sıradaki: %@" : {
+      "comment" : "Next execution date label"
     },
     "Son Aktiviteler" : {
       "localizations" : {
@@ -4661,6 +4964,15 @@
     "Tarihi temizle" : {
 
     },
+    "Tekrarlama Sıklığı" : {
+      "comment" : "Frequency picker label"
+    },
+    "Tekrarlayan Masraf Yok" : {
+      "comment" : "Empty state title"
+    },
+    "Tekrarlayan Masraflar" : {
+      "comment" : "Recurring expenses view title"
+    },
     "Tips" : {
 
     },
@@ -4718,7 +5030,11 @@
         }
       }
     },
+    "Toplam Tutar" : {
+      "comment" : "Receipt total amount summary label"
+    },
     "Toplamın %lld%%'i" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -4808,6 +5124,9 @@
         }
       }
     },
+    "Tutar" : {
+      "comment" : "Label for amount input field"
+    },
     "Ücretsiz" : {
       "localizations" : {
         "en" : {
@@ -4824,7 +5143,11 @@
         }
       }
     },
+    "Ücretsizde 3 grup sınırı var. Pro ile istediğin kadar grup oluştur, hiçbir arkadaşını dışarıda bırakma." : {
+
+    },
     "Ücretsizde 5 grup sınırı var. Pro ile istediğin kadar grup oluştur, hiçbir arkadaşını dışarıda bırakma." : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -4857,6 +5180,7 @@
       }
     },
     "Ürün bilgisi yüklenemedi." : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -4952,6 +5276,9 @@
         }
       }
     },
+    "Uygulamada olmayan arkadaşlarını da ekleyebilirsin" : {
+
+    },
     "Vazgeç" : {
       "localizations" : {
         "en" : {
@@ -4967,6 +5294,9 @@
           }
         }
       }
+    },
+    "Veriler dışa aktarılamadı · Dosya oluşturulamadı · Depolama izinlerini kontrol et ve tekrar dene" : {
+
     },
     "Veriler hazır, paylaşım ekranı açılıyor." : {
       "extractionState" : "stale",
@@ -5066,12 +5396,6 @@
         }
       }
     },
-    "Yalnızca masrafı ekleyen kişi düzenleyebilir." : {
-
-    },
-    "Yalnızca masrafı ekleyen kişi silebilir." : {
-
-    },
     "Yapmam Gerekenler" : {
       "localizations" : {
         "en" : {
@@ -5121,6 +5445,7 @@
       }
     },
     "Yeni bir grup oluştur veya davet koduyla katıl." : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -5168,6 +5493,9 @@
         }
       }
     },
+    "Yeni Kural Ekle" : {
+      "comment" : "Add new rule button label"
+    },
     "Yeni üye olarak katıl" : {
       "localizations" : {
         "en" : {
@@ -5183,6 +5511,9 @@
           }
         }
       }
+    },
+    "Yıllık" : {
+      "comment" : "Yearly option"
     },
     "Zaman Filtresi" : {
       "localizations" : {
