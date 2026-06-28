@@ -402,7 +402,189 @@ struct RPCClient: Sendable {
 
         return .transport(error.localizedDescription)
     }
+
+    // MARK: - Recurring Expense Rules
+
+    func createRecurringRule(
+        _ input: CreateRecurringRuleRPCInput
+    ) async -> Result<UUID, RPCError> {
+        await value("create_recurring_expense_rule", params: input)
+    }
+
+    func updateRecurringRule(
+        _ input: UpdateRecurringRuleRPCInput
+    ) async -> Result<Void, RPCError> {
+        await void("update_recurring_expense_rule", params: input)
+    }
+
+    func pauseRecurringRule(
+        ruleId: UUID,
+        actorMemberId: UUID,
+        isActive: Bool
+    ) async -> Result<Void, RPCError> {
+        await void(
+            "pause_recurring_expense_rule",
+            params: PauseRecurringRuleRPCInput(
+                ruleId: ruleId,
+                actorMemberId: actorMemberId,
+                isActive: isActive
+            )
+        )
+    }
+
+    func deleteRecurringRule(
+        ruleId: UUID,
+        actorMemberId: UUID
+    ) async -> Result<Void, RPCError> {
+        await void(
+            "delete_recurring_expense_rule",
+            params: DeleteRecurringRuleRPCInput(
+                ruleId: ruleId,
+                actorMemberId: actorMemberId
+            )
+        )
+    }
 }
+
+// MARK: - Recurring Expense Rule RPC
+
+struct RecurringSplitRPCEntry: Encodable, Sendable {
+    let memberId: UUID
+    let shareAmount: Int
+    let currency: String
+
+    enum CodingKeys: String, CodingKey {
+        case memberId = "member_id"
+        case shareAmount = "share_amount"
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(memberId, forKey: .memberId)
+        try container.encode(
+            decimalAmount(fromMinor: shareAmount, currency: currency),
+            forKey: .shareAmount
+        )
+    }
+}
+
+struct CreateRecurringRuleRPCInput: Encodable, Sendable {
+    let groupId: UUID
+    let description: String
+    let note: String?
+    let amount: Int
+    let currency: String
+    let category: String
+    let splitType: SplitType
+    let paidBy: UUID
+    let frequency: RecurringFrequency
+    let startDate: String
+    let splits: [RecurringSplitRPCEntry]
+
+    enum CodingKeys: String, CodingKey {
+        case groupId = "p_group_id"
+        case description = "p_description"
+        case note = "p_note"
+        case amount = "p_amount"
+        case currency = "p_currency"
+        case category = "p_category"
+        case splitType = "p_split_type"
+        case paidBy = "p_paid_by"
+        case frequency = "p_frequency"
+        case startDate = "p_start_date"
+        case splits = "p_splits"
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(groupId, forKey: .groupId)
+        try container.encode(description, forKey: .description)
+        try container.encode(note, forKey: .note)
+        try container.encode(
+            decimalAmount(fromMinor: amount, currency: currency),
+            forKey: .amount
+        )
+        try container.encode(currency.uppercased(), forKey: .currency)
+        try container.encode(category, forKey: .category)
+        try container.encode(splitType, forKey: .splitType)
+        try container.encode(paidBy, forKey: .paidBy)
+        try container.encode(frequency, forKey: .frequency)
+        try container.encode(startDate, forKey: .startDate)
+        try container.encode(splits, forKey: .splits)
+    }
+}
+
+struct UpdateRecurringRuleRPCInput: Encodable, Sendable {
+    let ruleId: UUID
+    let description: String
+    let note: String?
+    let amount: Int
+    let currency: String
+    let category: String
+    let splitType: SplitType
+    let paidBy: UUID
+    let actorMemberId: UUID
+    let frequency: RecurringFrequency
+    let isActive: Bool
+    let splits: [RecurringSplitRPCEntry]
+
+    enum CodingKeys: String, CodingKey {
+        case ruleId = "p_rule_id"
+        case description = "p_description"
+        case note = "p_note"
+        case amount = "p_amount"
+        case currency = "p_currency"
+        case category = "p_category"
+        case splitType = "p_split_type"
+        case paidBy = "p_paid_by"
+        case actorMemberId = "p_actor_member_id"
+        case frequency = "p_frequency"
+        case isActive = "p_is_active"
+        case splits = "p_splits"
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(ruleId, forKey: .ruleId)
+        try container.encode(description, forKey: .description)
+        try container.encode(note, forKey: .note)
+        try container.encode(
+            decimalAmount(fromMinor: amount, currency: currency),
+            forKey: .amount
+        )
+        try container.encode(currency.uppercased(), forKey: .currency)
+        try container.encode(category, forKey: .category)
+        try container.encode(splitType, forKey: .splitType)
+        try container.encode(paidBy, forKey: .paidBy)
+        try container.encode(actorMemberId, forKey: .actorMemberId)
+        try container.encode(frequency, forKey: .frequency)
+        try container.encode(isActive, forKey: .isActive)
+        try container.encode(splits, forKey: .splits)
+    }
+}
+
+private struct PauseRecurringRuleRPCInput: Encodable {
+    let ruleId: UUID
+    let actorMemberId: UUID
+    let isActive: Bool
+
+    enum CodingKeys: String, CodingKey {
+        case ruleId = "p_rule_id"
+        case actorMemberId = "p_actor_member_id"
+        case isActive = "p_is_active"
+    }
+}
+
+private struct DeleteRecurringRuleRPCInput: Encodable {
+    let ruleId: UUID
+    let actorMemberId: UUID
+
+    enum CodingKeys: String, CodingKey {
+        case ruleId = "p_rule_id"
+        case actorMemberId = "p_actor_member_id"
+    }
+}
+
 
 private struct DeleteExpenseParams: Encodable {
     let expenseId: UUID

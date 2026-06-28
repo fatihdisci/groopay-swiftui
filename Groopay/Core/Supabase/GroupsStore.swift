@@ -7,6 +7,7 @@ import Supabase
 final class GroupsStore {
     private(set) var groups: [GroupSnapshot] = []
     private(set) var activities: [Activity] = []
+    private(set) var recurringRules: [UUID: [RecurringExpenseRule]] = [:]
     private(set) var isLoading = false
     private(set) var errorMessage: String?
     var presentedPaywall = false
@@ -510,6 +511,19 @@ final class GroupsStore {
         }
     }
 
+    private static func recurringRuleSplitInputs(
+        _ splits: [UUID: Int],
+        currency: String
+    ) -> [RecurringSplitRPCEntry] {
+        splits.map {
+            RecurringSplitRPCEntry(
+                memberId: $0.key,
+                shareAmount: $0.value,
+                currency: currency
+            )
+        }
+    }
+
     private static func dateString(_ date: Date) -> String {
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "en_US_POSIX")
@@ -674,6 +688,154 @@ final class GroupsStore {
         return text.contains("3 grup")
             || text.contains("ücretsiz plan")
             || text.contains("free plan")
+    }
+
+    // MARK: - Recurring Expense Rules
+
+    func recurringRules(for groupID: UUID) -> [RecurringExpenseRule] {
+        recurringRules[groupID] ?? []
+    }
+
+    func loadRecurringRules(for groupID: UUID) async {
+        do {
+            let rules: [RecurringExpenseRule] = try await supabase
+                .from("recurring_expense_rules")
+                .select()
+                .eq("group_id", value: groupID)
+                .order("created_at", ascending: false)
+                .execute()
+                .value
+            recurringRules[groupID] = rules
+        } catch {
+            // En iyi çaba — hata olursa mevcut veriyi koru.
+            errorMessage = error.localizedDescription
+        }
+    }
+
+    func createRecurringRule(
+        groupID: UUID,
+        description: String,
+        note: String?,
+        amount: Int,
+        currency: String,
+        category: String,
+        splitType: SplitType,
+        paidBy: UUID,
+        frequency: RecurringFrequency,
+        startDate: Date,
+        splits: [UUID: Int]
+    ) async -> Bool {
+        let input = CreateRecurringRuleRPCInput(
+            groupId: groupID,
+            description: description.trimmingCharacters(in: .whitespacesAndNewlines),
+            note: note?.isEmpty == true ? nil : note,
+            amount: amount,
+            currency: currency,
+            category: category,
+            splitType: splitType,
+            paidBy: paidBy,
+            frequency: frequency,
+            startDate: Self.dateString(startDate),
+            splits: Self.recurringRuleSplitInputs(splits, currency: currency)
+        )
+
+        switch await rpc.createRecurringRule(input) {
+        case .success:
+            await loadRecurringRules(for: groupID)
+            return true
+        case .failure(let error):
+            errorMessage = error.localizedDescription
+            return false
+        }
+    }
+
+    func updateRecurringRule(
+        ruleID: UUID,
+        groupID: UUID,
+        description: String,
+        note: String?,
+        amount: Int,
+        currency: String,
+        category: String,
+        splitType: SplitType,
+        paidBy: UUID,
+        frequency: RecurringFrequency,
+        isActive: Bool,
+        splits: [UUID: Int]
+    ) async -> Bool {
+        guard let actor = currentMemberID(in: groupID) else {
+            errorMessage = localized("Üyelik bilgisi bulunamadı.")
+            return false
+        }
+        let input = UpdateRecurringRuleRPCInput(
+            ruleId: ruleID,
+            description: description.trimmingCharacters(in: .whitespacesAndNewlines),
+            note: note?.isEmpty == true ? nil : note,
+            amount: amount,
+            currency: currency,
+            category: category,
+            splitType: splitType,
+            paidBy: paidBy,
+            actorMemberId: actor,
+            frequency: frequency,
+            isActive: isActive,
+            splits: Self.recurringRuleSplitInputs(splits, currency: currency)
+        )
+
+        switch await rpc.updateRecurringRule(input) {
+        case .success:
+            await loadRecurringRules(for: groupID)
+            return true
+        case .failure(let error):
+            errorMessage = error.localizedDescription
+            return false
+        }
+    }
+
+    func pauseRecurringRule(
+        ruleID: UUID,
+        groupID: UUID,
+        isActive: Bool
+    ) async -> Bool {
+        guard let actor = currentMemberID(in: groupID) else {
+            errorMessage = localized("Üyelik bilgisi bulunamadı.")
+            return false
+        }
+
+        switch await rpc.pauseRecurringRule(
+            ruleId: ruleID,
+            actorMemberId: actor,
+            isActive: isActive
+        ) {
+        case .success:
+            await loadRecurringRules(for: groupID)
+            return true
+        case .failure(let error):
+            errorMessage = error.localizedDescription
+            return false
+        }
+    }
+
+    func deleteRecurringRule(
+        ruleID: UUID,
+        groupID: UUID
+    ) async -> Bool {
+        guard let actor = currentMemberID(in: groupID) else {
+            errorMessage = localized("Üyelik bilgisi bulunamadı.")
+            return false
+        }
+
+        switch await rpc.deleteRecurringRule(
+            ruleId: ruleID,
+            actorMemberId: actor
+        ) {
+        case .success:
+            await loadRecurringRules(for: groupID)
+            return true
+        case .failure(let error):
+            errorMessage = error.localizedDescription
+            return false
+        }
     }
 }
 

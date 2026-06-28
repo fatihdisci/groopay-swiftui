@@ -8,6 +8,7 @@ struct GroupDetailView: View {
     @Environment(\.appFeedback) private var feedback
     @State private var selectedTab = GroupDetailSection.expenses
     @State private var presentedExpense: ExpenseSheet?
+    @State private var showRecurringExpenses = false
     @State private var didApplyInitialTab = false
 
     var body: some View {
@@ -51,6 +52,12 @@ struct GroupDetailView: View {
                         onDeleted: presentUndo(for:)
                     )
                 }
+                .sheet(isPresented: $showRecurringExpenses) {
+                    RecurringExpensesView(
+                        groupID: groupID,
+                        store: store
+                    )
+                }
             } else {
                 ScrollView {
                     VStack(spacing: 16) {
@@ -62,6 +69,7 @@ struct GroupDetailView: View {
                 }
                 .accessibilityHidden(true)
                 .task { await store.load() }
+                .task { await store.loadRecurringRules(for: groupID) }
             }
         }
         .navigationBarTitleDisplayMode(.inline)
@@ -156,6 +164,25 @@ struct GroupDetailView: View {
         .accessibilityHint("Bu gruba yeni masraf eklemek için açar")
     }
 
+    private var recurringExpensesButton: some View {
+        Button {
+            showRecurringExpenses = true
+        } label: {
+            HStack(spacing: 8) {
+                Image(systemName: "arrow.trianglehead.2.clockwise.rotate.90")
+                    .font(.system(size: 14, weight: .semibold))
+                Text("Tekrarlayan Masraflar")
+                    .font(.body(14, weight: .semibold))
+            }
+            .foregroundStyle(Color.primaryTheme)
+            .frame(maxWidth: .infinity, minHeight: 44)
+            .background(Color.primaryTheme.opacity(0.1))
+            .clipShape(RoundedRectangle(cornerRadius: ThemeRadius.button))
+        }
+        .padding(.horizontal, 20)
+        .padding(.bottom, 12)
+    }
+
     private var detailTabs: some View {
         HStack(spacing: 8) {
             ForEach(GroupDetailSection.allCases) { tab in
@@ -189,6 +216,7 @@ struct GroupDetailView: View {
     private func tabContent(snapshot: GroupSnapshot) -> some View {
         switch selectedTab {
         case .expenses:
+            recurringExpensesButton
             expensesList(snapshot: snapshot)
         case .balances:
             BalancesTabView(store: store, groupID: groupID)
