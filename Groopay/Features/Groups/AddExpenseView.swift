@@ -28,7 +28,6 @@ struct AddExpenseView: View {
     @State private var fxRateAsOf: Date?
     @State private var fxRateError = false
     @State private var fxTask: Task<Void, Never>?
-    @State private var showReceiptScanner = false
 
     init(
         groupID: UUID,
@@ -137,9 +136,6 @@ struct AddExpenseView: View {
                     if showFXInfo(snapshot: snapshot) {
                         fxInfoBar(snapshot: snapshot)
                     }
-                    if editingExpense == nil {
-                        receiptScannerButton
-                    }
                     numpad
                     if editingExpense == nil {
                         recentSuggestions(snapshot: snapshot)
@@ -159,15 +155,6 @@ struct AddExpenseView: View {
         .background(Color.background.ignoresSafeArea())
         // İşlem sürerken sheet yanlışlıkla kapatılamasın.
         .interactiveDismissDisabled(isSaving)
-        .sheet(isPresented: $showReceiptScanner) {
-            ReceiptScannerView(
-                groupID: groupID,
-                store: store,
-                currency: selectedCurrency
-            ) { scannedItems in
-                applyScannedItems(scannedItems)
-            }
-        }
         // Masraf silme onayı destructive olduğundan alert/dialog olarak kalır.
         .confirmationDialog(
             "Masraf silinsin mi?",
@@ -1016,67 +1003,6 @@ struct AddExpenseView: View {
             )
             store.clearError()
         }
-    }
-
-    // MARK: - Receipt Scanner
-
-    private var receiptScannerButton: some View {
-        Button {
-            showReceiptScanner = true
-        } label: {
-            HStack(spacing: 8) {
-                Image(systemName: "doc.text.viewfinder")
-                    .font(.system(size: 15, weight: .semibold))
-                Text("Fişten Ekle")
-                    .font(.body(14, weight: .semibold))
-            }
-            .foregroundStyle(Color.primaryTheme)
-            .padding(.horizontal, 18)
-            .frame(minHeight: 44)
-            .background(Color.primaryTheme.opacity(0.1))
-            .clipShape(Capsule())
-        }
-    }
-
-    private func applyScannedItems(_ items: [ScannedReceiptItem]) {
-        guard !items.isEmpty else { return }
-
-        // Üye bazında payları hesapla: her kalem için equalSplits, sonra topla.
-        var memberTotals: [UUID: Int] = [:]
-        var grandTotal = 0
-
-        for item in items {
-            let assignedIds = Array(item.assignedMemberIds).sorted { $0.uuidString < $1.uuidString }
-            guard !assignedIds.isEmpty else { continue }
-
-            let splits = computeSplits(
-                amount: item.amountMinor,
-                type: .equal,
-                memberIds: assignedIds
-            )
-
-            for (memberId, share) in splits {
-                memberTotals[memberId, default: 0] += share
-            }
-
-            grandTotal += item.amountMinor
-        }
-
-        guard grandTotal > 0 else { return }
-
-        // Form alanlarını doldur.
-        amountText = Self.editableAmountString(minor: grandTotal, currency: selectedCurrency)
-        splitType = .custom
-        customShares = memberTotals
-        customText = memberTotals.mapValues {
-            Self.editableAmountString(minor: $0, currency: selectedCurrency)
-        }
-
-        if description.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-            description = "Fiş"
-        }
-
-        detailsExpanded = true
     }
 
     // MARK: - Helpers
