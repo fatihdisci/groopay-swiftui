@@ -33,6 +33,7 @@ Bu dökümanda, Groopay iOS SwiftUI uygulamasında gerçekleştirilen tekrarlaya
 | 28.06 | `c74db6d` | pg_cron SQL: `cron.schedule()` DO bloğu dışında → `schema "cron" does not exist` | Tüm mantık DO bloğuna alındı, `pg_extension` kontrolü eklendi |
 | 28.06 | `1594215` | pg_cron SQL: iç içe `$$` çakışması → syntax error | `$_$` delimiter kullanıldı |
 | 28.06 | *(bu commit)* | `execute_due_recurring_expenses` içinde `execution_date` output parametresi ile tablo kolonu çakışması (`ERROR: 42702: column reference "execution_date" is ambiguous`) | **1)** Constraint'e isim verildi (`recurring_expense_executions_rule_date_key`). **2)** `ON CONFLICT (rule_id, execution_date)` → `ON CONFLICT ON CONSTRAINT recurring_expense_executions_rule_date_key`. **3)** `RETURNS TABLE` output kolonu `processed_execution_date` olarak değiştirildi. **4)** Tablo referansları `public.` ile nitelendirildi. **5)** Hotfix migration `202606280003` oluşturuldu |
+| 28.06 | `71ca683` | pg_cron schedule manuel kontrol: `cron.job`'da sorgulandı, `active=true` olarak doğrulandı | `cron.unschedule` + `cron.schedule` yeniden çalıştırıldı, `select * from cron.job` ile `active=true` ve doğru schedule (`0 * * * *`) teyit edildi ✅ |
 
 ---
 

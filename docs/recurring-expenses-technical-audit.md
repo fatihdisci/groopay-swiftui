@@ -3,7 +3,7 @@
 **Sürüm:** 1.4.0 (build 39)  
 **Tarih:** 2026-06-28  
 **Son commit:** `2c1cce6`  
-**Durum:** ✅ Canlı test başarılı — motor çalıştı, expense oluştu, idempotency doğrulandı
+**Durum:** ✅ Canlı test başarılı — motor çalıştı, expense oluştu, idempotency doğrulandı, pg_cron aktif ve doğrulandı
 
 ---
 
@@ -174,6 +174,8 @@ $$;
 
 **Önemli:** `$_$` delimiter'ı, içteki `$$` ile dıştaki `DO $$` çakışmasını önler.
 
+**⏱️ 2026-06-28: pg_cron schedule aktif olarak doğrulandı.** Superuser SQL konsolundan `SELECT * FROM cron.job` sorgulandığında `jobname='recurring-expenses-hourly'`, `schedule='0 * * * *'`, `active=true` olarak görülmektedir. Cron motoru saat başı tetiklenmeye hazırdır.
+
 ### 4.3 Çalışma Mantığı
 
 ```
@@ -275,6 +277,22 @@ Abone             | 500.00 | TRY      | 2026-06-28
 
 ✅ **App'te grupta görünüyor**
 
+### 5.6 pg_cron Schedule Doğrulama
+
+```sql
+-- Supabase SQL Editor'da çalıştırıldı
+SELECT jobname, schedule, active, jobid
+  FROM cron.job
+ WHERE jobname = 'recurring-expenses-hourly';
+```
+
+```
+jobname                | schedule   | active | jobid
+recurring-expenses-hourly | 0 * * * * | t      | 1
+```
+
+✅ **pg_cron schedule aktif, `0 * * * *` (saat başı), `active=true`**
+
 ---
 
 ## 6. İstemci (SwiftUI) Katmanı
@@ -370,6 +388,7 @@ GroupDetailView
 | Masraflar `expenses` tablosunda | ✅ App'te görünür |
 | Delete UI (swipe + buton) | ✅ Çift yöntem |
 | Dashboard fontu | ✅ `2.000,00` sığıyor |
+| pg_cron schedule (`cron.job` sorgusu) | ✅ `active=true`, `0 * * * *` saat başı |
 
 ### 📁 Tüm Dosyalar
 
