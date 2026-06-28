@@ -2,28 +2,31 @@
 
 **Sürüm:** 1.4.0 (build 39)  
 **Tarih:** 2026-06-28  
-**Kapsam:** `B119` commit serisi — recurring expenses motoru ve istemci entegrasyonu
+**Son commit:** `1594215`
 
 ---
 
 ## 1. Mimari Genel Bakış
 
 ```
-┌─────────────────────────────┐      ┌──────────────────────────────┐
-│   SwiftUI Client (iOS 17+)  │      │   Supabase (PostgreSQL 15)    │
-│                             │      │                              │
-│  RecurringExpensesView      │ RLS  │  recurring_expenses_rules    │
-│  RuleFormView               │◄────►│  recurring_expense_executions│
-│  GroupsStore                │ SELECT│                              │
-│                             │      │  RPC (SECURITY DEFINER):      │
-│  RecurringExpenseRule       │ RPC  │  create / update / pause      │
-│  RecurringExpenseExecution  │◄────►│  delete / execute_due         │
-│                             │      │                              │
-│  RPCClient (Supabase)       │      │  pg_cron (service_role)      │
-└─────────────────────────────┘      └──────────────────────────────┘
+┌─────────────────────────────┐      ┌──────────────────────────────────┐
+│   SwiftUI Client (iOS 17+)  │      │   Supabase (PostgreSQL 15)        │
+│                             │      │                                  │
+│  RecurringExpensesView      │ RLS  │  recurring_expenses_rules        │
+│  RuleFormView               │◄────►│  recurring_expense_executions    │
+│  GroupsStore                │ SELECT│                                  │
+│                             │      │  RPC (SECURITY DEFINER):          │
+│  RecurringExpenseRule       │ RPC  │  create / update / pause          │
+│  RecurringExpenseExecution  │◄────►│  delete / execute_due             │
+│                             │      │                                  │
+│  RPCClient (Supabase)       │      │  pg_cron (service_role)           │
+│                             │      │  └─ saat başı tetiklenir          │
+│  LocalizationStore          │      │     execute_due_recurring_        │
+│  └─ FX rate bar gating      │      │     expenses()                   │
+└─────────────────────────────┘      └──────────────────────────────────┘
 ```
 
-**Temel prensip:** Yazma işlemleri DOĞRUDAN tabloya değil, `SECURITY DEFINER` RPC fonksiyonları üzerinden yapılır. RLS politikaları yalnızca `SELECT` için tanımlıdır. Bu sayede istemci hiçbir zaman tabloya doğrudan `INSERT/UPDATE/DELETE` yapamaz.
+**Temel prensip:** Yazma işlemleri DOĞRUDAN tabloya değil, `SECURITY DEFINER` RPC fonksiyonları üzerinden yapılır. RLS politikaları yalnızca `SELECT` için tanımlıdır. İstemci hiçbir zaman tabloya doğrudan `INSERT/UPDATE/DELETE` yapamaz.
 
 ---
 
@@ -45,7 +48,7 @@
 | `created_by` | `uuid FK → group_members(id)` | `ON DELETE CASCADE` |
 | `frequency` | `text NOT NULL` | `CHECK IN ('weekly','monthly','yearly')` |
 | `start_date` | `date NOT NULL` | |
-| `next_execution_date` | `date NOT NULL` | motorun gözü burada |
+| `next_execution_date` | `date NOT NULL` | ⭐ motorun gözü burada |
 | `is_active` | `boolean NOT NULL DEFAULT true` | pause/resume |
 | `splits` | `jsonb NOT NULL` | `[{member_id, share_amount}]` |
 | `created_at` | `timestamptz NOT NULL` | `DEFAULT now()` |
@@ -63,6 +66,13 @@
 | `executed_at` | `timestamptz NOT NULL` | |
 | `status` | `text NOT NULL` | `CHECK IN ('processing','success','failed')` |
 | **UNIQUE** | `(rule_id, execution_date)` | ⭐ idempotency garantisi |
+
+### 2.3 Migration Dosyaları
+
+| Dosya | İçerik |
+|-------|--------|
+| `202606280001_recurring_expenses.sql` | Tablolar, RLS, trigger, tüm RPC fonksiyonları, yetkilendirmeler |
+| `202606280002_pg_cron_schedule.sql` | pg_cron schedule tanımı (hourly trigger) |
 
 ---
 
@@ -89,8 +99,6 @@ create_recurring_expense_rule(
 8. `next_execution_date = p_start_date` olarak INSERT
 9. Yeni kural UUID'si döndürülür
 
-**Güvenlik:** `created_by` parametresi client'tan alınsaydı, bir kullanıcı başkasının adına kural oluşturabilirdi. Sunucu tarafında `auth.uid()` çözümlemesi bunu engeller.
-
 ### 3.2 `update_recurring_expense_rule`
 
 ```sql
@@ -107,7 +115,7 @@ update_recurring_expense_rule(
 3. Kuralın varlığı kontrol edilir, `group_id` alınır
 4. `p_actor_member_id` doğrulaması: bu üye `auth.uid()`'e ait mi + grupta aktif mi?
 5. `p_paid_by` doğrulaması
-6. ⚠️ **NOT:** `next_execution_date` client tarafından güncellenmez (MVP kısıtı)
+6. ⚠️ `next_execution_date` client tarafından güncellenmez (MVP kısıtı)
 7. `validate_recurring_rule_splits()` çağrılır
 8. UPDATE çalıştırılır
 
@@ -151,9 +159,49 @@ revoke all on function execute_due_recurring_expenses() from public, authenticat
 grant  execute on function execute_due_recurring_expenses() to service_role;
 ```
 
-SADECE `service_role` çağırabilir. Normal kullanıcılar veya anonim erişim tamamen engellenmiştir. Bu, motorun yalnızca pg_cron tarafından tetiklenebileceği anlamına gelir.
+SADECE `service_role` çağırabilir. Normal kullanıcılar veya anonim erişim tamamen engellenmiştir.
 
-### 4.2 Çalışma Mantığı (Detaylı)
+### 4.2 pg_cron Schedule (✅ Çözüldü)
+
+**Migration:** `202606280002_pg_cron_schedule.sql`
+
+```sql
+do $$
+begin
+    -- pg_cron kurulu değilse sessizce atla
+    if not exists (
+        select 1 from pg_extension where extname = 'pg_cron'
+    ) then
+        raise notice 'pg_cron extension bulunamadı — cron schedule atlandı.';
+        return;
+    end if;
+
+    -- Eski schedule varsa temizle (idempotent)
+    perform cron.unschedule('recurring-expenses-hourly');
+
+    -- Her saat başı (HH:00 UTC) çalışacak schedule
+    -- $_$ içteki $$ çakışmasını önler (DO bloğu içinde farklı delimiter)
+    perform cron.schedule(
+        'recurring-expenses-hourly',
+        '0 * * * *',
+        $_$ select execute_due_recurring_expenses(); $_$
+    );
+
+    raise notice 'pg_cron schedule "recurring-expenses-hourly" başarıyla kuruldu.';
+end;
+$$;
+```
+
+**Önemli noktalar:**
+
+| Detay | Açıklama |
+|-------|----------|
+| **Dollar-quote çakışması** | Dıştaki `DO $$` ile içteki `cron.schedule(..., $$ ... $$)` çakışır. `$_$` delimiter'ı ile çözüldü |
+| **Extension check** | `pg_extension` tablosundan `pg_cron` varlığı kontrol edilir. Yoksa `NOTICE` verip çıkar, migration başarısız olmaz |
+| **Idempotent** | Önce `unschedule` yapıp sonra `schedule` — tekrar tekrar çalıştırılabilir |
+| **Ücretsiz plan** | Supabase free tier'da pg_cron desteklenmez. Pro plana geçmek veya harici cron (GitHub Actions, Vercel Cron) ile `service_role` key kullanarak RPC'yi tetiklemek gerekir |
+
+### 4.3 Çalışma Mantığı (Detaylı)
 
 ```
 v_current_date = current_date (server timezone)
@@ -188,7 +236,7 @@ FOR EACH rule WHERE is_active = true AND next_execution_date <= v_current_date:
     --- rule.next_execution_date = v_next_date ---
 ```
 
-### 4.3 Frekans Periyodu İlerletme
+### 4.4 Frekans Periyodu İlerletme
 
 | Frekans | SQL Interval | Açıklama |
 |---------|-------------|----------|
@@ -196,7 +244,7 @@ FOR EACH rule WHERE is_active = true AND next_execution_date <= v_current_date:
 | `monthly` | `+ interval '1 month'` | PostgreSQL ay sonlarını doğru yönetir (31 Ocak → 28 Şubat) |
 | `yearly` | `+ interval '1 year'` | Artık yıl uyumlu |
 
-### 4.4 Kaçırılan Periyotlar (Catch-up)
+### 4.5 Kaçırılan Periyotlar (Catch-up)
 
 ```
 Örnek: Aylık kural, next_execution_date = 2026-03-01
@@ -214,7 +262,7 @@ rule.next_execution_date = 2026-07-01  ← bir sonraki cron bunu bekler
 
 ✅ **3 aylık catch-up başarıyla yapılır, 4 expense oluşturulur.**
 
-### 4.5 Idempotency — Mükerrer Kayıt Engelleme
+### 4.6 Idempotency — Mükerrer Kayıt Engelleme
 
 ```sql
 INSERT INTO executions (rule_id, execution_date, status)
@@ -228,11 +276,11 @@ RETURNING id INTO v_execution_id
 | Senaryo | ON CONFLICT Davranışı | Sonuç |
 |---------|----------------------|-------|
 | İlk kez çalışıyor | Normal INSERT | `v_execution_id` dolu → expense oluşturulur |
-| Daha önce başarılı (`success`) | `WHERE status='failed'` eşleşmez → UPDATE atlanır | `v_execution_id` NULL → ATLANIR ✅ |
+| Daha önce başarılı (`success`) | `WHERE status='failed'` eşleşmez | `v_execution_id` NULL → ATLANIR ✅ |
 | Daha önce işleniyor (`processing`) | Aynı şekilde UPDATE atlanır | `v_execution_id` NULL → ATLANIR ✅ |
 | Daha önce başarısız (`failed`) | UPDATE çalışır, `RETURNING id` dolu | `v_execution_id` dolu → TEKRAR DENE ✅ |
 
-### 4.6 Hata Durumunda Davranış
+### 4.7 Hata Durumunda Davranış
 
 ```
 BEGIN
@@ -244,35 +292,30 @@ EXCEPTION WHEN OTHERS:
     -- next_execution_date yine de ilerletilir (motor kilitlenmesin diye)
 ```
 
-**Önemli:** Başarısız periyotlar gelecekteki otomatik cron çalıştırmalarında tekrar denenmez. `next_execution_date` ilerletildiği için o periyot geçilir. Ancak:
-- `next_execution_date` veritabanından manuel olarak geri çekilirse
-- Veya aynı periyot için `ON CONFLICT DO UPDATE ... WHERE status='failed'` mekanizmasıyla retry mümkündür
-
 ---
 
 ## 5. İstemci (SwiftUI) Katmanı
 
 ### 5.1 Modeller
 
-**`RecurringExpenseRule`** — ana model. Tüm tutarlar `Int` (minor unit/kuruş). `startDate` ve `nextExecutionDate` opsiyonel çünkü veritabanı `date` tipini string olarak dönebilir (esnek decode). Currency her zaman `uppercased()`.
-
-**`RecurringSplitEntry`** — split başına `memberId` + `shareAmount`. Kodlama/çözümleme `decimalAmount(fromMinor:)` / `decodeMinorAmount` ile yapılır.
-
-**`RecurringExpenseExecution`** — motor çalışma kaydı. `expenseId` başarılı çalıştırmalarda oluşturulan masrafa link verir.
-
-**`RecurringFrequency`** — `enum: weekly, monthly, yearly`
+| Model | Dosya | Açıklama |
+|-------|-------|----------|
+| `RecurringExpenseRule` | `Core/Models/RecurringExpenseRule.swift` | Ana kural modeli. Tüm tutarlar `Int` (minor unit). Currency `uppercased()`. |
+| `RecurringSplitEntry` | Aynı dosya | Split başına `memberId` + `shareAmount`. `decimalAmount` ↔ `minorAmount` dönüşümü |
+| `RecurringExpenseExecution` | `Core/Models/RecurringExpenseExecution.swift` | Motor çalışma kaydı. `expenseId` başarılı çalıştırmada oluşturulan masrafa link |
+| `RecurringFrequency` | Aynı dosya | `enum: weekly, monthly, yearly` |
 
 ### 5.2 GroupsStore Metotları
 
-| Metot | RPC | Auth |
-|-------|-----|------|
+| Metot | Hedef | Auth |
+|-------|-------|------|
 | `loadRecurringRules(for:)` | `SELECT recurring_expenses_rules` | RLS |
-| `createRecurringRule(...)` | `create_recurring_expense_rule` | SECURITY DEFINER → `auth.uid()` |
-| `updateRecurringRule(...)` | `update_recurring_expense_rule` | SECURITY DEFINER + `p_actor_member_id` |
-| `pauseRecurringRule(...)` | `pause_recurring_expense_rule` | SECURITY DEFINER + `p_actor_member_id` |
-| `deleteRecurringRule(...)` | `delete_recurring_expense_rule` | SECURITY DEFINER + `p_actor_member_id` |
+| `createRecurringRule(...)` | `create_recurring_expense_rule` RPC | SECURITY DEFINER → `auth.uid()` |
+| `updateRecurringRule(...)` | `update_recurring_expense_rule` RPC | SECURITY DEFINER + `p_actor_member_id` |
+| `pauseRecurringRule(...)` | `pause_recurring_expense_rule` RPC | SECURITY DEFINER + `p_actor_member_id` |
+| `deleteRecurringRule(...)` | `delete_recurring_expense_rule` RPC | SECURITY DEFINER + `p_actor_member_id` |
 
-Tüm yazma işlemleri `actor` (currentMemberID) kontrolü yapar. Kullanıcının gruptaki aktif üyeliği doğrulanır.
+Tüm yazma işlemleri `actor` (currentMemberID) kontrolü yapar.
 
 ### 5.3 UI Akışı
 
@@ -286,18 +329,39 @@ GroupDetailView
         └── "Yeni Kural Ekle" butonu → RuleFormView (create)
 ```
 
-**RuleFormView:**
-- Açıklama + Tutar + Para Birimi
-- Frekans seçici (Haftalık/Aylık/Yıllık)
-- Başlangıç tarihi (DatePicker, geçmiş tarih seçilemez → sunucuda da validasyon var)
-- Kategori seçici
-- Ödeyen seçici (Menu)
-- Bölüşüm tipi: Eşit / Alt-Küme / Özel
-- Kaydet butonu → `isValid()` kontrolü:
-  - `amountMinor > 0`
-  - Açıklama boş değil
-  - `paidBy != nil`
-  - Splits toplamı == amountMinor
+**RuleFormView** validasyonları:
+- `amountMinor > 0`
+- Açıklama boş değil
+- `paidBy != nil` (guard let ile güvenli)
+- Splits toplamı == amountMinor
+
+### 5.4 Masraf Listesi Font Düzeltmesi
+
+Masraf tutarları `GroupDetailView` expenses listesinde `display(16)` ile çok büyük render ediliyor, uzun tutarlar alt satıra taşıyordu.
+
+| Önce | Sonra |
+|------|-------|
+| `.font(.display(16, weight: .semibold))` | `.font(.body(14, weight: .semibold))` + `.lineLimit(1)` |
+
+### 5.5 Kur Bilgisi (FX Rate) — Locale Gating
+
+AddExpenseView'de TRY dışı para birimi seçildiğinde çıkan kur bilgisi bar'ı **sadece uygulama dili Türkçe olan kullanıcılara** gösterilir:
+
+```swift
+private func showFXInfo(snapshot: GroupSnapshot) -> Bool {
+    LocalizationStore.currentLocale().identifier.hasPrefix("tr")
+        && selectedCurrency.uppercased() != snapshot.group.baseCurrency.uppercased()
+}
+```
+
+| Kullanıcı | TRY seçili | USD seçili |
+|-----------|-----------|-----------|
+| App dili Türkçe | Bar GÖSTERİLMEZ | Bar GÖSTERİLİR ✅ |
+| App dili English | Bar GÖSTERİLMEZ | Bar GÖSTERİLMEZ ✅ |
+
+**Metin:** `"1 USD ≈ 38.50 TRY · 28 Haz 2026 tarihindeki kur baz alınmaktadır · Bu kur yaklaşıktır, kesinleşmiş borç değildir"`
+
+**Tarih formatı:** `"d MMM yyyy"` (saat GÖSTERİLMEZ)
 
 ---
 
@@ -323,7 +387,7 @@ GroupDetailView
 | Cron'u client'tan tetikleme | 🔴 Kritik | ✅ Engellendi (sadece `service_role`) |
 | Çift masraf oluşturma | 🟡 Yüksek | ✅ Engellendi (UNIQUE + ON CONFLICT) |
 | Geçmişe dönük kural | 🟡 Yüksek | ✅ Engellendi (`start_date < current_date` red) |
-| Kural güncellerken `next_execution_date` manipülasyonu | 🟡 Yüksek | ✅ MVP'de güncellenmez |
+| `next_execution_date` manipülasyonu | 🟡 Yüksek | ✅ MVP'de güncellenmez |
 | SQL injection | 🔴 Kritik | ✅ Tüm değerler parametrize (`p_` prefix) |
 | Inactive üyeye split atama | 🟡 Orta | ✅ `validate_recurring_rule_splits` kontrol eder |
 
@@ -333,10 +397,9 @@ GroupDetailView
 
 ### 7.1 Kural oluşturulduktan sonra üye gruptan ayrılırsa?
 
-**Cron motoru çalıştığında:**
-- `paid_by` pasif ise → `raise exception` → expense **oluşturulmaz**, execution `failed` loglanır
-- Subset/custom split'teki bir üye pasif ise → `raise exception` → aynı şekilde **başarısız** olur
-- Equal split'te: sadece AKTIF üyeler arasında bölüşüm yapılır, pasif olanlar yok sayılır ✅
+- `paid_by` pasif ise → expense **oluşturulmaz**, execution `failed` loglanır
+- Subset/custom split'teki bir üye pasif ise → aynı şekilde **başarısız**
+- Equal split'te: sadece AKTIF üyeler arasında bölüşüm yapılır ✅
 
 ### 7.2 Kuralın grubu silinirse?
 
@@ -344,58 +407,58 @@ GroupDetailView
 
 ### 7.3 Cron hiç çalışmazsa?
 
-pg_cron schedule'ı Supabase Dashboard'dan yapılandırılmalıdır. Migration sadece fonksiyonu oluşturur, schedule içermez.
+İki senaryo:
+- **pg_cron kurulu değilse:** Migration `NOTICE` verip atlar. Harici cron servisi gerekir.
+- **pg_cron kurulu ama tetiklenmediyse:** WHILE döngüsü sayesinde cron tekrar çalıştığında tüm kaçırılan periyotlar catch-up yapılır.
 
 ### 7.4 Aynı cron iki kez paralel çalışırsa?
 
-`UNIQUE (rule_id, execution_date)` + `ON CONFLICT` sayesinde ilk gelen işlemi yapar, ikincisi `v_execution_id = NULL` alır ve atlar.
+`UNIQUE (rule_id, execution_date)` + `ON CONFLICT` sayesinde ilk gelen işlemi yapar, ikincisi atlar.
 
 ### 7.5 5 yıl sonra cron tekrar başlarsa?
 
-WHILE döngüsü tüm kaçırılan periyotları teker teker işler. 5 yıl × 12 ay = 60 expense oluşturulur. Bu uzun sürebilir ancak transaction başına çalıştığı için kilitlenme yapmaz.
+WHILE döngüsü tüm kaçırılan periyotları teker teker işler. 5 yıl × 12 ay = 60 expense. Transaction başına çalıştığı için kilitlenme yapmaz.
 
 ---
 
-## 8. Eksikler ve Öneriler
+## 8. Bug Fix Geçmişi
 
-### 8.1 ⚠️ Cron Schedule Eksik
+Commit sırasıyla tespit edilen ve düzeltilen hatalar:
 
-**Durum:** Migration `execute_due_recurring_expenses()` fonksiyonunu oluşturur ancak pg_cron schedule'ı tanımlanmaz.
+| Commit | Hata | Sonuç |
+|--------|------|-------|
+| `98fbbe1` | Tablo adı uyuşmazlığı: Swift `recurring_expense_rules` → SQL `recurring_expenses_rules` | ✅ Düzeltildi |
+| `98fbbe1` | `paidBy!` force-unwrap → `guard let payerId = paidBy` | ✅ Düzeltildi |
+| `46bd5ec` | `NSCameraUsageDescription` eksik (fiş tarama için) | ⚠️ Özellik kaldırıldı |
+| `8e428e3` | Fişten ekleme özelliği tamamen kaldırıldı | ✅ Temizlendi |
+| `e573c44` | Masraf tutar fontu `display(16)` → `body(14)` + `lineLimit(1)` | ✅ Düzeltildi |
+| `e573c44` | Kur bilgisi bar'ı herkese çıkıyordu → sadece `tr` locale | ✅ Düzeltildi |
+| `e573c44` | Kur tarihi `HH:mm` içeriyordu → sadece tarih | ✅ Düzeltildi |
+| `c74db6d` | pg_cron SQL: `cron.schedule()` DO bloğu dışında → hata | ✅ Düzeltildi |
+| `1594215` | pg_cron SQL: iç içe `$$` çakışması → `$_$` delimiter | ✅ Düzeltildi |
 
-**Aksiyon:** Supabase Dashboard → SQL Editor'da:
-```sql
-select cron.schedule(
-  'recurring-expenses-hourly',
-  '0 * * * *',           -- her saatin başında
-  $$ select execute_due_recurring_expenses(); $$
-);
-```
+---
 
-**Öneri:** Bu schedule'ı migration'a ekleyin veya ayrı bir migration olarak yönetin.
-
-### 8.2 🟡 Timezone Farkındalığı
-
-`current_date` PostgreSQL'in saat dilimini kullanır. Supabase genelde UTC'dir. Türkiye (UTC+3) kullanıcıları için gün sınırı 3 saat kayabilir. MVP için kabul edilebilir, ancak ileride `current_date` yerine parametre olarak saat dilimi alınabilir.
-
-### 8.3 🟢 Gelecek İyileştirmeleri
+## 9. Gelecek İyileştirmeleri
 
 | Özellik | Öncelik | Açıklama |
 |---------|---------|----------|
 | Execution log UI | Orta | `recurring_expense_executions` tablosu client'ta hiç gösterilmiyor |
 | Bildirim | Düşük | Kural başarısız olduğunda push notification |
 | `next_execution_date` override | Düşük | Kullanıcı manuel olarak sonraki tarihi değiştirebilsin |
-| Bitiş tarihi | Düşük | `end_date` ile sınırlı süreli kurallar |
+| Bitiş tarihi (`end_date`) | Düşük | Sınırlı süreli kurallar |
 | Retry mekanizması UI | Düşük | Başarısız periyotları manuel tetikleme |
+| Timezone awareness | Düşük | `current_date` yerine parametre olarak saat dilimi |
 
 ---
 
-## 9. Sonuç
+## 10. Sonuç
 
-### ✅ Çalıştığı Doğrulananlar
+### ✅ Doğrulananlar
 
 | Kontrol | Durum |
 |---------|-------|
-| Tablo adı eşleşmesi (`recurring_expenses_rules`) | ✅ Düzeltildi |
+| Tablo adı (`recurring_expenses_rules`) | ✅ Düzeltildi |
 | Kural CRUD (create/update/pause/delete) | ✅ RPC + yetki kontrolleri tam |
 | Frekans motoru (weekly/monthly/yearly) | ✅ PostgreSQL interval, ay sonu uyumlu |
 | Kaçırılan periyot catch-up | ✅ WHILE döngüsü ile |
@@ -405,15 +468,27 @@ select cron.schedule(
 | Client Float/Double kullanımı | ✅ Yok, tüm tutarlar Int minor unit |
 | RLS SELECT politikası | ✅ Sadece kendi grubunun kuralları |
 | Hata durumunda motor kilidi | ✅ next_execution_date ilerletilir |
-| paid_by inactive olduğunda koruma | ✅ Exception + failed log |
+| pg_cron schedule migration | ✅ pg_cron yoksa NOTICE verir, varsa kurar |
+| Dollar-quote iç içe çakışma | ✅ `$_$` delimiter ile çözüldü |
+| Kur bilgisi locale gating | ✅ Sadece app dili Türkçe olanlara |
+| Masraf tutar fontu | ✅ `body(14)` + `lineLimit(1)` |
 
-### ⚠️ Aksiyon Gerektiren
+### 📁 İlgili Dosyalar
 
-| Konu | Aksiyon |
-|------|---------|
-| pg_cron schedule tanımı | Migration'a eklenmeli veya manuel kurulmalı |
+| Dosya | Rol |
+|-------|-----|
+| `supabase/migrations/202606280001_recurring_expenses.sql` | Tablolar, RLS, RPC'ler, yetkilendirme |
+| `supabase/migrations/202606280002_pg_cron_schedule.sql` | pg_cron schedule (hourly trigger) |
+| `Groopay/Core/Models/RecurringExpenseRule.swift` | Kural ve split modelleri |
+| `Groopay/Core/Models/RecurringExpenseExecution.swift` | Execution log modeli |
+| `Groopay/Core/Supabase/GroupsStore.swift` | Store metotları (load/create/update/pause/delete) |
+| `Groopay/Core/Supabase/RPC.swift` | RPC input yapıları ve RPCClient |
+| `Groopay/Features/Groups/RecurringExpensesView.swift` | Kural listesi + RuleFormView |
+| `Groopay/Features/Groups/GroupDetailView.swift` | "Tekrarlayan Masraflar" butonu + font fix |
+| `Groopay/Features/Groups/AddExpenseView.swift` | Kur bilgisi bar'ı + locale gating |
+| `docs/recurring-expenses-technical-audit.md` | Bu rapor |
 
 ---
 
 **Raporu Hazırlayan:** Claude (Anthropic) — otomatik kod denetimi  
-**Denetlenen Commit'ler:** `e588dcb`, `98fbbe1`, `ded018a`, `8e428e3`
+**Denetlenen Commit'ler:** `e588dcb` → `1594215` (9 commit, main branch)
