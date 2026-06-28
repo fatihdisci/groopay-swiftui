@@ -22,41 +22,48 @@ final class ReceiptScanner {
             return
         }
 
-        let request = VNRecognizeTextRequest { [weak self] request, error in
-            guard let self else { return }
-            if let error {
-                Task { @MainActor in
-                    self.error = error.localizedDescription
-                }
-                return
-            }
-
-            guard let observations = request.results as? [VNRecognizedTextObservation] else {
-                return
-            }
-
-            var textLines: [String] = []
-            for observation in observations {
-                if let candidate = observation.topCandidates(1).first {
-                    textLines.append(candidate.string)
-                }
-            }
-
-            let joinedText = textLines.joined(separator: "\n")
-            Task { @MainActor in
-                self.recognizedText = joinedText
-            }
-        }
-
-        request.recognitionLevel = .accurate
-        request.recognitionLanguages = ["tr-TR", "en-US"]
-        request.usesLanguageCorrection = true
-
-        let handler = VNImageRequestHandler(cgImage: cgImage, options: [:])
         do {
-            try handler.perform([request])
+            recognizedText = try await performRecognition(cgImage: cgImage)
         } catch {
             self.error = error.localizedDescription
+        }
+    }
+
+    /// Bridges the callback-based Vision API to async/await with `withCheckedContinuation`.
+    /// Called from the Main Actor context, so the result is available before the caller resumes.
+    private nonisolated func performRecognition(cgImage: CGImage) async throws -> String? {
+        try await withCheckedThrowingContinuation { continuation in
+            let request = VNRecognizeTextRequest { request, error in
+                if let error {
+                    continuation.resume(throwing: error)
+                    return
+                }
+
+                guard let observations = request.results as? [VNRecognizedTextObservation] else {
+                    continuation.resume(returning: nil)
+                    return
+                }
+
+                let textLines: [String] = observations.compactMap { observation in
+                    observation.topCandidates(1).first?.string
+                }
+
+                let joinedText = textLines.isEmpty ? nil : textLines.joined(separator: "\n")
+                continuation.resume(returning: joinedText)
+            }
+
+            request.recognitionLevel = .accurate
+            request.recognitionLanguages = ["tr-TR", "en-US"]
+            request.usesLanguageCorrection = true
+
+            let handler = VNImageRequestHandler(cgImage: cgImage, options: [:])
+            do {
+                try handler.perform([request])
+            } catch {
+                // Vision threw synchronously (invalid image, etc.) — completion handler
+                // will not be called, so resume the continuation here.
+                continuation.resume(throwing: error)
+            }
         }
     }
 }

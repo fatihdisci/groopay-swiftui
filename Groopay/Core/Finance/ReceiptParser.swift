@@ -10,7 +10,7 @@ struct ReceiptParser {
         "toplam", "genel toplam", "ara toplam", "subtotal", "total", "grand total",
         "kdv", "vergi", "tax", "vat",
         "nakit", "kredi kartı", "banka kartı", "cash", "credit card",
-        "matrah", "iade", "para üstü", "change", "discount", "indirim",
+        "matrah", "iade", "para üstü", "para ustü", "change", "discount", "indirim",
         "fiş no", "tarih", "date", "saat", "time", "kasör", "kasiyer"
     ]
 

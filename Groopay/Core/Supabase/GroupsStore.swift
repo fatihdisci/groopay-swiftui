@@ -699,7 +699,7 @@ final class GroupsStore {
     func loadRecurringRules(for groupID: UUID) async {
         do {
             let rules: [RecurringExpenseRule] = try await supabase
-                .from("recurring_expense_rules")
+                .from("recurring_expenses_rules")
                 .select()
                 .eq("group_id", value: groupID)
                 .order("created_at", ascending: false)

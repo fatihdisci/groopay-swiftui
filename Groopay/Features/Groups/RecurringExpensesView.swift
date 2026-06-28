@@ -635,11 +635,11 @@ struct RuleFormView: View {
         
         return VStack(spacing: 0) {
             Button {
-                guard valid && !isSaving else { return }
+                guard valid, !isSaving, let payerId = paidBy else { return }
                 Task {
                     isSaving = true
                     let success: Bool
-                    
+
                     if let rule {
                         success = await store.updateRecurringRule(
                             ruleID: rule.id,
@@ -650,7 +650,7 @@ struct RuleFormView: View {
                             currency: selectedCurrency,
                             category: selectedCategoryID,
                             splitType: splitType,
-                            paidBy: paidBy!,
+                            paidBy: payerId,
                             frequency: frequency,
                             isActive: rule.isActive,
                             splits: splits
@@ -664,7 +664,7 @@ struct RuleFormView: View {
                             currency: selectedCurrency,
                             category: selectedCategoryID,
                             splitType: splitType,
-                            paidBy: paidBy!,
+                            paidBy: payerId,
                             frequency: frequency,
                             startDate: startDate,
                             splits: splits
