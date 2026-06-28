@@ -262,6 +262,7 @@ struct RuleFormView: View {
     @State private var customShares: [UUID: Int] = [:]
     @State private var customText: [UUID: String] = [:]
     @State private var isSaving = false
+    @State private var showDeleteConfirm = false
 
     init(groupID: UUID, store: GroupsStore, rule: RecurringExpenseRule?) {
         self.groupID = groupID
@@ -332,6 +333,16 @@ struct RuleFormView: View {
                 }
             }
             .background(Color.background.ignoresSafeArea())
+            .confirmationDialog(
+                "Kural silinsin mi?",
+                isPresented: $showDeleteConfirm,
+                titleVisibility: .visible
+            ) {
+                Button("Sil", role: .destructive) {
+                    Task { await handleDelete() }
+                }
+                Button("Vazgeç", role: .cancel) {}
+            }
         }
     }
 
@@ -634,6 +645,18 @@ struct RuleFormView: View {
         let valid = isValid(splits: splits)
         
         return VStack(spacing: 0) {
+            if rule != nil {
+                Button(role: .destructive) {
+                    showDeleteConfirm = true
+                } label: {
+                    Label("Kuralı Sil", systemImage: "trash")
+                        .font(.body(15, weight: .semibold))
+                        .foregroundStyle(Color.debt)
+                        .frame(maxWidth: .infinity, minHeight: 48)
+                        .background(Color.debt.opacity(0.1))
+                        .clipShape(RoundedRectangle(cornerRadius: ThemeRadius.button))
+                }
+            }
             Button {
                 guard valid, !isSaving, let payerId = paidBy else { return }
                 Task {
@@ -702,6 +725,20 @@ struct RuleFormView: View {
         .padding(.top, 14)
         .padding(.bottom, 8)
         .background(.ultraThinMaterial)
+    }
+
+    private func handleDelete() async {
+        guard let rule else { return }
+        isSaving = true
+        defer { isSaving = false }
+        let success = await store.deleteRecurringRule(ruleID: rule.id, groupID: groupID)
+        if success {
+            feedback.success(String(localized: "Kural silindi.", comment: "Rule deleted"))
+            dismiss()
+        } else {
+            feedback.error(store.errorMessage ?? String(localized: "Kural silinemedi.", comment: "Rule delete failed"))
+            store.clearError()
+        }
     }
 
     private static func editableAmountString(minor: Int, currency: String) -> String {
