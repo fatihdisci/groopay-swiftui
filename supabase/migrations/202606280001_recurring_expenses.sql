@@ -505,7 +505,7 @@ begin
           insert into public.expenses (
             group_id, description, note, amount, currency, category, split_type, paid_by, created_by, expense_date
           ) values (
-            v_rule.group_id, v_rule.description, v_rule.note, v_rule.amount, v_rule.currency, v_rule.category, v_rule.split_type, v_rule.paid_by, v_rule.created_by, v_next_date
+            v_rule.group_id, v_rule.description, v_rule.note, v_rule.amount, v_rule.currency, v_rule.category, v_rule.split_type::split_type, v_rule.paid_by, v_rule.created_by, v_next_date
           ) returning id into v_expense_id;
 
           -- 3. Bölüşümleri hesapla ve ekle

@@ -3345,12 +3345,18 @@
       "comment" : "Rule created successfully"
     },
     "Kural silindi." : {
-      "comment" : "Rule deleted success feedback"
+      "comment" : "Rule deleted\nRule deleted success feedback"
     },
     "Kural silinemedi." : {
-      "comment" : "Rule delete failed error"
+      "comment" : "Rule delete failed\nRule delete failed error"
+    },
+    "Kural silinsin mi?" : {
+
     },
     "Kuralı Düzenle" : {
+
+    },
+    "Kuralı Sil" : {
 
     },
     "KURUCU" : {
