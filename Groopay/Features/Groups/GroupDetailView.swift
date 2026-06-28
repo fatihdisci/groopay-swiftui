@@ -398,8 +398,9 @@ private struct ExpenseCard: View {
 
             VStack(alignment: .trailing, spacing: 8) {
                 Text(formatAmount(expense.amount, currency: expense.currency))
-                    .font(.display(16, weight: .semibold))
+                    .font(.body(14, weight: .semibold))
                     .foregroundStyle(Color.textPrimary)
+                    .lineLimit(1)
 
                 Menu {
                     Button(action: onCopy) {

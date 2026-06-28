@@ -322,9 +322,11 @@ struct AddExpenseView: View {
 
     // MARK: - FX Rate (DESIGN.md §6.4)
 
-    /// Grubun baz para birimi seçili para biriminden farklıysa info bar göster.
+    /// Yalnızca uygulama dili Türkçe olan kullanıcılarda ve
+    /// grubun baz para birimi seçili para biriminden farklıysa info bar göster.
     private func showFXInfo(snapshot: GroupSnapshot) -> Bool {
-        selectedCurrency.uppercased() != snapshot.group.baseCurrency.uppercased()
+        LocalizationStore.currentLocale().identifier.hasPrefix("tr")
+            && selectedCurrency.uppercased() != snapshot.group.baseCurrency.uppercased()
     }
 
     /// Kur bilgisi info bar'ı. Yükleme/hata/başarı durumlarını kapsar.
@@ -334,7 +336,7 @@ struct AddExpenseView: View {
         let formattedDate: String = {
             let f = DateFormatter()
             f.locale = locale
-            f.setLocalizedDateFormatFromTemplate("d MMM yyyy HH:mm")
+            f.setLocalizedDateFormatFromTemplate("d MMM yyyy")
             return fxRateAsOf.map { f.string(from: $0) } ?? ""
         }()
 
@@ -346,7 +348,7 @@ struct AddExpenseView: View {
 
             if let rate = fxRate, fxRateAsOf != nil, !fxRateError {
                 Text(String(
-                    format: String(localized: "1 %@ ≈ %@ %@ · %@ tarihinde kilitlendi · Bu kur yaklaşıktır, kesinleşmiş borç değildir", locale: locale),
+                    format: String(localized: "1 %@ ≈ %@ %@ · %@ tarihindeki kur baz alınmaktadır · Bu kur yaklaşıktır, kesinleşmiş borç değildir", locale: locale),
                     locale: locale,
                     selectedCurrency.uppercased(),
                     String(format: "%.2f", rate),
