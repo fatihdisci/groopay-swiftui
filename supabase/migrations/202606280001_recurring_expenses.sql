@@ -47,7 +47,7 @@ create table if not exists public.recurring_expense_executions (
   error_message text, -- Hata durumlarında Postgres hata detayını loglamak için
   executed_at timestamptz not null default now(),
   status text not null default 'success' check (status in ('processing', 'success', 'failed')),
-  unique (rule_id, execution_date)
+  constraint recurring_expense_executions_rule_date_key unique (rule_id, execution_date)
 );
 
 -- RLS Aktifleştirme
@@ -436,7 +436,7 @@ create or replace function public.execute_due_recurring_expenses()
 returns table(
   executed_rule_id uuid,
   created_expense_id uuid,
-  execution_date date
+  processed_execution_date date
 )
 language plpgsql
 security definer
@@ -477,13 +477,13 @@ begin
       -- Ancak, next_execution_date'in veritabanından manuel olarak geri çekildiği veya aynı periyodun yeniden tetiklendiği durumlarda çakışma (ON CONFLICT) bu retry mekanizmasını korur.
       insert into public.recurring_expense_executions (rule_id, execution_date, status)
       values (v_rule.id, v_next_date, 'processing')
-      on conflict (rule_id, execution_date)
+      on conflict on constraint recurring_expense_executions_rule_date_key
       do update
         set status = 'processing',
             error_message = null,
             executed_at = now()
-        where recurring_expense_executions.status = 'failed'
-      returning id into v_execution_id;
+        where public.recurring_expense_executions.status = 'failed'
+      returning public.recurring_expense_executions.id into v_execution_id;
 
       -- Eğer v_execution_id dolu ise bu period ilk kez işleniyor veya retry ediliyordur.
       if v_execution_id is not null then
@@ -622,7 +622,7 @@ begin
 
           executed_rule_id := v_rule.id;
           created_expense_id := v_expense_id;
-          execution_date := v_next_date;
+          processed_execution_date := v_next_date;
           return next;
 
         exception when others then
