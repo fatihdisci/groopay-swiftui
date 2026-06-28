@@ -432,7 +432,9 @@ $$;
 
 -- 8. RPC: Cron / İşletici Motor (SECURITY DEFINER)
 -- Sadece service_role tarafından tetiklenebilir. Authenticated veya public rol yetkisi kapatılmıştır.
-create or replace function public.execute_due_recurring_expenses()
+-- DROP + CREATE kullanılır (RETURNS TABLE imzası hotfix ile değişebilir).
+drop function if exists public.execute_due_recurring_expenses();
+create function public.execute_due_recurring_expenses()
 returns table(
   executed_rule_id uuid,
   created_expense_id uuid,

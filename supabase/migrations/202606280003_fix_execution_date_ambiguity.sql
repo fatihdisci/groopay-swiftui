@@ -35,8 +35,9 @@ alter table public.recurring_expense_executions
   add constraint recurring_expense_executions_rule_date_key
   unique (rule_id, execution_date);
 
--- Adım 3: Fonksiyonu güncelle (output kolonu + ON CONFLICT + qualified refs)
-create or replace function public.execute_due_recurring_expenses()
+-- Adım 3: Fonksiyonu yeniden oluştur (DROP + CREATE — RETURNS TABLE imzası değiştiği için OR REPLACE yetmez)
+drop function if exists public.execute_due_recurring_expenses();
+create function public.execute_due_recurring_expenses()
 returns table(
   executed_rule_id uuid,
   created_expense_id uuid,
