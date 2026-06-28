@@ -6,44 +6,35 @@
 -- tüm periyotları sırayla işler.
 --
 -- ÖN KOŞUL: Supabase Dashboard → Database → Extensions → pg_cron ENABLED
--- Eğer pg_cron kurulu değilse bu migration başarısız olur.
--- Supabase'in ücretsiz planında pg_cron desteklenmez; bu durumda Pro plana
--- geçmek veya harici bir cron servisi (örn. GitHub Actions, Vercel Cron)
+--
+-- Supabase ücretsiz planında pg_cron desteklenmez. Bu migration, pg_cron
+-- mevcut değilse hiçbir şey yapmaz (sessizce atlanır).
+--
+-- ALTERNATİF: Harici bir cron servisi (GitHub Actions, Vercel Cron, vb.)
 -- kullanarak execute_due_recurring_expenses() RPC'sini service_role key ile
--- periyodik olarak tetiklemek gerekir.
+-- periyodik olarak tetikleyebilirsiniz.
 -- ============================================================================
 
--- Daha önce aynı isimde schedule varsa temizle (idempotent)
 do $$
 begin
+    -- pg_cron kurulu değilse hiçbir şey yapma
+    if not exists (
+        select 1 from pg_extension where extname = 'pg_cron'
+    ) then
+        raise notice 'pg_cron extension bulunamadı — cron schedule atlandı. Supabase Dashboard → Extensions altından pg_cron''u etkinleştirin veya harici bir cron servisi kullanın.';
+        return;
+    end if;
+
+    -- Daha önce aynı isimde schedule varsa temizle
     perform cron.unschedule('recurring-expenses-hourly');
-exception
-    when others then
-        -- pg_cron mevcut değilse veya schedule zaten yoksa sessizce devam et
-        null;
+
+    -- Her saat başı (HH:00 UTC) çalışacak schedule
+    perform cron.schedule(
+        'recurring-expenses-hourly',
+        '0 * * * *',
+        $$ select execute_due_recurring_expenses(); $$
+    );
+
+    raise notice 'pg_cron schedule "recurring-expenses-hourly" başarıyla kuruldu.';
 end;
 $$;
-
--- Yeni schedule: her saatin başında (HH:00) çalışır
--- Dakika seviyesinde rastgele dağıtım için 0 yerine offset kullanılabilir
-select cron.schedule(
-    'recurring-expenses-hourly',
-    '0 * * * *',                    -- her saat başı (UTC)
-    $$ select execute_due_recurring_expenses(); $$
-);
-
--- ============================================================================
--- ÖZET: Sıklık Seçimi Gerekçesi
--- ============================================================================
--- "0 * * * *" (her saat başı):
---   - Aylık kurallar için ~730 deneme/yıl (saatte 1)
---   - En kötü durum gecikme: 59 dakika
---   - Günlük kullanıcı beklentisi için yeterli
---
--- Alternatifler:
---   - "0 3 * * *" (her gece 03:00): yalnızca 365 deneme/yıl,
---     kullanıcı gün içinde oluşturduğu kuralın ertesi güne kadar
---     çalışmamasına sebep olur
---   - "*/30 * * * *" (30 dakikada bir): gereksiz sıklık,
---     veritabanına ek yük bindirir
--- ============================================================================
