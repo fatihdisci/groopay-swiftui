@@ -352,9 +352,6 @@
         }
       }
     },
-    "%d kalem başarıyla aktarıldı." : {
-      "comment" : "OCR success notification"
-    },
     "%lld" : {
 
     },
@@ -511,12 +508,12 @@
     "0.00" : {
 
     },
-    "1 %@ ≈ %@ %@ · %@ tarihinde kilitlendi · Bu kur yaklaşıktır, kesinleşmiş borç değildir" : {
+    "1 %@ ≈ %@ %@ · %@ tarihindeki kur baz alınmaktadır · Bu kur yaklaşıktır, kesinleşmiş borç değildir" : {
       "localizations" : {
         "tr" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "1 %1$@ ≈ %2$@ %3$@ · %4$@ tarihinde kilitlendi · Bu kur yaklaşıktır, kesinleşmiş borç değildir"
+            "value" : "1 %1$@ ≈ %2$@ %3$@ · %4$@ tarihindeki kur baz alınmaktadır · Bu kur yaklaşıktır, kesinleşmiş borç değildir"
           }
         }
       }
@@ -1206,9 +1203,6 @@
     "Bitti" : {
 
     },
-    "Bölüşecek Üyeler" : {
-      "comment" : "Assignment section title"
-    },
     "Bölüşme" : {
       "localizations" : {
         "en" : {
@@ -1869,9 +1863,6 @@
         }
       }
     },
-    "En az bir üye seçilmelidir." : {
-      "comment" : "Unassigned warning text"
-    },
     "English" : {
       "localizations" : {
         "en" : {
@@ -2042,24 +2033,6 @@
     "Filtreleri Temizle" : {
 
     },
-    "Fiş Harcaması" : {
-      "comment" : "Fallback default receipt description"
-    },
-    "Fiş işleniyor..." : {
-      "comment" : "OCR scanning loader text"
-    },
-    "Fiş Okuma" : {
-      "comment" : "OCR empty state title"
-    },
-    "Fiş: %@" : {
-      "comment" : "Default description from first parsed receipt item"
-    },
-    "Fişin fotoğrafını çekin veya galeriden seçin. Kalemler otomatik ayrıştırılacaktır." : {
-      "comment" : "OCR empty state description"
-    },
-    "Fişten Ekle" : {
-      "comment" : "OCR receipt scanner view title"
-    },
     "Fiyat bilgisi alınamadı · App Store bağlantısı kurulamadı · İnternetini kontrol edip tekrar dene" : {
 
     },
@@ -2078,12 +2051,6 @@
           }
         }
       }
-    },
-    "Fotoğraf Çek" : {
-      "comment" : "Take photo button"
-    },
-    "Galeriden Seç" : {
-      "comment" : "Choose from library button"
     },
     "Geçersiz avatar rengi." : {
       "localizations" : {
@@ -2239,9 +2206,6 @@
           }
         }
       }
-    },
-    "Görsel formatı desteklenmiyor." : {
-      "comment" : "Error when cgImage conversion fails"
     },
     "Görünen ad" : {
       "localizations" : {
@@ -3139,15 +3103,6 @@
         }
       }
     },
-    "Kalem %lld" : {
-      "comment" : "Default item name when parser cannot extract it"
-    },
-    "Kalem adı (örn: Hamburger)" : {
-
-    },
-    "Kalem Ekle" : {
-
-    },
     "Kapat" : {
       "localizations" : {
         "en" : {
@@ -3478,9 +3433,6 @@
         }
       }
     },
-    "Manuel Kalem Ekle" : {
-      "comment" : "Add manual line item button"
-    },
     "Market" : {
       "localizations" : {
         "en" : {
@@ -3658,9 +3610,6 @@
         }
       }
     },
-    "Masrafa Aktar" : {
-      "comment" : "Apply splits to parent expense button"
-    },
     "Masrafı Düzenle" : {
       "localizations" : {
         "en" : {
@@ -3754,9 +3703,6 @@
           }
         }
       }
-    },
-    "Metin okunamadı, boş bir kalem listesi açılıyor." : {
-      "comment" : "Notification when OCR fails to find lines"
     },
     "Misafir başla" : {
 
@@ -5029,9 +4975,6 @@
           }
         }
       }
-    },
-    "Toplam Tutar" : {
-      "comment" : "Receipt total amount summary label"
     },
     "Toplamın %lld%%'i" : {
       "extractionState" : "stale",

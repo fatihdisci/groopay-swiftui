@@ -205,10 +205,10 @@ struct DashboardView: View {
             }
             .foregroundStyle(.white.opacity(0.72))
             Text(formatAmount(amount, currency: currency))
-                .font(.system(size: 31, weight: .heavy))
+                .font(.system(size: 24, weight: .heavy))
                 .foregroundStyle(.white)
                 .lineLimit(1)
-                .minimumScaleFactor(0.68)
+                .minimumScaleFactor(0.72)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(10)
