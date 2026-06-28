@@ -32,7 +32,7 @@ begin
     perform cron.schedule(
         'recurring-expenses-hourly',
         '0 * * * *',
-        $$ select execute_due_recurring_expenses(); $$
+        $_$ select execute_due_recurring_expenses(); $_$
     );
 
     raise notice 'pg_cron schedule "recurring-expenses-hourly" başarıyla kuruldu.';
