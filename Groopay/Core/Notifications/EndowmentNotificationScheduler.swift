@@ -30,7 +30,7 @@ enum EndowmentNotificationScheduler {
 
         let content = UNMutableNotificationContent()
         content.title = String(localized: "Groopay'i kullanmaya başladın 👋")
-        content.body = String(localized: "Pro ile sınırsız grup, kategori analizi ve harcama trendlerine erişebilirsin. Gözat ister misin?")
+        content.body = String(localized: "Pro ile sınırsız grup oluşturabilir, harcama trendlerini ve detaylı analizleri açabilirsin. Gözat ister misin?")
         content.userInfo = ["action": "open_paywall"]
         content.sound = .default
 

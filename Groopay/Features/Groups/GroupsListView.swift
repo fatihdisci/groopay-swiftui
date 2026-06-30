@@ -93,36 +93,69 @@ struct GroupsListView: View {
     }
 
     private var bottomBar: some View {
-        HStack(spacing: 12) {
-            Button(action: onJoin) {
-                joinButtonLabel
-                    .foregroundStyle(Color.primaryTheme)
-                    .background(Color.background)
-                    .overlay {
-                        RoundedRectangle(cornerRadius: ThemeRadius.button)
-                            .stroke(Color.primaryTheme, lineWidth: 1.2)
-                    }
-                    .clipShape(RoundedRectangle(cornerRadius: ThemeRadius.button))
+        VStack(spacing: 10) {
+            if !authStore.hasProAccess {
+                limitMessage
             }
 
-            Button(action: onCreate) {
-                createButtonLabel
-                    .foregroundStyle(reachedLimit ? Color.textTertiary : Color.primaryTheme)
-                    .background(Color.background)
-                    .overlay {
-                        RoundedRectangle(cornerRadius: ThemeRadius.button)
-                            .stroke(
-                                reachedLimit ? Color.textTertiary.opacity(0.35) : Color.primaryTheme,
-                                lineWidth: 1.2
-                            )
-                    }
-                    .clipShape(RoundedRectangle(cornerRadius: ThemeRadius.button))
+            HStack(spacing: 12) {
+                Button(action: onJoin) {
+                    joinButtonLabel
+                        .foregroundStyle(Color.primaryTheme)
+                        .background(Color.background)
+                        .overlay {
+                            RoundedRectangle(cornerRadius: ThemeRadius.button)
+                                .stroke(Color.primaryTheme, lineWidth: 1.2)
+                        }
+                        .clipShape(RoundedRectangle(cornerRadius: ThemeRadius.button))
+                }
+
+                Button(action: onCreate) {
+                    createButtonLabel
+                        .foregroundStyle(reachedLimit ? Color.textTertiary : Color.primaryTheme)
+                        .background(Color.background)
+                        .overlay {
+                            RoundedRectangle(cornerRadius: ThemeRadius.button)
+                                .stroke(
+                                    reachedLimit ? Color.textTertiary.opacity(0.35) : Color.primaryTheme,
+                                    lineWidth: 1.2
+                                )
+                        }
+                        .clipShape(RoundedRectangle(cornerRadius: ThemeRadius.button))
+                }
             }
         }
         .padding(.horizontal, 20)
         .padding(.top, 12)
         .padding(.bottom, 10)
         .background(Color.background)
+    }
+
+    private var limitMessage: some View {
+        let used = min(store.createdActiveNonDemoGroupCount, GroupsStore.freeCreatedGroupLimit)
+        let remaining = max(GroupsStore.freeCreatedGroupLimit - used, 0)
+        let text = reachedLimit
+            ? String(localized: "10/10 grup hakkını kullandın. Pro ile sınırsız grup oluştur.")
+            : String(
+                format: String(localized: "%lld/10 grup oluşturdun · %lld hakkın kaldı"),
+                Int64(used),
+                Int64(remaining)
+            )
+
+        return HStack(spacing: 8) {
+            Image(systemName: reachedLimit ? "lock.fill" : "person.2.badge.plus")
+                .font(.system(size: 12, weight: .semibold))
+            Text(text)
+                .font(.body(12, weight: .medium))
+                .lineLimit(2)
+                .minimumScaleFactor(0.82)
+            Spacer(minLength: 0)
+        }
+        .foregroundStyle(reachedLimit ? Color.warning : Color.textSecondary)
+        .padding(.horizontal, 12)
+        .padding(.vertical, 9)
+        .background((reachedLimit ? Color.warning : Color.primaryTheme).opacity(0.08))
+        .clipShape(RoundedRectangle(cornerRadius: ThemeRadius.button))
     }
 
     private var joinButtonLabel: some View {
@@ -137,7 +170,7 @@ struct GroupsListView: View {
 
     private var createButtonLabel: some View {
         Label(
-            reachedLimit ? "Pro ile Sınırsız" : "Yeni Grup",
+            reachedLimit ? "Pro ile Sınırsız Grup" : "Yeni Grup",
             systemImage: reachedLimit ? "lock.fill" : "plus"
         )
         .font(.body(15, weight: .semibold))
@@ -147,7 +180,7 @@ struct GroupsListView: View {
 
     private var reachedLimit: Bool {
         !authStore.hasProAccess
-            && store.createdNonDemoGroupCount >= 3
+            && store.createdActiveNonDemoGroupCount >= GroupsStore.freeCreatedGroupLimit
     }
 }
 

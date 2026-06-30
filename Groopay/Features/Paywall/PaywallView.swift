@@ -12,22 +12,22 @@ struct ProFeature: Identifiable {
 
 private let proFeatures: [ProFeature] = [
     ProFeature(
-        id: "dashboard",
-        icon: "chart.bar.fill",
-        title: "Gelişmiş Panel",
-        subtitle: "Tüm gruplarının para birimi bazında özetini, harcama trendlerini ve kategorilerini tek ekranda gör."
-    ),
-    ProFeature(
         id: "groups",
         icon: "person.2.fill",
-        title: "Sınırsız Grup",
-        subtitle: "Ücretsizde 3 grup sınırı var. Pro ile istediğin kadar grup oluştur, hiçbir arkadaşını dışarıda bırakma."
+        title: "Sınırsız grup oluştur",
+        subtitle: "Free planda 10 aktif grup oluşturabilirsin. Pro ile oluşturduğun aktif gruplarda sınır kalkar."
+    ),
+    ProFeature(
+        id: "trends",
+        icon: "chart.xyaxis.line",
+        title: "Harcama trendlerini gör",
+        subtitle: "Seçtiğin para biriminde harcamalarının zaman içindeki hareketini takip et."
     ),
     ProFeature(
         id: "analytics",
-        icon: "chart.pie.fill",
-        title: "Kategori Analizi",
-        subtitle: "Harcamalarını kategorilere göre analiz et, nereye ne kadar gittiğini görselleştir."
+        icon: "chart.bar.doc.horizontal",
+        title: "Detaylı grup analizleri",
+        subtitle: "En hareketli ayı, popüler kategoriyi, en çok ödeyeni ve ödeşme özetini gör."
     ),
 ]
 
@@ -120,7 +120,7 @@ struct PaywallView: View {
                     .font(.display(28, weight: .extraBold))
                     .foregroundStyle(.white)
 
-                Text("Gruplarını sınırsız yönet, harcamaları daha hızlı analiz et.")
+                Text("Sınırsız grup oluştur, harcama trendlerini ve detaylı analizleri aç.")
                     .font(.body(14, weight: .medium))
                     .foregroundStyle(.white.opacity(0.82))
                     .multilineTextAlignment(.center)
@@ -128,8 +128,8 @@ struct PaywallView: View {
             }
 
             HStack(spacing: 10) {
-                heroPill("Sınırsız grup")
-                heroPill("Gelişmiş analiz")
+                heroPill("Sınırsız grup oluştur")
+                heroPill("Harcama trendleri")
             }
         }
         .frame(maxWidth: .infinity)

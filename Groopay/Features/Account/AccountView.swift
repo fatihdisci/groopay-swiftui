@@ -306,9 +306,9 @@ struct AccountView: View {
                 }
             } else {
                 VStack(spacing: 8) {
-                    featureRow(icon: "chart.bar.fill", text: "Gelişmiş Panel")
-                    featureRow(icon: "person.2.fill", text: "Sınırsız Grup")
-                    featureRow(icon: "chart.pie.fill", text: "Kategori Analizi")
+                    featureRow(icon: "person.2.fill", text: "Sınırsız grup oluştur")
+                    featureRow(icon: "chart.xyaxis.line", text: "Harcama trendlerini gör")
+                    featureRow(icon: "chart.bar.doc.horizontal", text: "Detaylı grup analizleri")
                 }
 
                 Button {

@@ -32,13 +32,13 @@ private let tipsTR: [TipItem] = [
         id: "dashboard",
         icon: "chart.bar.fill",
         title: "Panel",
-        description: "Tüm gruplarınızın para birimi bazında özetini, harcama trendlerini ve kategorilerini tek ekranda görün. (Pro özelliği)"
+        description: "Tüm gruplarınızın para birimi bazında özetini, kategori dağılımını ve aktivitelerini tek ekranda görün."
     ),
     TipItem(
         id: "pro",
         icon: "diamond.fill",
         title: "Pro Abonelik",
-        description: "Sınırsız grup oluşturma, gelişmiş panel ve kategori analizi gibi özelliklere erişmek için Groopay User Pro'ya abone olun."
+        description: "Sınırsız grup oluşturma, harcama trendleri ve detaylı grup analizleri için Groopay User Pro'ya abone olun."
     ),
     TipItem(
         id: "invite",
@@ -71,13 +71,13 @@ private let tipsEN: [TipItem] = [
         id: "dashboard",
         icon: "chart.bar.fill",
         title: "Dashboard",
-        description: "View summaries of all your groups by currency, spending trends, and categories on a single screen. (Pro feature)"
+        description: "View summaries of all your groups by currency, category distribution, and activity on a single screen."
     ),
     TipItem(
         id: "pro",
         icon: "diamond.fill",
         title: "Pro Subscription",
-        description: "Subscribe to Groopay User Pro for unlimited groups, advanced dashboard, and category analytics."
+        description: "Subscribe to Groopay User Pro for unlimited group creation, spending trends, and detailed group analytics."
     ),
     TipItem(
         id: "invite",

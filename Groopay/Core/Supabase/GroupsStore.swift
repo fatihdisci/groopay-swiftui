@@ -5,6 +5,8 @@ import Supabase
 @MainActor
 @Observable
 final class GroupsStore {
+    static let freeCreatedGroupLimit = 10
+
     private(set) var groups: [GroupSnapshot] = []
     private(set) var activities: [Activity] = []
     private(set) var recurringRules: [UUID: [RecurringExpenseRule]] = [:]
@@ -71,10 +73,10 @@ final class GroupsStore {
         BalanceSummary.calculate(groups: groups, userID: currentUserID)
     }
 
-    var createdNonDemoGroupCount: Int {
+    var createdActiveNonDemoGroupCount: Int {
         guard let userID = currentUserID else { return 0 }
         return groups.filter {
-            $0.group.createdBy == userID && !$0.group.isDemo
+            $0.group.createdBy == userID && !$0.group.isDemo && !$0.group.archived
         }.count
     }
 
@@ -685,7 +687,7 @@ final class GroupsStore {
 
     private static func isLimitError(_ error: RPCError) -> Bool {
         let text = error.localizedDescription.lowercased()
-        return text.contains("3 grup")
+        return text.contains("10 grup")
             || text.contains("ücretsiz plan")
             || text.contains("free plan")
     }

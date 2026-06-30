@@ -46,7 +46,7 @@ Bunlar CLAUDE.md'den taşınıyor ve SwiftUI'da da aynen geçerli. Backend deği
    - `add_settlement`, `confirm_settlement`, `reject_settlement`
    - `create_group_with_limit`, `delete_group`, `remove_member`, `transfer_ownership`
    - `preview_invite`, `preview_ghosts`, `join-via-invite` (Edge Function)
-6. **Grup limiti 5** (demo hariç) — `create_group_with_limit` server-side enforce eder. İstemci sadece RPC döndürdüğü hatayı gösterir.
+6. **Free oluşturulan aktif grup limiti 10** (demo ve arşivli gruplar hariç) — `create_group_with_limit` server-side enforce eder. Davetle gruba katılma sınırsızdır; istemci sadece UI/UX yönlendirme yapar.
 7. **Hayalet üye:** `group_members.user_id = NULL`. Claim → aynı satıra `user_id` yazılır (RPC ile).
 8. **FX:** Masraf orijinal para biriminde saklanır; çevrim sadece görüntüleme (canlı kur, kaydedilmez).
 9. **Pro entitlement sunucuda:** `profiles.user_pro`. İstemci sadece okur. Webhook yazar. `hasProAccess` = sadece `user_pro`. Group Pro UI yok (kod backend'de duruyor).

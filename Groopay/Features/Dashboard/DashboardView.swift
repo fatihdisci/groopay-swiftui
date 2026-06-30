@@ -42,14 +42,19 @@ struct DashboardView: View {
                         // 2) Yapmam gerekenler (herkese açık)
                         actionCenterSection
 
-                        // 3) Analiz (Pro; free kullanıcı teaser görür)
+                        // 3) Kategori dağılımı (herkese açık)
+                        timeFilterPicker
+                        donutSection
+                        categorySection
+
+                        // 4) Gelişmiş analitik (Pro)
                         if isPro {
-                            analysisContent
+                            proAnalyticsContent
                         } else {
-                            freeTeaser
+                            lockedAnalyticsPreview
                         }
 
-                        // 4) Son aktiviteler (herkese açık)
+                        // 5) Son aktiviteler (herkese açık)
                         recentActivitySection
                     }
                     .padding(20)
@@ -216,13 +221,12 @@ struct DashboardView: View {
         .clipShape(RoundedRectangle(cornerRadius: 12))
     }
 
-    // MARK: - Analiz (Pro Content)
+    // MARK: - Advanced Analytics (Pro Content)
 
     @ViewBuilder
-    private var analysisContent: some View {
-        timeFilterPicker
-        donutSection
-        categorySection
+    private var proAnalyticsContent: some View {
+        spendingTrendSection
+        detailedAnalysisSection
     }
 
     // MARK: - Yapmam Gerekenler (Action Center)
@@ -360,65 +364,211 @@ struct DashboardView: View {
         .pickerStyle(.segmented)
     }
 
-    // MARK: - Free Teaser
+    // MARK: - Locked Analytics
 
-    private var freeTeaser: some View {
-        VStack(spacing: 14) {
-            ZStack {
-                Circle()
-                    .fill(Color.primaryTheme.opacity(0.08))
-                    .frame(width: 56, height: 56)
-
-                Image(systemName: "diamond.fill")
-                    .font(.system(size: 26))
+    private var lockedAnalyticsPreview: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            HStack(spacing: 12) {
+                Image(systemName: "lock.fill")
+                    .font(.system(size: 15, weight: .semibold))
                     .foregroundStyle(Color.primaryTheme)
-            }
+                    .frame(width: 34, height: 34)
+                    .background(Color.primaryTheme.opacity(0.10))
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
 
-            Text(hasAnyExpense ? "Groopay'i kullanmaya başladın. Pro ile devam et." : "Panel Pro'ya Özel")
-                .font(.display(19, weight: .semibold))
-                .foregroundStyle(Color.textPrimary)
-
-            Text("Kategori analizi, harcama trendleri ve detaylı özetler Pro ile kullanılabilir.")
-                .font(.body(14))
-                .foregroundStyle(Color.textSecondary)
-                .multilineTextAlignment(.center)
-                .padding(.horizontal, 16)
-
-            // Mini feature grid — PaywallView proFeatures ile tutarlı
-            HStack(spacing: ThemeSpacing.xl) {
-                ForEach([
-                    ("chart.bar.fill", String(localized: "Gelişmiş Panel")),
-                    ("person.2.fill", String(localized: "Sınırsız Grup")),
-                    ("chart.pie.fill", String(localized: "Kategori Analizi")),
-                ], id: \.0) { icon, title in
-                    VStack(spacing: ThemeSpacing.xs) {
-                        Image(systemName: icon)
-                            .font(.system(size: 18))
-                            .foregroundStyle(Color.themeAccent)
-                        Text(title)
-                            .font(.captionFont)
-                            .foregroundStyle(Color.themeTextSecondary)
-                    }
+                VStack(alignment: .leading, spacing: 3) {
+                    Text("Harcama Trendi ve Detaylı Analiz")
+                        .font(.display(17, weight: .bold))
+                        .foregroundStyle(Color.textPrimary)
+                    Text("Trendler, en hareketli ay, popüler kategori, en çok ödeyen ve ödeşme özeti Pro ile açılır.")
+                        .font(.body(12, weight: .medium))
+                        .foregroundStyle(Color.textSecondary)
+                        .fixedSize(horizontal: false, vertical: true)
                 }
             }
-            .padding(.top, ThemeSpacing.sm)
+
+            HStack(spacing: 8) {
+                ForEach(lockedPreviewBars, id: \.self) { height in
+                    RoundedRectangle(cornerRadius: 4)
+                        .fill(Color.primaryTheme.opacity(height > 0.55 ? 0.32 : 0.16))
+                        .frame(height: 58 * height)
+                        .frame(maxHeight: 58, alignment: .bottom)
+                }
+            }
+            .frame(maxWidth: .infinity, minHeight: 66, alignment: .bottom)
+            .padding(12)
+            .background(Color.surfaceTinted)
+            .clipShape(RoundedRectangle(cornerRadius: ThemeRadius.button))
 
             Button {
                 showPaywall = true
             } label: {
-                Text("Pro'ya Geç")
+                Text("Pro ile Aç")
                     .font(.body(15, weight: .semibold))
                     .foregroundStyle(.white)
-                    .frame(maxWidth: 220, minHeight: 44)
+                    .frame(maxWidth: .infinity, minHeight: 44)
                     .background(Color.brand)
                     .clipShape(RoundedRectangle(cornerRadius: 12))
             }
-            .padding(.top, 4)
         }
-        .padding(24)
+        .padding(18)
         .background(Color.surface)
         .clipShape(RoundedRectangle(cornerRadius: 16))
         .purpleTintedShadow()
+    }
+
+    private var lockedPreviewBars: [CGFloat] {
+        hasAnyExpense
+            ? [0.35, 0.58, 0.42, 0.76, 0.49, 0.68]
+            : [0.38, 0.52, 0.45, 0.62, 0.50, 0.58]
+    }
+
+    private var spendingTrendSection: some View {
+        let currency = analyticsCurrency
+        let points = spendingTrendPoints(currency: currency)
+        let maxAmount = points.map(\.amount).max() ?? 0
+
+        return VStack(alignment: .leading, spacing: 14) {
+            HStack {
+                Text("Harcama Trendi")
+                    .font(.display(17, weight: .bold))
+                    .foregroundStyle(Color.textPrimary)
+                Spacer()
+                Text(currency ?? "")
+                    .font(.body(12, weight: .semibold))
+                    .foregroundStyle(Color.primaryTheme)
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 6)
+                    .background(Color.surfaceTinted)
+                    .clipShape(Capsule())
+            }
+
+            if points.isEmpty || currency == nil {
+                Text("Trend için henüz veri yok.")
+                    .font(.body(14))
+                    .foregroundStyle(Color.textTertiary)
+                    .padding(.vertical, 8)
+            } else {
+                HStack(alignment: .bottom, spacing: 8) {
+                    ForEach(points) { point in
+                        VStack(spacing: 7) {
+                            RoundedRectangle(cornerRadius: 5)
+                                .fill(Color.primaryTheme)
+                                .frame(
+                                    height: maxAmount > 0
+                                        ? max(CGFloat(point.amount) / CGFloat(maxAmount) * 92, 8)
+                                        : 8
+                                )
+                            Text(point.label)
+                                .font(.body(10, weight: .semibold))
+                                .foregroundStyle(Color.textTertiary)
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.7)
+                        }
+                        .frame(maxWidth: .infinity)
+                    }
+                }
+
+                if let last = points.last {
+                    Text(
+                        String(
+                            format: AppLocalization.string("Son dönem: %@", locale: locale),
+                            locale: locale,
+                            formatAmount(last.amount, currency: currency ?? "")
+                        )
+                    )
+                    .font(.body(12, weight: .medium))
+                    .foregroundStyle(Color.textSecondary)
+                }
+            }
+        }
+        .padding(18)
+        .background(Color.surface)
+        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .purpleTintedShadow()
+    }
+
+    private var detailedAnalysisSection: some View {
+        let currency = analyticsCurrency
+        let details = detailedAnalytics(currency: currency)
+
+        return VStack(alignment: .leading, spacing: 14) {
+            HStack {
+                Text("Detaylı Analiz")
+                    .font(.display(17, weight: .bold))
+                    .foregroundStyle(Color.textPrimary)
+                Spacer()
+                Text(currency ?? "")
+                    .font(.body(12, weight: .semibold))
+                    .foregroundStyle(Color.primaryTheme)
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 6)
+                    .background(Color.surfaceTinted)
+                    .clipShape(Capsule())
+            }
+
+            LazyVGrid(
+                columns: [
+                    GridItem(.flexible(), spacing: 10),
+                    GridItem(.flexible(), spacing: 10)
+                ],
+                spacing: 10
+            ) {
+                detailMetricCard(
+                    title: "En Hareketli Ay",
+                    value: details.busiestMonth ?? "-",
+                    icon: "calendar"
+                )
+                detailMetricCard(
+                    title: "Popüler Kategori",
+                    value: details.popularCategory ?? "-",
+                    icon: "chart.pie.fill"
+                )
+                detailMetricCard(
+                    title: "En Çok Ödeyen",
+                    value: details.topPayer ?? "-",
+                    icon: "person.fill.checkmark"
+                )
+                detailMetricCard(
+                    title: "Ödeşme Özeti",
+                    value: details.settlementSummary,
+                    icon: "checkmark.seal.fill"
+                )
+            }
+        }
+        .padding(18)
+        .background(Color.surface)
+        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .purpleTintedShadow()
+    }
+
+    private func detailMetricCard(
+        title: LocalizedStringResource,
+        value: String,
+        icon: String
+    ) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Image(systemName: icon)
+                .font(.system(size: 14, weight: .semibold))
+                .foregroundStyle(Color.primaryTheme)
+                .frame(width: 28, height: 28)
+                .background(Color.primaryTheme.opacity(0.10))
+                .clipShape(RoundedRectangle(cornerRadius: 8))
+            Text(title)
+                .font(.body(11, weight: .semibold))
+                .foregroundStyle(Color.textTertiary)
+                .lineLimit(1)
+                .minimumScaleFactor(0.78)
+            Text(value)
+                .font(.body(13, weight: .semibold))
+                .foregroundStyle(Color.textPrimary)
+                .lineLimit(2)
+                .minimumScaleFactor(0.76)
+        }
+        .frame(maxWidth: .infinity, minHeight: 106, alignment: .topLeading)
+        .padding(12)
+        .background(Color.surfaceTinted)
+        .clipShape(RoundedRectangle(cornerRadius: ThemeRadius.button))
     }
 
     // MARK: - Category Analysis
@@ -750,6 +900,132 @@ struct DashboardView: View {
 
     // MARK: - Data helpers
 
+    private var analyticsCurrency: String? {
+        selectedDonutCurrency ?? defaultDonutCurrency
+    }
+
+    private func spendingTrendPoints(currency: String?) -> [SpendingTrendPoint] {
+        guard let currency else { return [] }
+        let calendar = Calendar.current
+        let formatter = DateFormatter()
+        formatter.locale = locale
+        formatter.setLocalizedDateFormatFromTemplate("MMM")
+
+        let grouped = filteredDashboardExpenses(currency: currency)
+            .reduce(into: [Date: Int]()) { result, expense in
+                guard let date = expense.expenseDate ?? expense.createdAt,
+                      let month = calendar.dateInterval(of: .month, for: date)?.start else {
+                    return
+                }
+                result[month, default: 0] += expense.amount
+            }
+
+        return grouped
+            .sorted { $0.key < $1.key }
+            .suffix(6)
+            .map { date, amount in
+                SpendingTrendPoint(
+                    label: formatter.string(from: date),
+                    amount: amount
+                )
+            }
+    }
+
+    private func detailedAnalytics(currency: String?) -> DetailedAnalytics {
+        guard let currency else {
+            return DetailedAnalytics(
+                busiestMonth: nil,
+                popularCategory: nil,
+                topPayer: nil,
+                settlementSummary: AppLocalization.string("Veri yok", locale: locale)
+            )
+        }
+
+        let expenses = filteredDashboardExpenses(currency: currency)
+        let calendar = Calendar.current
+        let monthFormatter = DateFormatter()
+        monthFormatter.locale = locale
+        monthFormatter.setLocalizedDateFormatFromTemplate("LLLL yyyy")
+
+        let busiestMonth = expenses
+            .reduce(into: [Date: Int]()) { result, expense in
+                guard let date = expense.expenseDate ?? expense.createdAt,
+                      let month = calendar.dateInterval(of: .month, for: date)?.start else {
+                    return
+                }
+                result[month, default: 0] += expense.amount
+            }
+            .max { $0.value < $1.value }
+            .map { monthFormatter.string(from: $0.key) }
+
+        let popularCategory = expenses
+            .reduce(into: [String: Int]()) { result, expense in
+                result[expense.category, default: 0] += expense.amount
+            }
+            .max { $0.value < $1.value }
+            .map { categoryTitle(ExpenseCategory.find($0.key)) }
+
+        let payerTotals = expenses
+            .reduce(into: [UUID: Int]()) { result, expense in
+                result[expense.paidBy, default: 0] += expense.amount
+            }
+        let topPayer = payerTotals
+            .max { $0.value < $1.value }
+            .flatMap { payerID, amount -> String? in
+                guard let name = memberName(payerID) else { return nil }
+                return "\(name) · \(formatAmount(amount, currency: currency))"
+            }
+
+        let settlements = store.groups
+            .flatMap(\.settlements)
+            .filter {
+                $0.status == .confirmed
+                    && $0.currency.uppercased() == currency.uppercased()
+            }
+        let settlementTotal = settlements.reduce(0) { $0 + $1.amount }
+        let settlementSummary = settlements.isEmpty
+            ? AppLocalization.string("Henüz ödeşme yok", locale: locale)
+            : String(
+                format: AppLocalization.string("%1$lld ödeme · %2$@", locale: locale),
+                locale: locale,
+                Int64(settlements.count),
+                formatAmount(settlementTotal, currency: currency)
+            )
+
+        return DetailedAnalytics(
+            busiestMonth: busiestMonth,
+            popularCategory: popularCategory,
+            topPayer: topPayer,
+            settlementSummary: settlementSummary
+        )
+    }
+
+    private func filteredDashboardExpenses(currency: String) -> [Expense] {
+        let since = selectedTimeFilter.since()
+        return store.groups
+            .flatMap(\.expenses)
+            .filter { expense in
+                guard expense.deletedAt == nil else { return false }
+                guard expense.currency.uppercased() == currency.uppercased() else {
+                    return false
+                }
+                guard let since else { return true }
+                guard let date = expense.expenseDate ?? expense.createdAt else {
+                    return false
+                }
+                return date >= since
+            }
+    }
+
+    private func memberName(_ memberID: UUID) -> String? {
+        for snapshot in store.groups {
+            if let member = snapshot.member(id: memberID) {
+                return member.displayName
+            }
+        }
+        return nil
+    }
+
     private var defaultDonutCurrency: String? {
         let totals = categoryStats(filter: selectedTimeFilter)
             .flatMap(\.currencyAmounts)
@@ -921,6 +1197,19 @@ struct DashboardView: View {
             return formatter.string(from: date)
         }
     }
+}
+
+private struct SpendingTrendPoint: Identifiable {
+    var id: String { label }
+    let label: String
+    let amount: Int
+}
+
+private struct DetailedAnalytics {
+    let busiestMonth: String?
+    let popularCategory: String?
+    let topPayer: String?
+    let settlementSummary: String
 }
 
 enum TimeFilter: String, CaseIterable, Identifiable {

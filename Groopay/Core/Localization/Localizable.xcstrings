@@ -4,6 +4,38 @@
     "" : {
 
     },
+    "%1$lld ödeme · %2$@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld payments · %2$@"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld ödeme · %2$@"
+          }
+        }
+      }
+    },
+    "%lld/10 grup oluşturdun · %lld hakkın kaldı" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You created %lld/10 groups · %lld remaining"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld/10 grup oluşturdun · %lld hakkın kaldı"
+          }
+        }
+      }
+    },
     "/ay" : {
       "localizations" : {
         "en" : {
@@ -16,6 +48,214 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "/ay"
+          }
+        }
+      }
+    },
+    "10/10 grup hakkını kullandın. Pro ile sınırsız grup oluştur." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You used 10/10 group slots. Create unlimited groups with Pro."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "10/10 grup hakkını kullandın. Pro ile sınırsız grup oluştur."
+          }
+        }
+      }
+    },
+    "En Hareketli Ay" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Busiest Month"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En Hareketli Ay"
+          }
+        }
+      }
+    },
+    "En Çok Ödeyen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Top Payer"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En Çok Ödeyen"
+          }
+        }
+      }
+    },
+    "En hareketli ayı, popüler kategoriyi, en çok ödeyeni ve ödeşme özetini gör." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "See the busiest month, popular category, top payer, and settlement summary."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En hareketli ayı, popüler kategoriyi, en çok ödeyeni ve ödeşme özetini gör."
+          }
+        }
+      }
+    },
+    "Free planda 10 aktif grup oluşturabilirsin. Pro ile oluşturduğun aktif gruplarda sınır kalkar." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The Free plan lets you create 10 active groups. Pro removes the limit for groups you create."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Free planda 10 aktif grup oluşturabilirsin. Pro ile oluşturduğun aktif gruplarda sınır kalkar."
+          }
+        }
+      }
+    },
+    "Henüz ödeşme yok" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No settlements yet"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Henüz ödeşme yok"
+          }
+        }
+      }
+    },
+    "Ödeşme Özeti" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Settlement Summary"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ödeşme Özeti"
+          }
+        }
+      }
+    },
+    "Popüler Kategori" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Popular Category"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Popüler Kategori"
+          }
+        }
+      }
+    },
+    "Seçtiğin para biriminde harcamalarının zaman içindeki hareketini takip et." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Track how your spending changes over time in the selected currency."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seçtiğin para biriminde harcamalarının zaman içindeki hareketini takip et."
+          }
+        }
+      }
+    },
+    "Son dönem: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Last period: %@"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Son dönem: %@"
+          }
+        }
+      }
+    },
+    "Trend için henüz veri yok." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No trend data yet."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trend için henüz veri yok."
+          }
+        }
+      }
+    },
+    "Trendler, en hareketli ay, popüler kategori, en çok ödeyen ve ödeşme özeti Pro ile açılır." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trends, busiest month, popular category, top payer, and settlement summary unlock with Pro."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trendler, en hareketli ay, popüler kategori, en çok ödeyen ve ödeşme özeti Pro ile açılır."
+          }
+        }
+      }
+    },
+    "Veri yok" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No data"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Veri yok"
           }
         }
       }
@@ -637,6 +877,9 @@
         }
       }
     },
+    "Açık" : {
+
+    },
     "Açıklama" : {
       "comment" : "Label for description field",
       "localizations" : {
@@ -655,7 +898,20 @@
       }
     },
     "Adil paylaşım" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fair Splitting"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adil paylaşım"
+          }
+        }
+      }
     },
     "Adınızı girin" : {
       "localizations" : {
@@ -1507,6 +1763,16 @@
         }
       }
     },
+    "Cihaz kimliğini doğrulayarak Pro araçlarını aç ve diline uygun örnek grup ve masrafları oluştur." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Authenticate on this device to unlock Pro tools and create sample groups and expenses in your language."
+          }
+        }
+      }
+    },
     "ÇIKARILDI" : {
       "localizations" : {
         "en" : {
@@ -1677,6 +1943,38 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Details"
+          }
+        }
+      }
+    },
+    "Detaylı Analiz" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Detailed Analysis"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Detaylı Analiz"
+          }
+        }
+      }
+    },
+    "Detaylı grup analizleri" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Detailed group analytics"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Detaylı grup analizleri"
           }
         }
       }
@@ -2116,6 +2414,16 @@
         }
       }
     },
+    "Geliştirici Modunu Kilitle" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lock Developer Mode"
+          }
+        }
+      }
+    },
     "GENEL DURUM" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -2336,6 +2644,22 @@
         }
       }
     },
+    "Gruplarında en hareketli ayı, popüler kategoriyi, en çok ödeyeni ve ödeşme özetini gör." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "See the busiest month, popular category, top payer, and settlement summary across your groups."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gruplarında en hareketli ayı, popüler kategoriyi, en çok ödeyeni ve ödeşme özetini gör."
+          }
+        }
+      }
+    },
     "Groopay'i kullanmaya başladın 👋" : {
 
     },
@@ -2539,7 +2863,20 @@
       }
     },
     "Grupları yönet" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Manage Groups"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Grupları yönet"
+          }
+        }
+      }
     },
     "Gruplarındaki masraf ve ödemeler burada görünecek." : {
       "extractionState" : "stale",
@@ -2570,6 +2907,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Gruplarını sınırsız yönet, harcamaları daha hızlı analiz et."
+          }
+        }
+      }
+    },
+    "Sınırsız grup oluştur, harcama trendlerini ve detaylı analizleri aç." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Create unlimited groups and unlock spending trends and detailed analytics."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sınırsız grup oluştur, harcama trendlerini ve detaylı analizleri aç."
           }
         }
       }
@@ -2689,8 +3042,85 @@
         }
       }
     },
+    "Harcama Trendi" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Spending Trend"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Harcama Trendi"
+          }
+        }
+      }
+    },
+    "Harcama Trendi ve Detaylı Analiz" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Spending Trend and Detailed Analysis"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Harcama Trendi ve Detaylı Analiz"
+          }
+        }
+      }
+    },
+    "Harcama trendleri" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Spending trends"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Harcama trendleri"
+          }
+        }
+      }
+    },
+    "Harcama trendlerini gör" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "See spending trends"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Harcama trendlerini gör"
+          }
+        }
+      }
+    },
     "Harcamaları bölüş, kimin ne ödeyeceğini gör, gruplarını tek yerde takip et." : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Split expenses, see who owes what, and manage all your groups in one place."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Harcamaları bölüş, kimin ne ödeyeceğini gör, gruplarını tek yerde takip et."
+          }
+        }
+      }
     },
     "Harcamalarını kategorilere göre analiz et, nereye ne kadar gittiğini görselleştir." : {
       "localizations" : {
@@ -3204,6 +3634,19 @@
     "Kira, abonelik veya aidat gibi periyodik masraflarınız için otomatik harcamalar oluşturun." : {
       "comment" : "Empty state description"
     },
+    "Kilidi Aç ve Test Verilerini Kur" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unlock and Set Up Test Data"
+          }
+        }
+      }
+    },
+    "Kilitli" : {
+
+    },
     "Kısa açıklama" : {
       "localizations" : {
         "en" : {
@@ -3711,7 +4154,20 @@
       }
     },
     "Misafir başla" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Start as a Guest"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Misafir başla"
+          }
+        }
+      }
     },
     "Misafir Kullanıcı" : {
       "localizations" : {
@@ -4369,6 +4825,16 @@
         }
       }
     },
+    "Pro erişimi bu cihazda geçici olarak açık. Test verileri gerçek test hesabına eklenir." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pro access is temporarily enabled on this device. Test data is added to the active test account."
+          }
+        }
+      }
+    },
     "Pro için Apple ile giriş yap" : {
       "localizations" : {
         "en" : {
@@ -4401,8 +4867,63 @@
         }
       }
     },
-    "Pro ile sınırsız grup, kategori analizi ve harcama trendlerine erişebilirsin. Gözat ister misin?" : {
-
+    "Pro ile Aç" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unlock with Pro"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pro ile Aç"
+          }
+        }
+      }
+    },
+    "Pro ile sınırsız grup oluşturabilir, harcama trendlerini ve detaylı analizleri açabilirsin. Gözat ister misin?" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "With Pro, create unlimited groups and unlock spending trends and detailed analytics. Want to take a look?"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pro ile sınırsız grup oluşturabilir, harcama trendlerini ve detaylı analizleri açabilirsin. Gözat ister misin?"
+          }
+        }
+      }
+    },
+    "Pro ile Sınırsız Grup" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unlimited Groups with Pro"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pro ile Sınırsız Grup"
+          }
+        }
+      }
+    },
+    "Pro ve test verileri hazır." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pro and test data are ready."
+          }
+        }
+      }
     },
     "Pro'ya Geç" : {
       "localizations" : {
@@ -4705,6 +5226,22 @@
         }
       }
     },
+    "Sınırsız grup oluştur" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Create unlimited groups"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sınırsız grup oluştur"
+          }
+        }
+      }
+    },
     "Sınırsız Grup" : {
       "localizations" : {
         "en" : {
@@ -4925,6 +5462,106 @@
     "Tekrarlayan Masraflar" : {
       "comment" : "Recurring expenses view title"
     },
+    "Test grubu oluşturulamadı." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The test group could not be created."
+          }
+        }
+      }
+    },
+    "Test grubu üyeleri hazırlanamadı." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The test group members could not be prepared."
+          }
+        }
+      }
+    },
+    "Test verileri hazır." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Test data is ready."
+          }
+        }
+      }
+    },
+    "Test verileri hazırlanamadı." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Test data could not be prepared."
+          }
+        }
+      }
+    },
+    "Test verileri silindi." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Test data was deleted."
+          }
+        }
+      }
+    },
+    "Test Verilerini Kur / Tamamla" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Set Up / Complete Test Data"
+          }
+        }
+      }
+    },
+    "Test Verilerini Sil" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete Test Data"
+          }
+        }
+      }
+    },
+    "Test verisi için oturum açmalısın." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You must sign in to create test data."
+          }
+        }
+      }
+    },
+    "TestFlight geliştirici araçlarını aç" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unlock TestFlight developer tools"
+          }
+        }
+      }
+    },
+    "TestFlight Geliştirici Modu" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "TestFlight Developer Mode"
+          }
+        }
+      }
+    },
     "Tips" : {
 
     },
@@ -4961,10 +5598,36 @@
       }
     },
     "Toplam Alacak" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Total Receivable"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toplam Alacak"
+          }
+        }
+      }
     },
     "Toplam Borç" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Total Debt"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toplam Borç"
+          }
+        }
+      }
     },
     "Toplam borç: %@" : {
       "localizations" : {
@@ -5088,26 +5751,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ücretsiz"
-          }
-        }
-      }
-    },
-    "Ücretsizde 3 grup sınırı var. Pro ile istediğin kadar grup oluştur, hiçbir arkadaşını dışarıda bırakma." : {
-
-    },
-    "Ücretsizde 5 grup sınırı var. Pro ile istediğin kadar grup oluştur, hiçbir arkadaşını dışarıda bırakma." : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The free plan is limited to 5 groups. With Pro, create as many groups as you want."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ücretsizde 5 grup sınırı var. Pro ile istediğin kadar grup oluştur, hiçbir arkadaşını dışarıda bırakma."
           }
         }
       }
